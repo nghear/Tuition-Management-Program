@@ -1,0 +1,11 @@
+1.Subject: Math
+| Tuition: 1,000,000
+
+2.Subject: Physics
+| Tuition: 800,000
+
+3.Subject: Chemistry
+| Tuition: 900,000
+
+4.Subject: English
+| Tuition: 1,500,000
