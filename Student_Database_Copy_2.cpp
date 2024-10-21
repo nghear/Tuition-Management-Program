@@ -17,7 +17,7 @@ void eraseLines(int count) {
             printf("\x1b[1A");
             printf("\x1b[2K");
         }
-        printf("\r");   // Move cursor to start of line
+        printf("\r");   // Move cursor to head of line
     }
 }
 
@@ -30,29 +30,55 @@ void gotoxy(int x, int y) { // Move cursor to coordinate (x,y)
 }
 
 typedef struct student {
-    int id_no;
+    char id_no[30];
     char name[30];
-    float math, physics, chemistry, average;
+    char subject[30];
+    int tuition;
     struct student *next;
-}node;
+} node_st;
 
-node *create_list();
-void display(node *);
-void count(node *);
-void search(node *, int);
-node *addatbeginning(node *);
-node *addatend(node *);
-node *addafter(node *,int);
-node *addbefore(node *,int);
-node *addatpos(node *,int);
-node *del(node *,int);
-node *reverse(node *);
+node_st *create_list();
+void display_memory(node_st *);
+void display_file(node_st *);
+void count(node_st *);
+void search(node_st *, int);
+/*node_st *addatbeginning(node_st *);
+node_st *addatend(node_st *);
+node_st *addafter(node_st *,int);
+node_st *addbefore(node_st *,int);
+node_st *addatpos(node_st *,int);
+node_st *del(node_st *,int);
+node_st *reverse(node_st *);*/
+
+node_st* head = nullptr;
+
+bool check(const char* x) {
+    //Check in memory
+    for(node_st* t = head; t != nullptr; t = t -> next) {
+        if (t -> id_no == x) return true;
+    }
+
+    //Check in file
+    FILE* file = fopen("students.txt", "r");
+    if (file != NULL) {
+        char line[256];
+        while (fgets(line, sizeof(line), file)) {
+            char id_no[30];
+            if (sscanf(line, "%s", &id_no) == 1 && strcmp(x, id_no) == 0) {
+                fclose(file);
+                return true;
+            }
+        }
+        fclose(file);
+    }
+    return false;
+}
 
 int main() {
     int choice, choice2, data, item, pos;
     char cf = 'y';
-    node *start;
-    start = NULL;
+    node_st *head;
+    head = NULL;
     do {
         printf("\n\t\tStudent's Data Management System\n\n");
         printf("\t1: Create List\n");
@@ -69,36 +95,31 @@ int main() {
 
         switch(choice) {
             case 1:
-                printf("Are you sure? Creating a new List will rewrite the existing one (If there is one). \nTo continue, press y. ");
-                cf=getch();
-                printf("\n");
-                if (cf == 'y') {
-                    start = create_list();
-                }
-                else {
-                    printf("Thanks for confirmation. Press any key to return.");
-                }
+                head = create_list();
                 _getch();
                 system("cls");
                 break;
             case 2:
-                display(start);
-                _getch();
-                system("cls");
+                display_memory(head);
                 break;
             case 3:
-                count(start);
+                count(head);
                 _getch();
                 system("cls");
                 break;
             case 4:
-                if (start == NULL) {
+                display_file(head);
+                break;
+            case 5:
+                exit(0);
+            /*case 4:
+                if (head == NULL) {
                 printf("No list to search from. Press any key to return.");
                 }
                 else {
                     printf("Enter ID to be searched: ");
                     scanf("%d", &data);
-                    search(start, data);
+                    search(head, data);
                 }
                     _getch();
                     system("cls");
@@ -107,7 +128,7 @@ int main() {
                 system("cls");
                 do {
                     printf("\n\t\tAdding new Student's Information. \n\n");
-                    printf("\t1: To the start of the list.\n");
+                    printf("\t1: To the head of the list.\n");
                     printf("\t2: To the end of the list.\n");
                     printf("\t3: Before a specific ID: \n");
                     printf("\t4: After a specific ID: \n");
@@ -119,33 +140,33 @@ int main() {
 
                     switch(choice2) {
                         case 1:
-                            start = addatbeginning(start);
+                            head = addatbeginning(head);
                             _getch();
                             system("cls");
                             break;
                         case 2:
-                            start = addatend(start);
+                            head = addatend(head);
                             _getch();
                             system("cls");
                             break;
                         case 3:
                             printf("Enter ID to insert before it: ");
                             scanf("%d", &item);
-                            start = addbefore(start, item);
+                            head = addbefore(head, item);
                             _getch();
                             system("cls");
                             break;
                         case 4:
                             printf("Enter ID to insert after it: ");
                             scanf("%d", &item);
-                            start = addafter(start, item);
+                            head = addafter(head, item);
                             _getch();
                             system("cls");
                             break;
                         case 5:
                             printf("Enter position number to insert into: ");
                             scanf("%d", &pos);
-                            start = addatpos(start, pos);
+                            head = addatpos(head, pos);
                             _getch();
                             system("cls");
                             break;
@@ -162,23 +183,23 @@ int main() {
     system("cls");
                 break;
             case 6:
-                if (start == NULL) {
+                if (head == NULL) {
                     printf("No list to delete from. Press any key to return.");
                 }
                 else {
                     printf("Enter the ID to be deleted: ");
                     scanf("%d", &data);
-                    start = del(start, data);
+                    head = del(head, data);
                 }
                 _getch();
                 system("cls");
                 break;
             case 7:
-                if (start == NULL) {
+                if (head == NULL) {
                     printf("No list to reverse. Press any key to return.");
                 }
                 else {
-                    start = reverse(start);
+                    head = reverse(head);
                 }
                 _getch();
                 system("cls");
@@ -187,110 +208,174 @@ int main() {
                 exit(0);
             default:
                 printf("Input only between 1 to 8!Press any key to return.");
-                _getch();
+                _getch(); */
         }
-    } while (choice != 8); 
+    } while (choice != 5); 
 }
 
-node *create_list() {
-    int id, flag = 1;
-    float math, physics, chemistry, average;
+node_st *create_list() {
+    node_st st;
+    char id[30];
     char Name[30];
-    char ans='y';
-    node *temp, *newer, *start;
-    node *getnode();
+    node_st *temp, *p, *head;
+    node_st *getnode();
     temp = NULL;
-    do {
-        printf("Enter the ID: ");
-        scanf("%d", &id);
-        printf("Enter student's name: ");
-        fflush(stdin);
-        gets(Name);
-        printf("Enter Math's score: ");
-        scanf("%f", &math);
-        printf("Enter Physics's score: ");
-        scanf("%f", &physics);
-        printf("Enter Chemistry's score: ");
-        scanf("%f", &chemistry);
-        newer = getnode();
-        if (newer == NULL) {
-            printf("\nMemory is not allocated");
-        }
-        newer -> id_no = id;
-        strcpy(newer -> name, Name);
-        newer -> math = math;
-        newer -> physics = physics;
-        newer -> chemistry = chemistry;
-        newer -> average = (math + physics + chemistry) / 3.0f;
-        if (flag == 1) {
-            start = newer;
-            temp = start;
-            flag = 0;
-        }
-        else {
-            temp -> next = newer;
-            temp = newer;
-        }
-        printf("To enter another ID, press y.\nPress any key other than y to return. ");
-        ans=getch();
-        printf("\n\n");
-    } while (ans == 'y');
-    printf("\nThe Single Linked List is created. Press any key to return.");
-    return start;
+    
+    p = getnode();
+    if (p == NULL) {
+        printf("\nMemory is not allocated");
+    }
+
+    //Input ID + Check ID for match
+    printf("Enter new ID: ");
+    fflush(stdin);
+    fgets(id, sizeof(id), stdin);
+    id[strcspn(id, "\n")] = 0;
+    strcpy(p -> id_no, id);
+    if (check(id)) {
+        printf("A student with this ID already exists.\n");
+        printf("Press any key to return to the Menu.");
+        _getch();
+        system("cls");
+        return head;
+    }
+
+    //Input name
+    printf("Enter Student's Full Name: ");
+    fflush(stdin);
+    fgets(Name, sizeof(Name), stdin);
+    Name[strcspn(Name,"\n")] = 0;
+    strcpy(p -> name, Name);
+
+    //Insert into Head
+    if (head == NULL) {
+        head = p;
+    }
+    else {
+        temp = head;
+        p -> next = temp;
+        head = p;
+    }
+
+    FILE *file = fopen("students.txt", "a");
+    if (file != NULL) {
+        fprintf(file, "%s,%s\n", p -> id_no, p -> name);
+        fclose(file);
+        printf("Data added successfully to memory and file.\n");
+    }
+    else {
+        printf("Data added to memory, however write to file has failed.\n");
+    }
+
+    printf("Press any key to return.");
+    _getch();
+    system("cls");
+    return head;
 }
 
-node *getnode() {
-    node *temp;
-    temp = (node*)malloc(sizeof(node));
+node_st *getnode() {
+    node_st *temp;
+    temp = (node_st*)malloc(sizeof(node_st));
     temp -> next = NULL;
     return temp;
 }
 
-void display(node *start) {
-    node *p;
-    p = start;
-    if (p == NULL) {
+void display_memory(node_st *head) {
+    node_st *p;
+    p = head;
+    if (!head) {
         printf("List is empty. Press any key to return.");
-        return;
+        _getch();
+        system("cls");
     }
     else {
         system("cls");
         gotoxy(2, 1);  printf("ID");
-        gotoxy(15, 1); printf("Full Name");
-        gotoxy(55, 1); printf("Math");
-        gotoxy(70, 1); printf("Physics");
-        gotoxy(85, 1); printf("Chemistry");
-        gotoxy(100, 1); printf("Average");
+        gotoxy(32, 1); printf("Full Name");
         
         int i = 2;
         while (p != NULL) {
-            gotoxy(2, i);  printf("%d", p->id_no);
-            gotoxy(15, i); printf("%s", p->name);
-            gotoxy(55, i); printf("%0.2f", p->math);
-            gotoxy(70, i); printf("%0.2f", p->physics);
-            gotoxy(85, i); printf("%0.2f", p->chemistry);
-            gotoxy(100, i); printf("%0.2f", p->average);
+            gotoxy(2, i);  printf("%s", p->id_no);
+            gotoxy(32, i); printf("%s", p->name);
             p = p -> next;
             i++;
         }
-        printf("\nPress any key to return.");
     }
+    printf("\nPress any key to return.");
+    _getch();
+    system("cls");
 }
 
-void count(node *start) {
-    node *p;
-    int i = 0;
-    p = start;
+void display_file(node_st *head) {
+    system("cls");
+    node_st st;
+    FILE* file = fopen("students.txt", "r");
+    if (file == NULL) {
+        printf("No data available in file.\n");
+    }
+    else {
+        int row = 1;
+        char line[256];
+        bool header_printed = false;
+
+        while (fgets(line, sizeof(line), file)) {
+            char id_no[30];
+            char name[30];
+            if (sscanf(line, "%s,%s", &id_no, &name) == 2) {
+                if (!header_printed) {
+                    gotoxy(2, row);  printf("ID");
+                    gotoxy(32, row); printf("Full Name");
+                    row++;
+                    header_printed = true;
+                }
+                gotoxy(2, row);  printf("%s", id_no);
+                gotoxy(32, row); printf("%s", name);
+                row++;
+            }
+        }
+        fclose(file);
+
+        if (!header_printed) {
+            printf("No data available in file\n");
+        }
+    }
+    printf("\nPress any key to return to Menu.");
+    _getch();
+    system("cls");
+}
+
+void count(node_st *head) {
+    node_st *p;
+    int count = 0;
+    int i, n;
+    node_st st[256];
+    FILE *file = fopen("students.txt","r");
+    if (file == NULL) {
+        printf("No data in file.\n");
+    }
+    else {
+        char line[256];
+        fread(&n, sizeof(int), 1, file);
+        for (int i = 0; i < n; i++) {
+            fread(&st[i], sizeof(node_st), 1, file);
+        }
+        fclose(file);
+        for (i = 0; i < n; i++) {
+            count++;
+        }
+
+    }
+    /*p = head;
     while (p != NULL) {
         p = p -> next;
         i++;
-    }
-    printf("there's %d ID.", i);
+    } */
+    printf("there's %d ID.", count);
 }
 
-void search(node *start, int data) {
-    node *p;
-    p = start;
+/*void search(node_st *head, int data) {
+    node_st *p;
+    p = head;
     system("cls");
         while (p != NULL) {
             if (p -> id_no == data) {
@@ -314,35 +399,8 @@ void search(node *start, int data) {
     printf("\nPress any key to return to the menu.");
 }
 
-node *addatbeginning(node *start) {
-    node *temp, *newer;
-    newer = getnode();
-    printf("Enter ID: ");
-    scanf("%d", &newer -> id_no);
-    printf("Enter the name: ");
-    fflush(stdin);
-    gets(newer -> name);
-    printf("Enter Math's Score: ");
-    scanf("%f", &newer -> math);
-    printf("Enter Physics's Score: ");
-    scanf("%f", &newer -> physics);
-    printf("Enter Chemistry's Score: ");
-    scanf("%f", &newer -> chemistry);
-    newer -> average = (newer -> math + newer -> physics + newer -> chemistry) / 3.0f;
-    if (start == NULL) {
-        start = newer;
-    }
-    else {
-        temp = start;
-        newer -> next = temp;
-        start = newer;
-    }
-    printf("Added successfully. Press any key to return.");
-    return start;
-}
-
-node *addatend(node *start) {
-    node *p, *temp;
+node_st *addatbeginning(node_st *head) {
+    node_st *temp, *p;
     p = getnode();
     printf("Enter ID: ");
     scanf("%d", &p -> id_no);
@@ -356,34 +414,61 @@ node *addatend(node *start) {
     printf("Enter Chemistry's Score: ");
     scanf("%f", &p -> chemistry);
     p -> average = (p -> math + p -> physics + p -> chemistry) / 3.0f;
-    if (start == NULL) {
-        start = p;
-        printf("Added Successfully. Press any key to return.");
-        return start;
+    if (head == NULL) {
+        head = p;
     }
     else {
-        temp = start;
+        temp = head;
+        p -> next = temp;
+        head = p;
+    }
+    printf("Added successfully. Press any key to return.");
+    return head;
+}
+
+node_st *addatend(node_st *head) {
+    node_st *p, *temp;
+    p = getnode();
+    printf("Enter ID: ");
+    scanf("%d", &p -> id_no);
+    printf("Enter the name: ");
+    fflush(stdin);
+    gets(p -> name);
+    printf("Enter Math's Score: ");
+    scanf("%f", &p -> math);
+    printf("Enter Physics's Score: ");
+    scanf("%f", &p -> physics);
+    printf("Enter Chemistry's Score: ");
+    scanf("%f", &p -> chemistry);
+    p -> average = (p -> math + p -> physics + p -> chemistry) / 3.0f;
+    if (head == NULL) {
+        head = p;
+        printf("Added Successfully. Press any key to return.");
+        return head;
+    }
+    else {
+        temp = head;
         while (temp -> next != NULL) {
             temp = temp -> next;
         }
         temp -> next = p;
         p -> next = NULL;
         printf("Added Successfully. Press any key to return.");
-        return start;
+        return head;
     }
 }
 
-node *addbefore(node *start, int item) {
-    node *temp, *p;
-    if (start == NULL) {
+node_st *addbefore(node_st *head, int item) {
+    node_st *temp, *p;
+    if (head == NULL) {
         printf ("List is empty\n");
         _getch();
-        return start;
+        return head;
     }
     
     // If data to be inserted before first node*
 
-    if (start -> id_no == item) {
+    if (head -> id_no == item) {
         temp = getnode();
         printf("Enter ID: ");
         scanf("%d", &temp -> id_no);
@@ -397,13 +482,13 @@ node *addbefore(node *start, int item) {
         printf("Enter Chemistry's Score: ");
         scanf("%f", &temp -> chemistry);
         temp -> average = (temp -> math + temp -> physics + temp -> chemistry) / 3.0f;
-        temp -> next = start;
-        start = temp;
+        temp -> next = head;
+        head = temp;
         printf("Added Successfully. Press any key to return.");
-        return start;
+        return head;
     }
     
-    p = start;
+    p = head;
     while (p -> next != NULL) {
         if (p -> next -> id_no == item) {
             temp = getnode();
@@ -422,16 +507,16 @@ node *addbefore(node *start, int item) {
             temp -> next = p -> next;
             p -> next = temp;
             printf("Added Successfully. Press any key to return.");
-            return start;
+            return head;
         }
         p = p -> next;
     }
     printf("%d not present in the list\n", item);
-    return start;
+    return head;
 }
 
-node *addafter(node *start, int item) {
-    node *temp, *p;
+node_st *addafter(node_st *head, int item) {
+    node_st *temp, *p;
     p = getnode();
     printf("Enter ID: ");
     scanf("%d", &p -> id_no);
@@ -446,25 +531,25 @@ node *addafter(node *start, int item) {
     scanf("%f", &p -> chemistry);
     p -> average = (p -> math + p -> physics + p -> chemistry) / 3.0f;
 
-    if (start == NULL) {
-        start = p;
+    if (head == NULL) {
+        head = p;
     }
     else {
-        temp = start;
+        temp = head;
         do {
             if (temp -> id_no == item) {
                 p -> next = temp -> next;
                 temp -> next = p;
                 printf("Added Successfully. Press any key to return.");
-                return start;
+                return head;
             }
             else temp = temp -> next;
         } while (temp != NULL);
     }
 }
 
-node *addatpos (node *start, int pos) {
-    node *temp, *p;
+node_st *addatpos (node_st *head, int pos) {
+    node_st *temp, *p;
     int i;
     temp = getnode();
     printf("Enter ID: ");
@@ -481,11 +566,11 @@ node *addatpos (node *start, int pos) {
     temp -> average = (temp -> math + temp -> physics + temp -> chemistry) / 3.0f;
 
     if (pos == 1) {
-        temp -> next = start;
-        start = temp;
-        return start;
+        temp -> next = head;
+        head = temp;
+        return head;
     }
-    p = start;
+    p = head;
     for (i = 1; i < pos - 1 && p != NULL; i++) {
         p = p -> next;
     }
@@ -497,48 +582,48 @@ node *addatpos (node *start, int pos) {
         p -> next = temp;
     }
     printf("Added sucessfully. Press any key to return.");
-    return start;
+    return head;
 }
 
-node *del (node *start, int data) {
-    node *temp, *p;
+node_st *del (node_st *head, int data) {
+    node_st *temp, *p;
 
     // Delete the first node
-    if (start -> id_no == data) {
-        temp = start;
-        start = start -> next;
+    if (head -> id_no == data) {
+        temp = head;
+        head = head -> next;
         free(temp);
         printf("ID %d has been deleted. Press any key to return.", data);
-        return start;
+        return head;
     }
 
     //Delete after first node
-    p = start;
+    p = head;
     while (p -> next != NULL) {
         if (p -> next -> id_no == data) {
             temp = p -> next;
             p -> next = temp -> next;
             free(temp);
             printf("ID %d has been deleted. Press any key to return.", data);
-            return start;
+            return head;
         }
         p = p -> next;
     }
     printf("ID %d not found. Press any key to return.", data);
-    return start;
+    return head;
 }
 
-node *reverse (node *start) {
-    node *prev, *ptr, *n;
+node_st *reverse (node_st *head) {
+    node_st *prev, *ptr, *n;
     prev = NULL;
-    ptr = start;
+    ptr = head;
     while (ptr != NULL) {
         n = ptr -> next;
         ptr -> next = prev;
         prev = ptr;
         ptr = n;
     }
-    start = prev;
+    head = prev;
     printf("List's order has been reversed. Press any key to return.");
-    return start;
-}
+    return head;
+} */
