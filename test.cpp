@@ -35,10 +35,10 @@ void gotoxy(int x, int y) {
 #define MAX_CLASSNAME_LENGTH 200
 
 typedef struct {
-    char id_st[MAX_ID_LENGTH];
-    char name[MAX_NAME_LENGTH];
-    float tuitionpaid;
-    char attending_class[MAX_CLASSNAME_LENGTH];
+    char student_id[MAX_ID_LENGTH];
+    char student_name[MAX_NAME_LENGTH];
+    float tuition_paid;
+    char class_attend[MAX_CLASSNAME_LENGTH];
 } students;
 
 typedef struct {
@@ -47,18 +47,12 @@ typedef struct {
     int tuition;
 } classes;
 
-typedef struct check {
-    char id_st_link[15];
-    char id_class_link[15];
-    check* next;
-} check;
-
 void experimental_insert_student() {
     FILE *file;
     students new_student, existing_student;
     int student_count = 0;
     char no_class[MAX_CLASSNAME_LENGTH] = "Not Registered";
-    bool id_exists = false;
+    bool id_found = false;
 
     //Open file in append and read mode
     file = fopen("ex_student.txt", "a+");
@@ -71,35 +65,35 @@ void experimental_insert_student() {
     printf("\nEnter Student Information\n");
     printf("Enter Student's ID: ");
     fflush(stdin);
-    fgets(new_student.id_st, sizeof(new_student.id_st), stdin);
+    fgets(new_student.student_id, sizeof(new_student.student_id), stdin);
 
     //Check if ID already exists
     rewind(file);
     while ( fread(&existing_student, sizeof(students), 1, file) == 1) {
         student_count++;
-        if ( strcmp(existing_student.id_st, new_student.id_st) == 0) {
-            id_exists = true;
+        if ( strcmp(existing_student.student_id, new_student.student_id) == 0) {
+            id_found = true;
             break;
         }
     }
 
-    if (id_exists) {
-        printf("Error: Student ID %s already exists\n", new_student.id_st);
+    if (id_found) {
+        printf("Error: Student ID %s already exists\n", new_student.student_id);
     }
     else {
         printf("Enter Student's Name: ");
         fflush(stdin);
-        fgets(new_student.name, sizeof(new_student.name), stdin);
+        fgets(new_student.student_name, sizeof(new_student.student_name), stdin);
 
         printf("Enter Tuition Paid: ");
-        scanf("%f", &new_student.tuitionpaid);
+        scanf("%f", &new_student.tuition_paid);
 
-        strcpy(new_student.attending_class, no_class);
+        strcpy(new_student.class_attend, no_class);
 
         //Write new student to file
         fseek(file, 0, SEEK_END);
-        new_student.id_st[ strcspn(new_student.id_st, "\n") ] = 0;
-        new_student.name[ strcspn(new_student.name, "\n") ] = 0;
+        new_student.student_id[ strcspn(new_student.student_id, "\n") ] = 0;
+        new_student.student_name[ strcspn(new_student.student_name, "\n") ] = 0;
         fwrite(&new_student, sizeof(students), 1, file);
         printf("\nStudent added sucessfully. Number: %d\n", student_count + 1);
     }
@@ -136,7 +130,7 @@ void experimental_print_students_list() {
     while (fread(&st, sizeof(students), 1, file) == 1) {
         student_count++;
         printf("%-5d %-15s %-30s %-15.2f %-30s", 
-            student_count, st.id_st, st.name, st.tuitionpaid, st.attending_class);
+            student_count, st.student_id, st.student_name, st.tuition_paid, st.class_attend);
         printf("\n");
     }
 
@@ -157,8 +151,7 @@ void experimental_insert_class() {
     FILE *file;
     classes new_class, existing_class;
     int class_count = 0;
-    int tuition;
-    bool class_exists = false;
+    bool class_found = false;
 
     // Open the file in append and read mode
     file = fopen("ex_class.txt","a+");
@@ -178,12 +171,12 @@ void experimental_insert_class() {
     while ( fread(&existing_class, sizeof(classes), 1, file) == 1) {
         class_count++;
         if (strcmp(existing_class.class_id, new_class.class_id) == 0) {
-            class_exists = true;
+            class_found = true;
             break;
         }
     }
 
-    if (class_exists) {
+    if (class_found) {
         printf("Error: Class ID %s already exists!\n", new_class.class_id);
     }
     else {
@@ -210,13 +203,13 @@ void experimental_insert_class() {
 }
 
 void experimental_print_classes_list() {
-    FILE *file1, *file2;
+    FILE *file;
     classes cl;
     int class_count = 0;
 
     //Open the file in binary read mode
-    file1 = fopen("ex_class.txt", "r");
-    if (file1 == NULL) {
+    file = fopen("ex_class.txt", "r");
+    if (file == NULL) {
         printf("Error opening file or file doesn't exist!\n");
         printf("Press any key to return.");
         getch();
@@ -244,14 +237,14 @@ void experimental_print_classes_list() {
         printf("\nTotal number of subjects: %d\n", class_count);
     }
 
-    fclose(file1);
+    fclose(file);
 
     printf("\nPress any key to return.");
     getch();
     system("cls");
 }
 
-void experimental_class_register() {
+void experimental_class_register() { // This code currently may sometime bug out, zero clue why (29/10, N).
     FILE *student_file, *class_file;
     students st;
     classes cl;
@@ -280,7 +273,7 @@ void experimental_class_register() {
 
     //Find student
     while (fread(&st, sizeof(students), 1, student_file) == 1) {
-        if (strcmp(st.id_st, student_id_s) == 0) {
+        if (strcmp(st.student_id, student_id_s) == 0) {
             student_found = true;
             student_pos = ftell(student_file) - sizeof(students);
             break;
@@ -296,14 +289,14 @@ void experimental_class_register() {
 
     // Check if student has already assigned for a class
     while (fread(&cl, sizeof(classes), 1, class_file) == 1) {
-        if (strcmp(st.attending_class, cl.class_name) == 0) {
+        if (strcmp(st.class_attend, cl.class_name) == 0) {
             class_check = true;
             break;
         }
     }
 
     if (class_check) {
-        printf("Student has already registered class %s\n", st.attending_class);
+        printf("Student has already registered class %s\n", st.class_attend);
         printf("Would you like to re-register to a different class?\n"
                 "Type 'yes' to continue or 'no' to cancel: ");
         do {
@@ -347,21 +340,21 @@ void experimental_class_register() {
         return;
     }
 
-    if (strcmp(st.attending_class, cl.class_name) == 0) {
-        printf("Student %s is already registered for class %s (As stated from previous check already!)", st.name, cl.class_name);
+    if (strcmp(st.class_attend, cl.class_name) == 0) {
+        printf("Student %s is already registered for class %s (As stated from previous check already!)", st.student_name, cl.class_name);
         fclose(student_file);
         fclose(class_file);
         return;
     }
 
     // Register student for class
-    strcpy(st.attending_class, cl.class_name);
+    strcpy(st.class_attend, cl.class_name);
 
     // Update student Record
     fseek(student_file, student_pos, SEEK_SET);
     fwrite(&st, sizeof(students), 1, student_file);
 
-    printf("\nSuccessfully Registered Student %s for class %s!\n", st.name, st.attending_class);
+    printf("\nSuccessfully Registered Student %s for class %s!\n", st.student_name, st.class_attend);
 
     fclose(student_file);
     fclose(class_file);
@@ -394,7 +387,7 @@ void experimental_class_unregister() {
 
     // Find student
     while (fread(&st, sizeof(students), 1, file) == 1) {
-        if (strcmp(st.id_st, student_id_s) == 0) {
+        if (strcmp(st.student_id, student_id_s) == 0) {
             student_found = true;
             student_pos = ftell(file) - sizeof(students);
             break;
@@ -407,13 +400,13 @@ void experimental_class_unregister() {
         return;
     }
 
-    if (strcmp(st.attending_class, no_class) == 0) {
-        printf("Student %s has not registered to any classes!\n", st.name);
+    if (strcmp(st.class_attend, no_class) == 0) {
+        printf("Student %s has not registered to any classes!\n", st.student_name);
         fclose(file);
         return;
     }
 
-    printf("Current Class: %s", st.attending_class);
+    printf("Current Class: %s", st.class_attend);
     printf("Type 'yes' to continue or 'no' to cancel the unregister: ");
     do {
         fflush(stdin);
@@ -433,14 +426,14 @@ void experimental_class_unregister() {
 
 
     // Unregister the class
-    strcpy(class_name_s, st.attending_class); // Copy for confirmation line.
-    strcpy(st.attending_class, no_class);
+    strcpy(class_name_s, st.class_attend); // Copy for confirmation line.
+    strcpy(st.class_attend, no_class);
     
     // Update Student Record
     fseek(file, student_pos, SEEK_SET);
     fwrite(&st, sizeof(students), 1, file);
 
-    printf("Successfully removed Student %s from class %s", st.name, class_name_s);
+    printf("Successfully removed Student %s from class %s", st.student_name, class_name_s);
 
     fclose(file);
 
@@ -488,9 +481,9 @@ void experimental_view_class() {
     }
 
     while (fread(&st, sizeof(students), 1, student_file) == 1) {
-        if (strcmp(st.attending_class, cl.class_name) == 0) {
+        if (strcmp(st.class_attend, cl.class_name) == 0) {
             enrolled_count++;
-            printf("%-5d %-15s %-30s\n", enrolled_count, st.id_st, st.name);
+            printf("%-5d %-15s %-30s\n", enrolled_count, st.student_id, st.student_name);
         }
     }
 
@@ -526,7 +519,7 @@ void experimental_calculate_tuition() {
 
     // Find Student
     while (fread(&st, sizeof(students), 1, student_file) == 1) {
-        if (strcmp(st.id_st, student_id_s) == 0) {
+        if (strcmp(st.student_id, student_id_s) == 0) {
             student_found = true;
             break;
         }
@@ -541,13 +534,13 @@ void experimental_calculate_tuition() {
     
     class_file = fopen("ex_class.txt", "r");
 
-    printf("\nStudent %s's Tuition Fee:\n", st.name);
+    printf("\nStudent %s's Tuition Fee:\n", st.student_name);
     printf("%-30s %-15s\n", "Subject", "Tuition Fee");
     printf("----------------------------------------\n");
 
     // Tuition Fee's Calculation
     while(fread(&cl, sizeof(classes), 1, class_file) == 1) {
-        if (strcmp(st.attending_class, cl.class_name) == 0) {
+        if (strcmp(st.class_attend, cl.class_name) == 0) {
             printf("%-30s %-15d\n", cl.class_name, cl.tuition);
             total_tuition = cl.tuition;
             break;
@@ -556,9 +549,9 @@ void experimental_calculate_tuition() {
 
     printf("----------------------------------------\n");
     printf("%-30s %-15.2f\n", "Total Tuition: ", total_tuition);
-    printf("%-30s %-15.2f\n", "Amount Paid: ", st.tuitionpaid);
-    if (st.tuitionpaid < total_tuition) {
-        printf("%-30s %-15.2f\n", "Amount Required Left: ", total_tuition - st.tuitionpaid);
+    printf("%-30s %-15.2f\n", "Amount Paid: ", st.tuition_paid);
+    if (st.tuition_paid < total_tuition) {
+        printf("%-30s %-15.2f\n", "Amount Required Left: ", total_tuition - st.tuition_paid);
     }
 
     fclose(student_file);
@@ -568,12 +561,75 @@ void experimental_calculate_tuition() {
     system("cls");
 }
 
+main() {
+    int c;
+    do {
+        printf("\n\t\tStudent Data Management System\n\n"
+               "\t1: Insert a new Students\n"
+               "\t2: Insert a new Class\n"
+               "\t3: Print out List of Students\n"
+               "\t4: Print out List of Class\n"
+               "\t5: Register Student into Class\n"
+               "\t6: Remove Student from Class\n"
+               "\t7: View Class's Total Students\n"
+               "\t8: Check Student's Tuition Fee\n"
+               "\t9: Exit System"
+               "\nEnter your choice (1 to 9)\n");
+
+        while (printf("\nChoice: ") && scanf("%d", &c) != 1) {
+            while (getchar() != '\n');
+            printf("Please enter again!");
+            _getch();
+            eraseLines(3);
+        }
+
+        switch(c) {
+            case 1:
+                experimental_insert_student();
+                break;
+            case 2:
+                experimental_insert_class();
+                break;
+            case 3:
+                experimental_print_students_list();
+                break;
+            case 4:
+                experimental_print_classes_list();
+                break;
+            case 5:
+                experimental_class_register();
+                break;
+            case 6:
+                experimental_class_unregister();
+                break;
+            case 7:
+                experimental_view_class();
+                break;
+            case 8:
+                experimental_calculate_tuition();
+                break;
+            case 9:
+                printf("Exiting System... (-_-)zzz");
+                getch();
+                exit(0);
+            default:
+                printf("From 1 to 9 only!");
+                getch();
+                system("cls");
+                break;
+        }
+    } while (c != 9);
+}
+
+
+
+/* Old Function (no longer in use, 29/10)
 void Insert_Students_List() {
     int n, r; // n for new list counter, r for old counter
     int pos = 0; // start of new list counter
     long lsize; // file size check
-    char id_st[15];
-    char name[30];
+    char student_id[15];
+    char student_name[30];
     students st;
     students temp[100]; // Temp data to save old list
     FILE *write1, *read1, *file2;
@@ -623,19 +679,19 @@ void Insert_Students_List() {
 
         printf("Enter Student's ID: ");
         fflush(stdin);
-        fgets(st.id_st, sizeof(id_st), stdin);
+        fgets(st.student_id, sizeof(student_id), stdin);
         
 
         printf("Enter Student's Name: ");
         fflush(stdin);
-        fgets(st.name, sizeof(name), stdin);
+        fgets(st.student_name, sizeof(student_name), stdin);
         
 
 
         fwrite(&st, sizeof(students), 1, write1); // Write first THEN delete null at end of char/string or else strcmp doesn't work.
-        st.id_st[strcspn(st.id_st, "\n")] = 0;
-        st.name[strcspn(st.name, "\n")] = 0;
-        fprintf(file2, "%d.ID: %s\n| Name: %s\n\n", pos+1, st.id_st, st.name); // Readable text file
+        st.student_id[strcspn(st.student_id, "\n")] = 0;
+        st.student_name[strcspn(st.student_name, "\n")] = 0;
+        fprintf(file2, "%d.ID: %s\n| Name: %s\n\n", pos+1, st.student_id, st.student_name); // Readable text file
     }
     fclose(write1);
     fclose(file2);
@@ -747,10 +803,10 @@ void Register_Subject() { // Not finished
     fflush(stdin);
     fgets(search_st,sizeof(search_st), stdin);
     for (i = 0; i < n; i++) { // Search for the student's ID position
-        if (strcmp(st[i].id_st, search_st) == 0) {
+        if (strcmp(st[i].student_id, search_st) == 0) {
             s1 = i; // s is the current student's ID position
-            printf("\nSelected ID: %s", st[s1].id_st);
-            printf("Student's Name: %s", st[s1].name);
+            printf("\nSelected ID: %s", st[s1].student_id);
+            printf("Student's Name: %s", st[s1].student_name);
         }
     }
     if (s1 < 0) {
@@ -773,7 +829,7 @@ void Register_Subject() { // Not finished
         else {
             // Idea 2: Create a new struct specifically defining
             // student's ID and Class's ID only
-            strcpy(ck.id_st_link, st[s1].id_st);
+            strcpy(ck.id_st_link, st[s1].student_id);
             strcpy(ck.id_class_link, cl[s2].class_id);
             file3 = fopen("link.txt", "w");
             fwrite(&ck, sizeof(check), 1, file3);
@@ -808,10 +864,10 @@ void Print_Students_List() {
         gotoxy(25,3); printf("Full Name");
         for(int i = 0; i < n; i++) {
             gotoxy(2, i+4);  printf("%d", i+1);
-            gotoxy(10, i+4); printf("%s", st[i].id_st);
-            gotoxy(25, i+4); printf("%s", st[i].name);
-            gotoxy(50, i+4); printf("%f", st[i].tuitionpaid);
-            gotoxy(75, i+4); printf("%s", st[i].attending_class);
+            gotoxy(10, i+4); printf("%s", st[i].student_id);
+            gotoxy(25, i+4); printf("%s", st[i].student_name);
+            gotoxy(50, i+4); printf("%f", st[i].tuition_paid);
+            gotoxy(75, i+4); printf("%s", st[i].class_attend);
         }
     
     printf("\n\nPress any key to return.");
@@ -857,63 +913,4 @@ void Print_Subjects_List() {
     _getch();
     system("cls");
 }
-
-main() {
-    int c;
-    do {
-        printf("\n\t\tStudent Data Management System\n\n"
-               "\t1: Insert a new Students\n"
-               "\t2: Insert a new Class\n"
-               "\t3: Print out List of Students\n"
-               "\t4: Print out List of Class\n"
-               "\t5: Register Student into Class\n"
-               "\t6: Remove Student from Class\n"
-               "\t7: View Class's Total Students\n"
-               "\t8: Check Student's Tuition Fee\n"
-               "\t9: Exit System"
-               "\nEnter your choice (1 to 9)\n");
-
-        while (printf("\nChoice: ") && scanf("%d", &c) != 1) {
-            while (getchar() != '\n');
-            printf("Please enter again!");
-            _getch();
-            eraseLines(3);
-        }
-
-        switch(c) {
-            case 1:
-                experimental_insert_student();
-                break;
-            case 2:
-                experimental_insert_class();
-                break;
-            case 3:
-                experimental_print_students_list();
-                break;
-            case 4:
-                experimental_print_classes_list();
-                break;
-            case 5:
-                experimental_class_register();
-                break;
-            case 6:
-                experimental_class_unregister();
-                break;
-            case 7:
-                experimental_view_class();
-                break;
-            case 8:
-                experimental_calculate_tuition();
-                break;
-            case 9:
-                printf("Exiting System... (-_-)zzz");
-                getch();
-                exit(0);
-            default:
-                printf("From 1 to 9 only!");
-                getch();
-                system("cls");
-                break;
-        }
-    } while (c != 9);
-}
+*/
