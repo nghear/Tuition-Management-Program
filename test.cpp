@@ -57,7 +57,7 @@ void experimental_insert_student() {
     FILE *file;
     students new_student, existing_student;
     int student_count = 0;
-    char no_class[] = "Not Registered";
+    char no_class[MAX_CLASSNAME_LENGTH] = "Not Registered";
     bool id_exists = false;
 
     //Open file in append and read mode
@@ -246,6 +246,323 @@ void experimental_print_classes_list() {
 
     fclose(file1);
 
+    printf("\nPress any key to return.");
+    getch();
+    system("cls");
+}
+
+void experimental_class_register() {
+    FILE *student_file, *class_file;
+    students st;
+    classes cl;
+    char student_id_s[MAX_ID_LENGTH];
+    char class_id_s[MAX_ID_LENGTH];
+    char ans[5];
+    bool student_found = false;
+    bool class_check = false;
+    bool class_found = false;
+    long student_pos;
+
+    // Open files
+    student_file = fopen("ex_student.txt", "r+");
+    class_file = fopen("ex_class.txt", "r");
+    
+    if (student_file == NULL || class_file == NULL) {
+        printf("Error opening file(s)!\n");
+        return;
+    }
+
+    // Get student ID
+    printf("Enter Student ID to register: ");
+    fflush(stdin);
+    fgets(student_id_s, sizeof(student_id_s), stdin);
+    student_id_s[ strcspn(student_id_s, "\n") ] = 0;
+
+    //Find student
+    while (fread(&st, sizeof(students), 1, student_file) == 1) {
+        if (strcmp(st.id_st, student_id_s) == 0) {
+            student_found = true;
+            student_pos = ftell(student_file) - sizeof(students);
+            break;
+        }
+    }
+
+    if (!student_found) {
+        printf("Student %s not found!\n", student_id_s);
+        fclose(student_file);
+        fclose(class_file);
+        return;
+    }
+
+    // Check if student has already assigned for a class
+    while (fread(&cl, sizeof(classes), 1, class_file) == 1) {
+        if (strcmp(st.attending_class, cl.class_name) == 0) {
+            class_check = true;
+            break;
+        }
+    }
+
+    if (class_check) {
+        printf("Student has already registered class %s\n", st.attending_class);
+        printf("Would you like to re-register to a different class?\n"
+                "Type 'yes' to continue or 'no' to cancel: ");
+        do {
+            fflush(stdin);
+            fgets(ans, sizeof(ans), stdin);
+            ans[ strcspn(ans, "\n") ] = 0;
+            if (strcmp(ans, "no") == 0) {
+                printf("The process has been cancelled.\n"
+                        "Press any key to return.\n");
+                getch();
+                return;
+            }
+
+            if (strcmp(ans, "yes") == 0) {
+                break;
+            }
+            printf("Invalid Input! Please type either yes or no: ");
+        } while (true);
+
+    }
+
+    // Get Class ID
+    printf("\nEnter Class's ID to register for: ");
+    fflush(stdin);
+    fgets(class_id_s, sizeof(class_id_s), stdin);
+    class_id_s[ strcspn(class_id_s, "\n") ] = 0;
+
+    // Find Class
+    rewind(class_file);
+    while (fread(&cl, sizeof(classes), 1, class_file) == 1) {
+        if (strcmp(cl.class_id, class_id_s) == 0) {
+            class_found = true;
+            break;
+        }
+    }
+
+    if (!class_found) {
+        printf("There is no Class with ID %s\n", class_id_s);
+        fclose(student_file);
+        fclose(class_file);
+        return;
+    }
+
+    if (strcmp(st.attending_class, cl.class_name) == 0) {
+        printf("Student %s is already registered for class %s (As stated from previous check already!)", st.name, cl.class_name);
+        fclose(student_file);
+        fclose(class_file);
+        return;
+    }
+
+    // Register student for class
+    strcpy(st.attending_class, cl.class_name);
+
+    // Update student Record
+    fseek(student_file, student_pos, SEEK_SET);
+    fwrite(&st, sizeof(students), 1, student_file);
+
+    printf("\nSuccessfully Registered Student %s for class %s!\n", st.name, st.attending_class);
+
+    fclose(student_file);
+    fclose(class_file);
+
+    printf("Press any key to return.");
+    getch();
+    system("cls");
+}
+
+void experimental_class_unregister() {
+    FILE *file;
+    students st;
+    char student_id_s[MAX_ID_LENGTH];
+    char class_name_s[MAX_CLASSNAME_LENGTH];
+    char no_class[MAX_CLASSNAME_LENGTH] = "Not Registered";
+    char ans[5];
+    bool student_found = false;
+    long student_pos;
+
+    file = fopen("ex_student.txt", "r+");
+    if (file == NULL) {
+        printf("Error opening file!\n");
+        return;
+    }
+
+    printf("Enter Student ID: ");
+    fflush(stdin);
+    fgets(student_id_s, MAX_CLASSNAME_LENGTH, stdin);
+    student_id_s[ strcspn(student_id_s, "\n") ] = 0;
+
+    // Find student
+    while (fread(&st, sizeof(students), 1, file) == 1) {
+        if (strcmp(st.id_st, student_id_s) == 0) {
+            student_found = true;
+            student_pos = ftell(file) - sizeof(students);
+            break;
+        }
+    }
+
+    if (!student_found) {
+        printf("Student ID %s has not been found.\n", student_id_s);
+        fclose(file);
+        return;
+    }
+
+    if (strcmp(st.attending_class, no_class) == 0) {
+        printf("Student %s has not registered to any classes!\n", st.name);
+        fclose(file);
+        return;
+    }
+
+    printf("Current Class: %s", st.attending_class);
+    printf("Type 'yes' to continue or 'no' to cancel the unregister: ");
+    do {
+        fflush(stdin);
+        fgets(ans, sizeof(ans), stdin);
+        ans[ strcspn(ans, "\n") ] = 0;
+    if (strcmp(ans, "no") == 0) {
+        printf("The process has been cancelled.\n"
+                "Press any key to return.");
+        getch();
+        return;
+    }
+    if (strcmp(ans, "yes") == 0) {
+        break;
+    }
+    printf("Invalid Input! Please type either yes or no: ");
+    } while (true);
+
+
+    // Unregister the class
+    strcpy(class_name_s, st.attending_class); // Copy for confirmation line.
+    strcpy(st.attending_class, no_class);
+    
+    // Update Student Record
+    fseek(file, student_pos, SEEK_SET);
+    fwrite(&st, sizeof(students), 1, file);
+
+    printf("Successfully removed Student %s from class %s", st.name, class_name_s);
+
+    fclose(file);
+
+    printf("Press any key to return.");
+    getch();
+    system("cls");
+}
+
+void experimental_view_class() {
+    FILE *student_file, *class_file;
+    students st;
+    classes  cl;
+    char class_id_s[MAX_ID_LENGTH];
+    int enrolled_count = 0;
+    bool class_found = false;
+
+    student_file = fopen("ex_student.txt", "r");
+    class_file = fopen("ex_class.txt", "r");
+
+    if (class_file == NULL || student_file == NULL) {
+        printf("Error opening file(s)!\n");
+        getch();
+        return;
+    }
+
+    printf("Enter Class ID to view enrollment: ");
+    fflush(stdin);
+    fgets(class_id_s, MAX_ID_LENGTH, stdin);
+    class_id_s[ strcspn(class_id_s, "\n") ] = 0;
+
+    // Find class
+    while (fread(&cl, sizeof(classes), 1, class_file) == 1) {
+        if (strcmp(cl.class_id, class_id_s) == 0) {
+            class_found = true;
+            break;
+        }
+    }
+
+    if (!class_found) {
+        printf("Class ID %s has not been found.\n", class_id_s);
+        fclose(student_file);
+        fclose(class_file);
+        getch();
+        return;
+    }
+
+    while (fread(&st, sizeof(students), 1, student_file) == 1) {
+        if (strcmp(st.attending_class, cl.class_name) == 0) {
+            enrolled_count++;
+            printf("%-5d %-15s %-30s\n", enrolled_count, st.id_st, st.name);
+        }
+    }
+
+    printf("\nTotal number of students in class %s: %d students.\n", cl.class_name, enrolled_count);
+
+    fclose(student_file);
+    fclose(class_file);
+
+    printf("Press any key to return.");
+    getch();
+    system("cls");
+}
+
+void experimental_calculate_tuition() {
+    FILE *student_file, *class_file;
+    students st;
+    classes  cl;
+    char student_id_s[MAX_ID_LENGTH];
+    float total_tuition = 0;
+    bool student_found = false;
+
+    student_file = fopen("ex_student.txt", "r");
+
+    if (student_file == NULL || class_file == NULL) {
+        printf("Error opening file(s)!\n");
+        getch();
+        return;
+    }
+    printf("Enter Student ID: ");
+    fflush(stdin);
+    fgets(student_id_s, MAX_ID_LENGTH, stdin);
+    student_id_s[ strcspn(student_id_s, "\n") ] = 0;
+
+    // Find Student
+    while (fread(&st, sizeof(students), 1, student_file) == 1) {
+        if (strcmp(st.id_st, student_id_s) == 0) {
+            student_found = true;
+            break;
+        }
+    }
+
+    if (!student_found) {
+        printf("Student ID %s has not been found.\n", student_id_s);
+        fclose(student_file);
+        getch();
+        return;
+    }
+    
+    class_file = fopen("ex_class.txt", "r");
+
+    printf("\nStudent %s's Tuition Fee:\n", st.name);
+    printf("%-30s %-15s\n", "Subject", "Tuition Fee");
+    printf("----------------------------------------\n");
+
+    // Tuition Fee's Calculation
+    while(fread(&cl, sizeof(classes), 1, class_file) == 1) {
+        if (strcmp(st.attending_class, cl.class_name) == 0) {
+            printf("%-30s %-15d\n", cl.class_name, cl.tuition);
+            total_tuition = cl.tuition;
+            break;
+        }
+    }
+
+    printf("----------------------------------------\n");
+    printf("%-30s %-15.2f\n", "Total Tuition: ", total_tuition);
+    printf("%-30s %-15.2f\n", "Amount Paid: ", st.tuitionpaid);
+    if (st.tuitionpaid < total_tuition) {
+        printf("%-30s %-15.2f\n", "Amount Required Left: ", total_tuition - st.tuitionpaid);
+    }
+
+    fclose(student_file);
+    fclose(class_file);
     printf("\nPress any key to return.");
     getch();
     system("cls");
@@ -545,13 +862,16 @@ main() {
     int c;
     do {
         printf("\n\t\tStudent Data Management System\n\n"
-               "\t1: Insert a new List of Students\n"
-               "\t2: Insert a new List of Subjects\n"
+               "\t1: Insert a new Students\n"
+               "\t2: Insert a new Class\n"
                "\t3: Print out List of Students\n"
-               "\t4: Print out List of Subjects\n"
-               "\t5: Check Student\n"
-               "\t6: Exit System"
-               "\nEnter your choice (1 to 3)\n");
+               "\t4: Print out List of Class\n"
+               "\t5: Register Student into Class\n"
+               "\t6: Remove Student from Class\n"
+               "\t7: View Class's Total Students\n"
+               "\t8: Check Student's Tuition Fee\n"
+               "\t9: Exit System"
+               "\nEnter your choice (1 to 9)\n");
 
         while (printf("\nChoice: ") && scanf("%d", &c) != 1) {
             while (getchar() != '\n');
@@ -574,15 +894,26 @@ main() {
                 experimental_print_classes_list();
                 break;
             case 5:
-                Register_Subject();
+                experimental_class_register();
                 break;
             case 6:
+                experimental_class_unregister();
+                break;
+            case 7:
+                experimental_view_class();
+                break;
+            case 8:
+                experimental_calculate_tuition();
+                break;
+            case 9:
+                printf("Exiting System... (-_-)zzz");
+                getch();
                 exit(0);
             default:
-                printf("From 1 to 5 only!");
+                printf("From 1 to 9 only!");
                 getch();
                 system("cls");
                 break;
         }
-    } while (c != 6);
+    } while (c != 9);
 }
