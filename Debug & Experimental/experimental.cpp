@@ -9,6 +9,10 @@
 #include <cstdlib>
 #include <cstring>
 #include <locale.h>
+#include <iostream>
+
+using namespace std;
+
 
 #define MAX_ID_LENGTH 15
 #define MAX_NAME_LENGTH 50
