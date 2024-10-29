@@ -225,7 +225,7 @@ void experimental_print_classes_list() {
     printf("----------------------------------------------------------\n");
 
     // Read and print each subject
-    while (fread(&cl, sizeof(classes), 1, file1) == 1) {
+    while (fread(&cl, sizeof(classes), 1, file) == 1) {
         class_count++;
         printf("%-5d %-15s %-30s %-15d\n", 
             class_count, cl.class_id, cl.class_name, cl.tuition);
