@@ -11,10 +11,10 @@
 #include <locale.h>
 
 #define MAX_ID_LENGTH 15
-#define MAX_NAME_LENGTH 200
-#define MAX_CLASSNAME_LENGTH 200
-#define MAX_ATTENDING_CLASSES 100
-
+#define MAX_NAME_LENGTH 50
+#define MAX_CLASSNAME_LENGTH 50
+#define MAX_ADDRESS_LENGTH 50
+#define MAX_ATTENDING_CLASSES 10
 
 void eraseLines(int count) {
     if (count > 0) {
@@ -37,6 +37,8 @@ void gotoxy(int x, int y) {
 typedef struct {
     char id[MAX_ID_LENGTH];
     char name[MAX_NAME_LENGTH];
+    int mobile_number;
+    char address[MAX_ADDRESS_LENGTH];
     float tuitionpaid;
     char attending_classes[MAX_ATTENDING_CLASSES][MAX_CLASSNAME_LENGTH]; // Increased to 100 classes
     int num_attending_classes;
@@ -126,9 +128,7 @@ void Insert_Students_List() {
 }
 
 
-// Experimental insert student, trying to fix: 
-//if file does not exist or have no data, it will not be created ??? (26/10: bug persist)
-//up to date with structure (28/10) 
+//add addr and mobile number
 void experimental_insert_student() { 
     FILE *file;
     student new_student, existing_student;
@@ -167,6 +167,14 @@ void experimental_insert_student() {
         fgets(new_student.name, sizeof(new_student.name), stdin);
         new_student.name[strcspn(new_student.name, "\n")] = 0;
 
+        printf("Enter Student's Mobile Number: ");
+        scanf("%d", &new_student.mobile_number);
+
+        printf("Enter Student's Address: ");
+        fflush(stdin);
+        fgets(new_student.address, sizeof(new_student.address), stdin);
+        new_student.address[strcspn(new_student.address, "\n")] = 0;
+
         printf("Enter Tuition Paid: ");
         scanf("%f", &new_student.tuitionpaid);
 
@@ -191,8 +199,7 @@ void experimental_insert_student() {
 }
 
 
-// Experimental student display based on experimental insert (27/10)
-//up to date with structure (28/10) 
+//add address and mobile number
 void experimental_print_student_list() {
     FILE *file;
     student st;
@@ -211,15 +218,15 @@ void experimental_print_student_list() {
     system("cls");  // Clear the screen
 
     printf("\t\t\tList of Students\n\n");
-    printf("%-5s %-15s %-30s %-15s %-30s\n", 
-           "No.", "ID", "Full Name", "Tuition Paid", "Attending Classes");
-    printf("--------------------------------------------------------------------------------\n");
+    printf("%-5s %-15s %-30s %-15s %-30s %-15s %-30s\n", 
+           "No.", "ID", "Full Name", "Mobile", "Address", "Tuition Paid", "Attending Classes");
+    printf("--------------------------------------------------------------------------------------------------------\n");
 
     // Read and print each student
     while (fread(&st, sizeof(student), 1, file) == 1) {
         student_count++;
-        printf("%-5d %-15s %-30s %-15.2f ", 
-            student_count, st.id, st.name, st.tuitionpaid);
+        printf("%-5d %-15s %-30s %-15d %-30s %-15.2f ", 
+            student_count, st.id, st.name, st.mobile_number, st.address, st.tuitionpaid);
         
         // Print attending classes
         if (st.num_attending_classes > 0) {

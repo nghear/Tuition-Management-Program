@@ -225,7 +225,7 @@ void experimental_print_classes_list() {
     printf("----------------------------------------------------------\n");
 
     // Read and print each subject
-    while (fread(&cl, sizeof(classes), 1, file1) == 1) {
+    while (fread(&cl, sizeof(classes), 1, file) == 1) {
         class_count++;
         printf("%-5d %-15s %-30s %-15d\n", 
             class_count, cl.class_id, cl.class_name, cl.tuition);
@@ -564,17 +564,11 @@ void experimental_calculate_tuition() {
 main() {
     int c;
     do {
-        printf("\n\t\tStudent Data Management System\n\n"
-               "\t1: Insert a new Students\n"
-               "\t2: Insert a new Class\n"
-               "\t3: Print out List of Students\n"
-               "\t4: Print out List of Class\n"
-               "\t5: Register Student into Class\n"
-               "\t6: Remove Student from Class\n"
-               "\t7: View Class's Total Students\n"
-               "\t8: Check Student's Tuition Fee\n"
-               "\t9: Exit System"
-               "\nEnter your choice (1 to 9)\n");
+        printf("\n\t\t ===== Student Data Management System =====\n\n"
+               "\t1: Student Management\n"
+               "\t2: Class Management\n"
+               "\t3: Exit System"
+               "\nEnter your choice (1 to 3)\n");
 
         while (printf("\nChoice: ") && scanf("%d", &c) != 1) {
             while (getchar() != '\n');
@@ -585,40 +579,10 @@ main() {
 
         switch(c) {
             case 1:
-                experimental_insert_student();
-                break;
-            case 2:
-                experimental_insert_class();
-                break;
-            case 3:
-                experimental_print_students_list();
-                break;
-            case 4:
-                experimental_print_classes_list();
-                break;
-            case 5:
-                experimental_class_register();
-                break;
-            case 6:
-                experimental_class_unregister();
-                break;
-            case 7:
-                experimental_view_class();
-                break;
-            case 8:
-                experimental_calculate_tuition();
-                break;
-            case 9:
-                printf("Exiting System... (-_-)zzz");
-                getch();
-                exit(0);
-            default:
-                printf("From 1 to 9 only!");
-                getch();
-                system("cls");
-                break;
+                printf("\n\t\t ===== Student Data Management System =====\n\n"
+                       "\t1: ")
         }
-    } while (c != 9);
+    } while (c != 3);
 }
 
 
