@@ -561,8 +561,112 @@ void experimental_calculate_tuition() {
     system("cls");
 }
 
+
+
+void sub_student() {
+    system("cls");
+    int choice_student;
+    do {
+        printf("\n\t\t ===== Study Center Management System =====\n"
+               "\t\t\t === Student Management ===\n\n"
+               "\t1: Create a new Student\n"
+               "\t2: List out all current student(s)\n"
+               "\t3: Check Student's Tuition Fee\n"
+               "\t4: Return to Main Menu"
+               "\nTo select, please enter the according number from 1 to 4\n");
+                
+        while (printf("\nChoice: ") && scanf("%d", &choice_student) != 1) {
+            while (getchar() != '\n');
+            printf("Invalid data type! Please enter numeric data only!\n"
+                   "Press any key to return.");
+            _getch();
+            eraseLines(4);
+        }
+
+        switch(choice_student) {
+            case 1:
+                experimental_insert_student();
+                break;
+            case 2:
+                experimental_print_students_list();
+                break;
+            case 3:
+                experimental_calculate_tuition();
+                break;
+            case 4:
+                break;
+            default:
+                printf("From 1 to 4 only!");
+                getch();
+                system("cls");
+                break;
+        }
+    } while (choice_student != 4);
+
+
+    printf("Returning to Main Menu.\n"
+           "Press any key to return.");
+    getch();
+    system("cls");
+    return;
+}
+
+void sub_class() {
+    int choice_class;
+    system("cls");
+    do {
+        printf("\n\t\t ===== Study Center Management System =====\n"
+               "\t\t\t === Class Management ===\n\n"
+               "\t1: Create a new Class\n"
+               "\t2: List out all existing class(es)\n"
+               "\t3: Register a new Student into Class\n"
+               "\t4: Remove an old student from Class\n"
+               "\t5: View Class's List of Student(s)\n"
+               "\t6: Return to Main Menu"
+               "\nTo select, please enter the according number from 1 to 6\n");
+                
+        while (printf("\nChoice: ") && scanf("%d", &choice_class) != 1) {
+            while (getchar() != '\n');
+            printf("Invalid data type! Please enter number only!\n"
+                   "Press any key to return.");
+            _getch();
+            eraseLines(4);
+        }
+
+        switch(choice_class) {
+            case 1:
+                experimental_insert_class();
+                break;
+            case 2:
+                experimental_print_classes_list();
+                break;
+            case 3:
+                experimental_class_register();
+                break;
+            case 4:
+                experimental_class_unregister();
+                break;
+            case 5:
+                experimental_view_class();
+                break;
+            case 6:
+                printf("Returning to Main Menu.\n"
+                       "Press any key to return.");
+                getch();
+                system("cls");
+                break;
+            default:
+                printf("From 1 to 6 only!");
+                getch();
+                system("cls");
+                break;
+        }
+    } while (choice_class != 6);
+    return;
+}
+
 main() {
-    int c;
+    int choice_main;
     do {
         printf("\n\t\t ===== Student Data Management System =====\n\n"
                "\t1: Student Management\n"
@@ -570,21 +674,31 @@ main() {
                "\t3: Exit System"
                "\nEnter your choice (1 to 3)\n");
 
-        while (printf("\nChoice: ") && scanf("%d", &c) != 1) {
+        while (printf("\nChoice: ") && scanf("%d", &choice_main) != 1) {
             while (getchar() != '\n');
             printf("Please enter again!");
             _getch();
             eraseLines(3);
         }
 
-        switch(c) {
+        switch(choice_main) {
             case 1:
-                printf("\n\t\t ===== Student Data Management System =====\n\n"
-                       "\t1: ")
+                sub_student();
+                break;
+            case 2:
+                sub_class();
+                break;
+            case 3:
+                printf("Exiting System... (-_-)zzz");
+                exit(0);
+            default:
+                printf("From 1 to 3 only!");
+                getch();
+                system("cls");
+                break;
         }
-    } while (c != 3);
+    } while (choice_main != 3);
 }
-
 
 
 /* Old Function (no longer in use, 29/10)
