@@ -77,7 +77,7 @@ void experimental_insert_student() {
     //Open file in append and read mode
     file = fopen("ex_student.txt", "a+b");
     if (file == NULL) {
-        printf("Error Opening file!\n");
+        printf("Error Opening file (>_<)!\n");
         system("cls");
         return;
     }
@@ -101,7 +101,7 @@ void experimental_insert_student() {
     }
 
     if (id_found) {
-        printf("Error: Student ID [ %s ] already exists\n", new_student.student_id);
+        printf("Error: Student ID [ %s ] already exists (>_<)!\n", new_student.student_id);
     }
     else {
         printf("Enter Student's Name: ");
@@ -118,11 +118,13 @@ void experimental_insert_student() {
         new_student.student_id[ strcspn(new_student.student_id, "\n") ] = 0;
         new_student.student_name[ strcspn(new_student.student_name, "\n") ] = 0;
         fwrite(&new_student, sizeof(students), 1, file);
-        printf("\nStudent added sucessfully. Number: %d\n", student_count + 1);
+        printf("\nStudent added sucessfully ( =^.^=). Number: %d\n", student_count + 1);
     }
 
     fclose(file);
-    printf("\nPress any key to return");
+
+    printf("                        (\\(\\ \n");
+    printf("Press any key to return ( -.-) \n");
     getch();
     system("cls");
 }
@@ -135,8 +137,10 @@ void experimental_print_students_list() {
     // Open the file in binary read mode
     file = fopen("ex_student.txt", "r+b");
     if (file == NULL) {
-        printf("Error opening file or file doesn't exist!\n");
-        printf("Press any key to return.");
+        printf("Error opening file or file doesn't exist (>_<)!\n");
+
+        printf("                        (\\(\\ \n");
+        printf("Press any key to return ( -.-) \n");
         getch();
         system("cls");
         return;
@@ -158,14 +162,15 @@ void experimental_print_students_list() {
     }
 
     if (student_count == 0) {
-        printf("Cannot Detect any Student.\n");
+        printf("Cannot Detect any Student (>~<)\n");
     } else {
         printf("\nTotal number of Students: %d\n", student_count);
     }
 
     fclose(file);
 
-    printf("\nPress any key to return.");
+    printf("                        (\\(\\ \n");
+    printf("Press any key to return ( -.-) \n");
     getch();
     system("cls");
 }
@@ -179,7 +184,7 @@ void experimental_insert_course() {
     // Open the file in append and read mode
     file = fopen("ex_course.txt","a+b");
     if (file == NULL) {
-        printf("Error Opening File!\n");
+        printf("Error Opening File (>_<)!\n");
         return;
     }
 
@@ -201,7 +206,7 @@ void experimental_insert_course() {
     }
 
     if (course_found) {
-        printf("Error: Course ID [ %s ] already exists!\n", new_course.course_id);
+        printf("Error: Course ID [ %s ] already exists (>~<)!\n", new_course.course_id);
     }
     else {
         printf("Enter Course's Name: ");
@@ -220,11 +225,13 @@ void experimental_insert_course() {
         new_course.course_name[ strcspn(new_course.course_name, "\n") ] = 0;
         fwrite(&new_course, sizeof(courses), 1, file);
 
-        printf("\nCourse added sucessfully. Number: %d\n", course_count + 1);
+        printf("\nCourse added sucessfully ( =^.^=). Number: %d\n", course_count + 1);
     }
 
     fclose(file);
-    printf("\nPress any key to return.");
+
+    printf("                        (\\(\\ \n");
+    printf("Press any key to return ( -.-) \n");
     getch();
     system("cls");
 }
@@ -237,8 +244,10 @@ void experimental_print_course_list() {
     //Open the file in binary read mode
     file = fopen("ex_course.txt", "r+b");
     if (file == NULL) {
-        printf("Error opening file or file doesn't exist!\n");
-        printf("Press any key to return.");
+        printf("Error opening file or file doesn't exist (>_<)!\n");
+
+        printf("                        (\\(\\ \n");
+        printf("Press any key to return ( -.-) \n");
         getch();
         system("cls");
         return;
@@ -259,14 +268,15 @@ void experimental_print_course_list() {
     }
 
     if (course_count == 0) {
-        printf("Cannot detect any Course.\n");
+        printf("Cannot detect any Course (>~<).\n");
     } else {
         printf("\nTotal number of Courses: %d\n", course_count);
     }
 
     fclose(file);
 
-    printf("\nPress any key to return.");
+    printf("                        (\\(\\ \n");
+    printf("Press any key to return ( -.-) \n");
     getch();
     system("cls");
 }
@@ -291,7 +301,7 @@ void experimental_class_register() { // Still has that weird extra 1 key bug (30
     class_file = fopen("ex_class.txt", "a+b");
     
     if (student_file == NULL || course_file == NULL || class_file == NULL) {
-        printf("Error opening file(s)!\n");
+        printf("Error opening file(s) (>_<)!\n");
         system("cls");
         return;
     }
@@ -312,7 +322,7 @@ void experimental_class_register() { // Still has that weird extra 1 key bug (30
     }
 
     if (!student_found) {
-        printf("Student [ %s ] not found!\n", student_id_s);
+        printf("Student [ %s ] not found (>~<)!\n", student_id_s);
         fclose(student_file);
         fclose(course_file);
         fclose(class_file);
@@ -336,7 +346,7 @@ void experimental_class_register() { // Still has that weird extra 1 key bug (30
             fflush(stdin);
             fgets(ans, sizeof(ans), stdin);
             ans[ strcspn(ans, "\n") ] = 0;
-            if (strcmp(ans, "no") == 0) {
+            if (strcmp(ans, "no") == 0 || strcmp(ans, "No") == 0 || strcmp(ans, "NO") == 0 || strcmp(ans, "nO") == 0) {
                 printf("\nThe process has been cancelled.\n"
                         "Press any key to return.\n");
                 getch();
@@ -344,7 +354,7 @@ void experimental_class_register() { // Still has that weird extra 1 key bug (30
                 return;
             }
 
-            if (strcmp(ans, "yes") == 0) {
+            if (strcmp(ans, "yes") == 0 || strcmp(ans, "Yes") == 0 || strcmp(ans, "YES") == 0 || strcmp(ans, "yEs") == 0) {
                 break;
             }
             printf("Invalid Input! Please type either yes or no: ");
@@ -369,11 +379,11 @@ void experimental_class_register() { // Still has that weird extra 1 key bug (30
     }
 
     if (!course_found) {
-        printf("There is no course with the ID [ %s ] \n", course_id_s);
+        printf("There is no course with the ID [ %s ] (>~<)!\n", course_id_s);
     }
 
     else if (strcmp(st.class_attend, cs.course_name) == 0) {
-        printf("Student [ %s ] is already registered for course [ %s ] (As stated from previous check already!)",
+        printf("Student [ %s ] is already registered for course [ %s ] (As stated from previous check already (>~<)!)",
                 st.student_name, cs.course_name);
     }
 
@@ -417,14 +427,15 @@ void experimental_class_register() { // Still has that weird extra 1 key bug (30
         fseek(course_file, course_pos, SEEK_SET);
         fwrite(&cs, sizeof(courses), 1, course_file); // You're here
 
-        printf("\nSuccessfully Registered Student %s for class %s!\n", st.student_name, st.class_attend);
+        printf("\nSuccessfully Registered Student %s for class %s ( =^.^=)!\n", st.student_name, st.class_attend);
     }
 
     fclose(student_file);
     fclose(course_file);
     fclose(class_file);
 
-    printf("Press any key to return.");
+    printf("                        (\\(\\ \n");
+    printf("Press any key to return ( -.-) \n");
     getch();
     system("cls");
 }
@@ -441,7 +452,7 @@ void experimental_class_unregister() { // Is not up-to-date, currently only dele
 
     file = fopen("ex_student.txt", "r+b");
     if (file == NULL) {
-        printf("Error opening file!\n");
+        printf("Error opening file (>_<)!\n");
         system("cls");
         return;
     }
@@ -461,11 +472,11 @@ void experimental_class_unregister() { // Is not up-to-date, currently only dele
     }
 
     if (!student_found) {
-        printf("Student ID %s has not been found.\n", student_id_s);
+        printf("Student ID %s has not been found (>_<)!\n", student_id_s);
     }
 
     else if (strcmp(st.class_attend, no_class) == 0) {
-        printf("Student %s has not registered to any classes!\n", st.student_name);
+        printf("Student %s has not registered to any classes (>~<)!\n", st.student_name);
     }
 
     else {
@@ -475,17 +486,17 @@ void experimental_class_unregister() { // Is not up-to-date, currently only dele
             fflush(stdin);
             fgets(ans, sizeof(ans), stdin);
             ans[ strcspn(ans, "\n") ] = 0;
-            if (strcmp(ans, "no") == 0) {
+            if (strcmp(ans, "no") == 0 || strcmp(ans, "No") == 0 || strcmp(ans, "NO") == 0 || strcmp(ans, "nO") == 0) {
                 printf("\nThe process has been cancelled.\n"
                        "Press any key to return.\n");
                 getch();
                 system("cls");
                 return;
             }
-            if (strcmp(ans, "yes") == 0) {
+            if (strcmp(ans, "yes") == 0 || strcmp(ans, "Yes") == 0 || strcmp(ans, "YES") == 0 || strcmp(ans, "yEs") == 0) {
             break;
             }
-        printf("\nInvalid Input! Please type either yes or no: ");
+        printf("\nInvalid Input (>~<)! Please type either yes or no: ");
         } while (true);
 
         // Unregister the class
@@ -496,11 +507,12 @@ void experimental_class_unregister() { // Is not up-to-date, currently only dele
         fseek(file, student_pos, SEEK_SET);
         fwrite(&st, sizeof(students), 1, file);
 
-        printf("\nSuccessfully removed Student %s from class %s", st.student_name, course_name_s);
+        printf("\nSuccessfully removed Student %s from class %s ( =^.^=)!\n", st.student_name, course_name_s);
     }
 
     fclose(file);
-    printf("\nPress any key to return.");
+    printf("                        (\\(\\ \n");
+    printf("Press any key to return ( -.-) \n");
     getch();
     system("cls");
 }
@@ -517,7 +529,7 @@ void experimental_view_class() { // Implemented Student, Course, Class (30/10, N
     course_file = fopen("ex_course.txt", "rb");
 
     if (course_file == NULL || class_file == NULL) {
-        printf("Error opening file(s)!\n");
+        printf("Error opening file(s) (>_<)!\n");
         getch();
         system("cls");
         return;
@@ -537,7 +549,7 @@ void experimental_view_class() { // Implemented Student, Course, Class (30/10, N
     }
 
     if (!course_found) {
-        printf("Class ID [ %s ] has not been found.\n", course_id_s);
+        printf("Class ID [ %s ] has not been found (>~<)!\n", course_id_s);
     }
 
     else {
@@ -570,7 +582,8 @@ void experimental_view_class() { // Implemented Student, Course, Class (30/10, N
 
     fclose(class_file);
     fclose(course_file);
-    printf("Press any key to return.");
+    printf("                        (\\(\\ \n");
+    printf("Press any key to return ( -.-) \n");
     getch();
     system("cls");
 }
@@ -589,7 +602,7 @@ void experimental_calculate_tuition() {
     course_file = fopen("ex_course.txt", "rb");
 
     if (student_file == NULL || course_file == NULL) {
-        printf("Error opening file(s)!\n");
+        printf("Error opening file(s) (>_<)!\n");
         getch();
         system("cls");
         return;
@@ -608,11 +621,11 @@ void experimental_calculate_tuition() {
     }
 
     if (!student_found) {
-        printf("Student ID [ %s ] has not been found!\n", student_id_s);
+        printf("Student ID [ %s ] has not been found (>~<)!\n", student_id_s);
     }
     
     else if (strcmp(st.class_attend, no_class) == 0) {
-        printf("Student [ %s ] has not register any course!\n", st.student_name);
+        printf("Student [ %s ] has not register any course (>~<)!\n", st.student_name);
     }
 
     else {
@@ -656,7 +669,8 @@ void experimental_calculate_tuition() {
 
     fclose(student_file);
     fclose(course_file);
-    printf("\nPress any key to return.");
+    printf("                        (\\(\\ \n");
+    printf("Press any key to return ( -.-) \n");
     getch();
     system("cls");
 }
@@ -694,9 +708,13 @@ void sub_student() {
                 experimental_calculate_tuition();
                 break;
             case 4:
+                printf("\nReturning to Main Menu.\n"
+                       "Press any key to return ( ='.'=) \n");
+                getch();
+                system("cls");
                 break;
             default:
-                printf("From 1 to 4 only!");
+                printf("From 1 to 4 only (>~<)!\n");
                 getch();
                 system("cls");
                 break;
@@ -705,7 +723,7 @@ void sub_student() {
 
 
     printf("\nReturning to Main Menu.\n"
-           "Press any key to return.");
+           "Press any key to return ( ='.'=) \n");
     getch();
     system("cls");
     return;
@@ -728,7 +746,7 @@ void sub_class() {
         while (printf("\nChoice: ") && scanf("%d", &choice_class) != 1) {
             while (getchar() != '\n');
             printf("Invalid data type! Please enter number only!\n"
-                   "Press any key to return.");
+                   "Press any key to return ( ='.'=) \n");
             _getch();
             eraseLines(4);
         }
@@ -751,12 +769,12 @@ void sub_class() {
                 break;
             case 6:
                 printf("\nReturning to Main Menu.\n"
-                       "Press any key to return.");
+                       "Press any key to return ( ='.'=) \n");
                 getch();
                 system("cls");
                 break;
             default:
-                printf("From 1 to 6 only!");
+                printf("From 1 to 6 only (>~<)!\n");
                 getch();
                 system("cls");
                 break;
@@ -776,7 +794,7 @@ main() {
 
         while (printf("\nChoice: ") && scanf("%d", &choice_main) != 1) {
             while (getchar() != '\n');
-            printf("Please enter again!");
+            printf("Please enter again (>~<)!\n");
             _getch();
             eraseLines(3);
         }
@@ -789,10 +807,10 @@ main() {
                 sub_class();
                 break;
             case 3:
-                printf("Exiting System... (-_-)zzz");
+                printf("Exiting System... (-_-)zzz\n");
                 exit(0);
             default:
-                printf("From 1 to 3 only!");
+                printf("From 1 to 3 only (>_<)!\n");
                 getch();
                 system("cls");
                 break;
@@ -840,7 +858,7 @@ void Insert_Students_List() {
     write1 = fopen("students_input.txt", "w");
 
     if (write1 == NULL) {
-        printf("Khong mo duoc file!");
+        printf("Khong mo duoc file (>_<)!");
         exit(0);
     }
 
@@ -917,7 +935,7 @@ void Insert_Subjects_list() { // The same as Students List, just different data
     write1 = fopen("subjects_input.txt", "w");
 
     if (write1 == NULL) {
-        printf("Can't open file!");
+        printf("Can't open file (>_<)!");
         exit(0);
     }
 
