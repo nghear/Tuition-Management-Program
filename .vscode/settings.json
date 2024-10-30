@@ -59,7 +59,10 @@
   "files.associations": {
     "limits": "cpp",
     "*.tcc": "cpp",
-    "cstdlib": "cpp"
+    "cstdlib": "cpp",
+    "bitset": "cpp",
+    "string_view": "cpp",
+    "regex": "cpp"
   },
   "C_Cpp.errorSquiggles": "disabled",
   "git.ignoreLimitWarning": true
