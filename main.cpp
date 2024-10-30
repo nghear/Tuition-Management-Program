@@ -101,7 +101,7 @@ void experimental_insert_student() {
     }
 
     if (id_found) {
-        printf("Error: Student ID [ %s ] already exists\n", new_student.student_id);
+        printf("Error: Student ID [ %s ] already exists (>_<)!\n", new_student.student_id);
     }
     else {
         printf("Enter Student's Name: ");
@@ -118,11 +118,13 @@ void experimental_insert_student() {
         new_student.student_id[ strcspn(new_student.student_id, "\n") ] = 0;
         new_student.student_name[ strcspn(new_student.student_name, "\n") ] = 0;
         fwrite(&new_student, sizeof(students), 1, file);
-        printf("\nStudent added sucessfully. Number: %d\n", student_count + 1);
+        printf("\nStudent added sucessfully ( =^.^=). Number: %d\n", student_count + 1);
     }
 
     fclose(file);
-    printf("\nPress any key to return");
+
+    printf("                        (\\(\\ \n");
+    printf("Press any key to return ( -.-) \n");
     getch();
     system("cls");
 }
@@ -135,8 +137,10 @@ void experimental_print_students_list() {
     // Open the file in binary read mode
     file = fopen("ex_student.txt", "r+b");
     if (file == NULL) {
-        printf("Error opening file or file doesn't exist!\n");
-        printf("Press any key to return.");
+        printf("Error opening file or file doesn't exist (>_<)!\n");
+
+        printf("                        (\\(\\ \n");
+        printf("Press any key to return ( -.-) \n");
         getch();
         system("cls");
         return;
@@ -158,14 +162,15 @@ void experimental_print_students_list() {
     }
 
     if (student_count == 0) {
-        printf("Cannot Detect any Student.\n");
+        printf("Cannot Detect any Student (>~<)\n");
     } else {
         printf("\nTotal number of Students: %d\n", student_count);
     }
 
     fclose(file);
 
-    printf("\nPress any key to return.");
+    printf("                        (\\(\\ \n");
+    printf("Press any key to return ( -.-) \n");
     getch();
     system("cls");
 }
@@ -179,7 +184,7 @@ void experimental_insert_course() {
     // Open the file in append and read mode
     file = fopen("ex_course.txt","a+b");
     if (file == NULL) {
-        printf("Error Opening File!\n");
+        printf("Error Opening File (>_<)!\n");
         return;
     }
 
@@ -201,7 +206,7 @@ void experimental_insert_course() {
     }
 
     if (course_found) {
-        printf("Error: Course ID [ %s ] already exists!\n", new_course.course_id);
+        printf("Error: Course ID [ %s ] already exists (>~<)!\n", new_course.course_id);
     }
     else {
         printf("Enter Course's Name: ");
@@ -220,11 +225,13 @@ void experimental_insert_course() {
         new_course.course_name[ strcspn(new_course.course_name, "\n") ] = 0;
         fwrite(&new_course, sizeof(courses), 1, file);
 
-        printf("\nCourse added sucessfully. Number: %d\n", course_count + 1);
+        printf("\nCourse added sucessfully ( =^.^=). Number: %d\n", course_count + 1);
     }
 
     fclose(file);
-    printf("\nPress any key to return.");
+
+    printf("                        (\\(\\ \n");
+    printf("Press any key to return ( -.-) \n");
     getch();
     system("cls");
 }
@@ -237,8 +244,10 @@ void experimental_print_course_list() {
     //Open the file in binary read mode
     file = fopen("ex_course.txt", "r+b");
     if (file == NULL) {
-        printf("Error opening file or file doesn't exist!\n");
-        printf("Press any key to return.");
+        printf("Error opening file or file doesn't exist (>_<)!\n");
+
+        printf("                        (\\(\\ \n");
+        printf("Press any key to return ( -.-) \n");
         getch();
         system("cls");
         return;
@@ -259,14 +268,15 @@ void experimental_print_course_list() {
     }
 
     if (course_count == 0) {
-        printf("Cannot detect any Course.\n");
+        printf("Cannot detect any Course (>~<).\n");
     } else {
         printf("\nTotal number of Courses: %d\n", course_count);
     }
 
     fclose(file);
 
-    printf("\nPress any key to return.");
+    printf("                        (\\(\\ \n");
+    printf("Press any key to return ( -.-) \n");
     getch();
     system("cls");
 }
@@ -291,7 +301,7 @@ void experimental_class_register() { // Still has that weird extra 1 key bug (30
     class_file = fopen("ex_class.txt", "a+b");
     
     if (student_file == NULL || course_file == NULL || class_file == NULL) {
-        printf("Error opening file(s)!\n");
+        printf("Error opening file(s) (>_<)!\n");
         system("cls");
         return;
     }
@@ -312,7 +322,7 @@ void experimental_class_register() { // Still has that weird extra 1 key bug (30
     }
 
     if (!student_found) {
-        printf("Student [ %s ] not found!\n", student_id_s);
+        printf("Student [ %s ] not found (>~<)!\n", student_id_s);
         fclose(student_file);
         fclose(course_file);
         fclose(class_file);
@@ -336,7 +346,7 @@ void experimental_class_register() { // Still has that weird extra 1 key bug (30
             fflush(stdin);
             fgets(ans, sizeof(ans), stdin);
             ans[ strcspn(ans, "\n") ] = 0;
-            if (strcmp(ans, "no") == 0) {
+            if (strcmp(ans, "no") == 0 || ) {
                 printf("\nThe process has been cancelled.\n"
                         "Press any key to return.\n");
                 getch();
@@ -517,7 +527,7 @@ void experimental_view_class() { // Implemented Student, Course, Class (30/10, N
     course_file = fopen("ex_course.txt", "rb");
 
     if (course_file == NULL || class_file == NULL) {
-        printf("Error opening file(s)!\n");
+        printf("Error opening file(s) (>_<)!\n");
         getch();
         system("cls");
         return;
@@ -589,7 +599,7 @@ void experimental_calculate_tuition() {
     course_file = fopen("ex_course.txt", "rb");
 
     if (student_file == NULL || course_file == NULL) {
-        printf("Error opening file(s)!\n");
+        printf("Error opening file(s) (>_<)!\n");
         getch();
         system("cls");
         return;
@@ -608,7 +618,7 @@ void experimental_calculate_tuition() {
     }
 
     if (!student_found) {
-        printf("Student ID [ %s ] has not been found!\n", student_id_s);
+        printf("Student ID [ %s ] has not been found (>~<)!\n", student_id_s);
     }
     
     else if (strcmp(st.class_attend, no_class) == 0) {
