@@ -1,6 +1,4 @@
 #include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include <vector>
 #include <algorithm>
 #include <conio.h>
@@ -10,6 +8,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <locale.h>
+#include <cmath>
 
 void eraseLines(int count) {
     if (count > 0) {
