@@ -51,12 +51,12 @@ typedef struct {
     char class_attend[MAX_CLASSNAME_LENGTH];
 } students;
 
-typedef struct { // old classes renamed, same function
+typedef struct { // old classes renamed, same function (30/10)
     char course_id[MAX_ID_LENGTH];
     char course_name[MAX_CLASSNAME_LENGTH];
     int tuition;
-    int total_students;
-    int total_class;
+    int total_students; // new data type 
+    int total_class; // new data type
 } courses;
 
 typedef struct {
@@ -550,6 +550,9 @@ void experimental_view_class() { // Implemented Student, Course, Class (30/10, N
                 enrolled_count++;
                 cl.student_no = enrolled_count;
                 printf("%-5d %-15s %-30s %-30s\n", cl.student_no, cl.student_id, cl.student_name, cl.class_name);
+                if (enrolled_count % 10 == 0) {
+                    printf("----------------------------------------------------------\n");
+                }
             }
         }
 
@@ -579,6 +582,7 @@ void experimental_calculate_tuition() {
     char student_id_s[MAX_ID_LENGTH];
     char no_class[MAX_CLASSNAME_LENGTH] = "Not Registered";
     float total_tuition = 0;
+    int total_semester, total_remain;
     bool student_found = false;
 
     student_file = fopen("ex_student.txt", "rb");
@@ -622,6 +626,8 @@ void experimental_calculate_tuition() {
             if (strcmp(st.class_attend, cs.course_name) == 0) {
                 printf("%-30s %-15d\n", cs.course_name, cs.tuition);
                 total_tuition = cs.tuition;
+                total_semester = st.tuition_paid / total_tuition;
+                total_remain = st.tuition_paid - (total_tuition * total_semester);
                 break;
             }
         }
@@ -629,8 +635,22 @@ void experimental_calculate_tuition() {
         printf("----------------------------------------\n");
         printf("%-30s %-15.2f\n", "Total Tuition: ", total_tuition);
         printf("%-30s %-15.2f\n", "Amount Paid: ", st.tuition_paid);
+
+        printf("\n");
         if (st.tuition_paid < total_tuition) {
             printf("%-30s %-15.2f\n", "Amount Required Left: ", total_tuition - st.tuition_paid);
+        }
+        else if (total_semester > 1) {
+            printf("Student %s has paid enough for %d semesters", st.student_name, total_semester);
+            if (total_remain > 0) {
+                printf("\nStudent %s has overpaid and has %d remain.", st.student_name, total_remain);
+            }
+        }
+        else {
+            printf("Student %s has paid the amount required for 1 semester.", st.student_name);
+            if (total_remain > 0) {
+                printf("\nStudent %s has overpaid and has %d remain.", st.student_name, total_remain);
+            }
         }
     }
 
