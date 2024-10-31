@@ -676,6 +676,131 @@ void experimental_calculate_tuition() {
 }
 
 
+//Experimental delete student by ID (delete from ex_student.txt, and unregister from ex_class.txt) (trying to implement) (30/10, D)
+void experimental_delete_student_ID() {
+    FILE *student_file, *temp_student_file, *class_file, *temp_class_file, *course_file;
+    students st;
+    classes cl;
+    courses cs;
+    char student_id_s[MAX_ID_LENGTH];
+    char ans[5];
+    bool student_found = false;
+    bool needs_update = false;
+
+    // Open all required files
+    student_file = fopen("ex_student.txt", "rb");
+    temp_student_file = fopen("temp_student.txt", "wb");
+    class_file = fopen("ex_class.txt", "rb");
+    temp_class_file = fopen("temp_class.txt", "wb");
+    course_file = fopen("ex_course.txt", "r+b");
+
+    if (student_file == NULL || temp_student_file == NULL || 
+        class_file == NULL || temp_class_file == NULL || course_file == NULL) {
+        printf("Error opening file(s) (>_<)!\n");
+        return;
+    }
+
+    // Get student ID to delete
+    printf("Enter Student ID to delete: ");
+    fflush(stdin);
+    fgets(student_id_s, sizeof(student_id_s), stdin);
+    student_id_s[strcspn(student_id_s, "\n")] = 0;
+
+    // Check if student exists and get confirmation
+    while (fread(&st, sizeof(students), 1, student_file) == 1) {
+        if (strcmp(st.student_id, student_id_s) == 0) {
+            student_found = true;
+            printf("\nStudent found:\nID: %s\nName: %s\nClass: %s\n", 
+                   st.student_id, st.student_name, st.class_attend);
+            printf("\nAre you sure you want to delete this student?\n"
+                   "Type 'yes' to continue or 'no' to cancel: ");
+            do {
+                fflush(stdin);
+                fgets(ans, sizeof(ans), stdin);
+                ans[strcspn(ans, "\n")] = 0;
+                if (strcmp(ans, "no") == 0 || strcmp(ans, "No") == 0 || 
+                    strcmp(ans, "NO") == 0 || strcmp(ans, "nO") == 0) {
+                    printf("\nDeletion cancelled.\n");
+                    fclose(student_file);
+                    fclose(temp_student_file);
+                    fclose(class_file);
+                    fclose(temp_class_file);
+                    fclose(course_file);
+                    remove("temp_student.txt");
+                    remove("temp_class.txt");
+                    return;
+                }
+                if (strcmp(ans, "yes") == 0 || strcmp(ans, "Yes") == 0 || 
+                    strcmp(ans, "YES") == 0 || strcmp(ans, "yEs") == 0) {
+                    break;
+                }
+                printf("Invalid Input! Please type either yes or no: ");
+            } while (true);
+            break;
+        }
+    }
+
+    if (!student_found) {
+        printf("Student ID [ %s ] not found (>_<)!\n", student_id_s);
+        fclose(student_file);
+        fclose(temp_student_file);
+        fclose(class_file);
+        fclose(temp_class_file);
+        fclose(course_file);
+        remove("temp_student.txt");
+        remove("temp_class.txt");
+        return;
+    }
+
+    // Copy all records except the one to be deleted
+    rewind(student_file);
+    while (fread(&st, sizeof(students), 1, student_file) == 1) {
+        if (strcmp(st.student_id, student_id_s) != 0) {
+            fwrite(&st, sizeof(students), 1, temp_student_file);
+        }
+    }
+
+    // Update class records and course total students
+    while (fread(&cl, sizeof(classes), 1, class_file) == 1) {
+        if (strcmp(cl.student_id, student_id_s) != 0) {
+            fwrite(&cl, sizeof(classes), 1, temp_class_file);
+        } else {
+            needs_update = true;
+            // Update course total students
+            rewind(course_file);
+            while (fread(&cs, sizeof(courses), 1, course_file) == 1) {
+                if (strcmp(cs.course_id, cl.course_id) == 0) {
+                    cs.total_students--;
+                    cs.total_class = (cs.total_students + 9) / 10; 
+                    fseek(course_file, -sizeof(courses), SEEK_CUR);
+                    fwrite(&cs, sizeof(courses), 1, course_file);
+                    break;
+                }
+            }
+        }
+    }
+
+    // Close all files
+    fclose(student_file);
+    fclose(temp_student_file);
+    fclose(class_file);
+    fclose(temp_class_file);
+    fclose(course_file);
+
+    // Replace original files with temp files
+    remove("ex_student.txt");
+    rename("temp_student.txt", "ex_student.txt");
+    remove("ex_class.txt");
+    rename("temp_class.txt", "ex_class.txt");
+
+    printf("\nStudent successfully deleted ( =^.^=)!\n");
+
+    printf("                        (\\(\\ \n");
+    printf("Press any key to return ( -.-) \n");
+    getch();
+    system("cls");
+}
+
 
 void sub_student() {
     system("cls");
@@ -686,8 +811,9 @@ void sub_student() {
                "\t1: Create a new Student\n"
                "\t2: List out all current student(s)\n"
                "\t3: Check Student's Tuition Fee\n"
-               "\t4: Return to Main Menu"
-               "\nTo select, please enter the according number from 1 to 4\n");
+               "\t4: Delete a Student by ID\n"
+               "\t5: Return to Main Menu"
+               "\nTo select, please enter the according number from 1 to 5\n");
                 
         while (printf("\nChoice: ") && scanf("%d", &choice_student) != 1) {
             while (getchar() != '\n');
@@ -708,24 +834,21 @@ void sub_student() {
                 experimental_calculate_tuition();
                 break;
             case 4:
+                experimental_delete_student_ID();
+                break;
+            case 5:
                 printf("\nReturning to Main Menu.\n"
                        "Press any key to return ( ='.'=) \n");
                 getch();
                 system("cls");
                 break;
             default:
-                printf("From 1 to 4 only (>~<)!\n");
+                printf("From 1 to 5 only (>~<)!\n");
                 getch();
                 system("cls");
                 break;
         }
-    } while (choice_student != 4);
-
-
-    printf("\nReturning to Main Menu.\n"
-           "Press any key to return ( ='.'=) \n");
-    getch();
-    system("cls");
+    } while (choice_student != 5);
     return;
 }
 
