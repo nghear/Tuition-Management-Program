@@ -441,22 +441,30 @@ void experimental_class_register() { // Still has that weird extra 1 key bug (30
 }
 
 void experimental_class_unregister() { // Is not up-to-date, currently only delete from ex_student.txt (30/10, N)
-    FILE *file;
+    FILE *student_file, *course_file, *class_file;
     students st;
+    courses cs;
+    classes cl;
     char student_id_s[MAX_ID_LENGTH];
     char course_name_s[MAX_CLASSNAME_LENGTH];
     char no_class[MAX_CLASSNAME_LENGTH] = "Not Registered";
     char ans[5];
     bool student_found = false;
-    long student_pos;
+    long int student_pos;
+    long int course_pos;
+    long int class_pos;
 
-    file = fopen("ex_student.txt", "r+b");
-    if (file == NULL) {
+    student_file = fopen("ex_student.txt", "r+b");
+    course_file = fopen("ex_course.txt","r+b");
+    class_file = fopen("ex_class.txt", "r+b");
+    
+    if (student_file == NULL || course_file == NULL || class_file == NULL) {
         printf("Error opening file (>_<)!\n");
         system("cls");
         return;
     }
 
+    // Get Student ID
     printf("Enter Student ID: ");
     fflush(stdin);
     fgets(student_id_s, MAX_CLASSNAME_LENGTH, stdin);
@@ -466,7 +474,7 @@ void experimental_class_unregister() { // Is not up-to-date, currently only dele
     while (fread(&st, sizeof(students), 1, file) == 1) {
         if (strcmp(st.student_id, student_id_s) == 0) {
             student_found = true;
-            student_pos = ftell(file) - sizeof(students);
+            student_pos = ftell(student_file) - sizeof(students);
             break;
         }
     }
@@ -499,13 +507,38 @@ void experimental_class_unregister() { // Is not up-to-date, currently only dele
         printf("\nInvalid Input (>~<)! Please type either yes or no: ");
         } while (true);
 
+        // Find in Course
+        while (fread(&cs, sizeof(courses), 1, course_file) == 1) {
+            if (strcmp(cs.course_name, st.class_attend) == 0) {
+                course_pos = ftell(course_file) - sizeof(courses);
+                break;
+            }
+        }
+
+        // Find in Class
+        while (fread(&cl, sizeof(classes), 1, class_file) == 1) {
+            if (strcmp(cl.course_id, cs.course_id) == 0) {
+                class_pos = ftell(class_file) - sizeof(classes);
+                break;
+            }
+        }
+
         // Unregister the class
         strcpy(course_name_s, st.class_attend); // Copy for confirmation line.
         strcpy(st.class_attend, no_class);
-    
+
+        cs.total_students = cs.total_students - 1;
+        if (cs.total_students % 10 == 0) {
+            cs.total_class = cs.total_class - 1;
+        }
+
+        
+
         // Update Student Record
-        fseek(file, student_pos, SEEK_SET);
-        fwrite(&st, sizeof(students), 1, file);
+        fseek(student_file, student_pos, SEEK_SET);
+        fwrite(&st, sizeof(students), 1, student_file);
+
+        // Update Course Record
 
         printf("\nSuccessfully removed Student %s from class %s ( =^.^=)!\n", st.student_name, course_name_s);
     }
