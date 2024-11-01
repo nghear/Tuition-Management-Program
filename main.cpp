@@ -11,6 +11,8 @@
 #include <cstring>
 #include <locale.h>
 
+// test
+
 void eraseLines(int count) {
     if (count > 0) {
         printf("\x1b[2K"); // Clear current line
