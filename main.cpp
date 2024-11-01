@@ -11,7 +11,9 @@
 #include <cstring>
 #include <locale.h>
 
-// test
+// test 
+
+//slhgkldjhgdf
 
 void eraseLines(int count) {
     if (count > 0) {
