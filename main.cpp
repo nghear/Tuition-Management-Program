@@ -1023,10 +1023,16 @@ void sub_student() {
                 experimental_calculate_tuition();
                 break;
             case 4:
-                experimental_delete_student_id();   
+                experimental_delete_student_ID();   
                 break;
             case 5:
                 experimental_delete_student_name();
+                break;
+            case 6:
+                printf("\nReturning to Main Menu.\n"
+                       "Press any key to return ( ='.'=) \n");
+                getch();
+                system("cls");
                 break;
             default:
                 printf("From 1 to 6 only (>~<)!\n");
@@ -1035,12 +1041,6 @@ void sub_student() {
                 break;
         }
     } while (choice_student != 6);
-
-
-    printf("\nReturning to Main Menu.\n"
-           "Press any key to return ( ='.'=) \n");
-    getch();
-    system("cls");
     return;
 }
 
