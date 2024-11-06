@@ -281,7 +281,7 @@ void experimental_print_course_list() {
     system("cls");
 }
 
-void experimental_class_register() { // Still has that weird extra 1 key bug (30/10, N)
+void experimental_class_register() { // Will have to Redefine this to fit new Unregister and new View_Class (6/11, N)
     FILE *student_file, *course_file, *class_file;
     students st;
     courses cs;
@@ -440,33 +440,42 @@ void experimental_class_register() { // Still has that weird extra 1 key bug (30
     system("cls");
 }
 
-void experimental_class_unregister() { // Is not up-to-date, currently only delete from ex_student.txt (30/10, N)
-    FILE *file;
+void experimental_class_unregister() { // Should be Working fine now (6/11, N)
+    FILE *student_file, *course_file, *class_file;
     students st;
+    courses cs;
+    classes cl[100];
     char student_id_s[MAX_ID_LENGTH];
     char course_name_s[MAX_CLASSNAME_LENGTH];
     char no_class[MAX_CLASSNAME_LENGTH] = "Not Registered";
     char ans[5];
     bool student_found = false;
-    long student_pos;
+    int i, all_students;
+    long int student_pos;
+    long int course_pos;
+    long int class_pos;
 
-    file = fopen("ex_student.txt", "r+b");
-    if (file == NULL) {
+    student_file = fopen("ex_student.txt", "r+b");
+    course_file = fopen("ex_course.txt","r+b");
+    class_file = fopen("ex_class.txt", "rb");
+    
+    if (student_file == NULL || course_file == NULL || class_file == NULL) {
         printf("Error opening file (>_<)!\n");
         system("cls");
         return;
     }
 
+    // Get Student ID
     printf("Enter Student ID: ");
     fflush(stdin);
     fgets(student_id_s, MAX_CLASSNAME_LENGTH, stdin);
     student_id_s[ strcspn(student_id_s, "\n") ] = 0;
 
-    // Find student
-    while (fread(&st, sizeof(students), 1, file) == 1) {
+    // Find Student Position
+    while (fread(&st, sizeof(students), 1, student_file) == 1) {
         if (strcmp(st.student_id, student_id_s) == 0) {
             student_found = true;
-            student_pos = ftell(file) - sizeof(students);
+            student_pos = ftell(student_file) - sizeof(students);
             break;
         }
     }
@@ -480,6 +489,7 @@ void experimental_class_unregister() { // Is not up-to-date, currently only dele
     }
 
     else {
+        // Unregister Process (6/11)
         printf("\nCurrent Class: %s", st.class_attend);
         printf("\nType 'yes' to continue or 'no' to cancel the unregister: ");
         do {
@@ -499,30 +509,73 @@ void experimental_class_unregister() { // Is not up-to-date, currently only dele
         printf("\nInvalid Input (>~<)! Please type either yes or no: ");
         } while (true);
 
+        // Count all Students That are registered
+        all_students = 0;
+        while (fread(&cs, sizeof(courses), 1, course_file) == 1) {
+            all_students = all_students + cs.total_students;
+        }
+        rewind(course_file);
+
+        // Find Course Position
+        while (fread(&cs, sizeof(courses), 1, course_file) == 1) {
+            if (strcmp(cs.course_name, st.class_attend) == 0) {
+                course_pos = ftell(course_file) - sizeof(courses);
+                break;
+            }
+        }
+
+        for (i = 0; i < all_students; i++) {
+            fread(&cl[i], sizeof(classes), 1, class_file);
+        }
+        rewind(class_file);
+
         // Unregister the class
         strcpy(course_name_s, st.class_attend); // Copy for confirmation line.
         strcpy(st.class_attend, no_class);
-    
+
+
+        cs.total_students = cs.total_students - 1;
+        if (cs.total_students % 10 == 0) {
+            cs.total_class = cs.total_class - 1;
+        }
+        
+        // Update Class Record
+        fclose(class_file);
+        class_file = fopen("ex_class.txt", "wb");
+        for (i = 0; i < all_students; i++) {
+            if (strcmp(st.student_id, cl[i].student_id) != 0) {
+                fwrite(&cl[i], sizeof(classes), 1, class_file);
+            }
+        }
+
         // Update Student Record
-        fseek(file, student_pos, SEEK_SET);
-        fwrite(&st, sizeof(students), 1, file);
+        fseek(student_file, student_pos, SEEK_SET);
+        fwrite(&st, sizeof(students), 1, student_file);
+
+        // Update Course Record
+        fseek(course_file, course_pos, SEEK_SET);
+        fwrite(&cs, sizeof(courses), 1, course_file);
 
         printf("\nSuccessfully removed Student %s from class %s ( =^.^=)!\n", st.student_name, course_name_s);
     }
 
-    fclose(file);
+    fclose(student_file);
+    fclose(class_file);
+    fclose(course_file);
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
     system("cls");
 }
 
-void experimental_view_class() { // Implemented Student, Course, Class (30/10, N)
+void experimental_view_class() { // Implemented Class Check Respectively (6/11, N)
     FILE *class_file, *course_file;
     classes cl;
     courses  cs;
     char course_id_s[MAX_ID_LENGTH];
-    int enrolled_count = 0;
+    char temp_class_name[MAX_CLASSNAME_LENGTH]; 
+    int enrolled_count = 0; int i = 0;
+    int temp_student_count[10];
     bool course_found = false;
 
     class_file = fopen("ex_class.txt", "rb");
@@ -556,25 +609,24 @@ void experimental_view_class() { // Implemented Student, Course, Class (30/10, N
         system("cls");
         printf("%-5s %-15s %-30s %-30s\n",
                "No.", "Student-ID", "Full-Name", "Class");
-        printf("----------------------------------------------------------\n");
         while (fread(&cl, sizeof(classes), 1, class_file) == 1) {
             if (strcmp(cl.course_id, cs.course_id) == 0) {
+                if (strcmp(temp_class_name, cl.class_name) != 0) {
+                    printf("----------------------------------------------------------\n");
+                    temp_student_count[i] = enrolled_count;
+                    i++;
+                    enrolled_count = 0;
+                }
+                strcpy(temp_class_name, cl.class_name);
                 enrolled_count++;
                 cl.student_no = enrolled_count;
                 printf("%-5d %-15s %-30s %-30s\n", cl.student_no, cl.student_id, cl.student_name, cl.class_name);
-                if (enrolled_count % 10 == 0) {
-                    printf("----------------------------------------------------------\n");
-                }
             }
         }
+        temp_student_count[i] = enrolled_count;
 
-        for (int i = 0; i < cs.total_class; i++) {
-            if (i < cs.total_class - 1) {
-                printf("\nTotal Student(s) in Class %s_0%d: %d Student(s)", cs.course_id, i + 1, 10);
-            }
-            else {
-                printf("\nTotal Student(s) in class %s_0%d: %d Student(s)", cs.course_id, i + 1, enrolled_count - 10 * i);
-            }
+        for (int j = 1; j <= i; j++) {
+            printf("\nTotal Student(s) in class %s_0%d: %d Student(s)", cl.course_id, j, temp_student_count[j]);
         }
 
         printf("\nTotal Student(s) of enroll for Course %s: %d Student(s).\n", cs.course_name, cs.total_students);
