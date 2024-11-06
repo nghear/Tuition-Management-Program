@@ -804,9 +804,6 @@ void experimental_delete_student_ID() {
         fclose(temp_class_file);
         fclose(course_file);
 
-        // Replace class file
-        remove("ex_class.txt");
-        rename("temp_class.txt", "ex_class.txt");
     }
 
     // Close all files
