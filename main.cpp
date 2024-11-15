@@ -879,164 +879,6 @@ void experimental_delete_student_ID() {
     system("cls");
 }
 
-//Experimental delete student by name (delete from ex_student.txt, decrease count in course and unregister from ex_class.txt) (30/10, D)
-void experimental_delete_student_name() { //same as ID //not use anymore :((((
-    FILE *student_file, *temp_student_file, *class_file, *temp_class_file, *course_file;
-    students st;
-    classes cl;
-    courses cs;
-    char student_name_s[MAX_NAME_LENGTH];
-    char student_ids_to_delete[100][MAX_ID_LENGTH];
-    int id_count = 0;
-    char ans[5];
-    bool student_found = false;
-    int deleted_count = 0;
-
-    student_file = fopen("ex_student.txt", "rb");
-    temp_student_file = fopen("temp_student.txt", "wb");
-    class_file = fopen("ex_class.txt", "rb");
-    temp_class_file = fopen("temp_class.txt", "wb");
-    course_file = fopen("ex_course.txt", "r+b");
-
-    if (student_file == NULL || temp_student_file == NULL) {
-        if (student_file) fclose(student_file);
-        if (temp_student_file) fclose(temp_student_file);
-        printf("Error opening student files (>_<)!\n");
-        return;
-    }
-
-    bool has_class_files = true;
-    if (class_file == NULL || temp_class_file == NULL || course_file == NULL) {
-        has_class_files = false;
-        if (class_file) fclose(class_file);
-        if (temp_class_file) fclose(temp_class_file);
-        if (course_file) fclose(course_file);
-    }
-
-    printf("Enter Student Name to delete: ");
-    fflush(stdin);
-    fgets(student_name_s, sizeof(student_name_s), stdin);
-    student_name_s[strcspn(student_name_s, "\n")] = 0;
-
-    while (fread(&st, sizeof(students), 1, student_file) == 1) {
-        if (strcmp(st.student_name, student_name_s) == 0) {
-            student_found = true;
-            strcpy(student_ids_to_delete[id_count], st.student_id);
-            id_count++;
-            printf("\nFound student:\nID: %s\nName: %s\nClass: %s\n", 
-                   st.student_id, st.student_name, st.class_attend);
-        }
-    }
-
-    if (!student_found) {
-        printf("No students found with name [ %s ] (>_<)!\n", student_name_s);
-        fclose(student_file);
-        fclose(temp_student_file);
-        if (has_class_files) {
-            fclose(class_file);
-            fclose(temp_class_file);
-            fclose(course_file);
-        }
-        remove("temp_student.txt");
-        if (has_class_files) {
-            remove("temp_class.txt");
-        }
-        return;
-    }
-
-    printf("\nFound %d student(s) with this name. Are you sure you want to delete?\n"
-           "Type 'yes' to continue or 'no' to cancel: ", id_count);
-    do {
-        fflush(stdin);
-        fgets(ans, sizeof(ans), stdin);
-        ans[strcspn(ans, "\n")] = 0;
-        if (strcmp(ans, "no") == 0 || strcmp(ans, "No") == 0 || 
-            strcmp(ans, "NO") == 0 || strcmp(ans, "nO") == 0) {
-            printf("\nDeletion cancelled.\n");
-            fclose(student_file);
-            fclose(temp_student_file);
-            if (has_class_files) {
-                fclose(class_file);
-                fclose(temp_class_file);
-                fclose(course_file);
-            }
-            remove("temp_student.txt");
-            if (has_class_files) {
-                remove("temp_class.txt");
-            }
-            return;
-        }
-        if (strcmp(ans, "yes") == 0 || strcmp(ans, "Yes") == 0 || 
-            strcmp(ans, "YES") == 0 || strcmp(ans, "yEs") == 0) {
-            break;
-        }
-        printf("Invalid Input! Please type either yes or no: ");
-    } while (true);
-
-    rewind(student_file);
-    while (fread(&st, sizeof(students), 1, student_file) == 1) {
-        bool should_delete = false;
-        for (int i = 0; i < id_count; i++) {
-            if (strcmp(st.student_id, student_ids_to_delete[i]) == 0) {
-                should_delete = true;
-                deleted_count++;
-                break;
-            }
-        }
-        if (!should_delete) {
-            fwrite(&st, sizeof(students), 1, temp_student_file);
-        }
-    }
-
-    if (has_class_files) {
-        while (fread(&cl, sizeof(classes), 1, class_file) == 1) {
-            bool should_delete = false;
-            for (int i = 0; i < id_count; i++) {
-                if (strcmp(cl.student_id, student_ids_to_delete[i]) == 0) {
-                    should_delete = true;
-                    // Update course total students
-                    rewind(course_file);
-                    while (fread(&cs, sizeof(courses), 1, course_file) == 1) {
-                        if (strcmp(cs.course_id, cl.course_id) == 0) {
-                            cs.total_students--;
-                            cs.total_class = (cs.total_students + 9) / 10;
-                            if (fseek(course_file, -(long)sizeof(courses), SEEK_CUR) == 0) {
-                                fwrite(&cs, sizeof(courses), 1, course_file);
-                            }
-                            break;
-                        }
-                    }
-                    break;
-                }
-            }
-            if (!should_delete) {
-                fwrite(&cl, sizeof(classes), 1, temp_class_file);
-            }
-        }
-    }
-
-    fclose(student_file);
-    fclose(temp_student_file);
-    if (has_class_files) {
-        fclose(class_file);
-        fclose(temp_class_file);
-        fclose(course_file);
-    }
-
-    remove("ex_student.txt");
-    rename("temp_student.txt", "ex_student.txt");
-    if (has_class_files) {
-        remove("ex_class.txt");
-        rename("temp_class.txt", "ex_class.txt");
-    }
-
-    printf("\n%d student(s) successfully deleted ( =^.^=)!\n", deleted_count);
-
-    printf("                        (\\(\\ \n");
-    printf("Press any key to return ( -.-) \n");
-    getch();
-    system("cls");
-}
 
 //delete course by ID (delete from ex_course.txt, decrease count in class and unregister student from ex_student.txt) (31/10, D)
 void experimental_delete_course_ID() {
@@ -1189,7 +1031,7 @@ void experimental_delete_course_ID() {
     if (has_related_files && deleted_count > 0) {
         printf("%d student(s) have been unregistered from the course.\n", deleted_count);
     }
-
+    printf("\n");
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
@@ -1232,7 +1074,7 @@ void sub_student() {
                 experimental_delete_student_ID();   
                 break;
             case 5:
-                experimental_delete_student_name();
+                
                 break;
             case 6:
                 printf("\nReturning to Main Menu.\n"
@@ -1308,10 +1150,13 @@ main() {
     int choice_main;
     do {
         printf("\n\t\t ===== Student Data Management System =====\n\n"
-               "\t1: Student Management\n"
-               "\t2: Class Management\n"
-               "\t3: Exit System"
-               "\nEnter your choice (1 to 3)\n");
+               "\t\t\t === Main Menu ===\n\n"
+               "\t\t\t === Choose your role ===\n\n"
+               "\t1: Head administrator\n"
+               "\t2: Finance officer\n"
+               "\t3: Student manager\n"
+               "\t4: Exit System"
+               "\nEnter your choice (1 to 4)\n");
 
         while (printf("\nChoice: ") && scanf("%d", &choice_main) != 1) {
             while (getchar() != '\n');
