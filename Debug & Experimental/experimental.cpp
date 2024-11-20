@@ -41,38 +41,41 @@ void appendChar (char *str, char *ch) {
 }
 
 #define MAX_ID_LENGTH 15
-#define MAX_NAME_LENGTH 200
-#define MAX_CLASSNAME_LENGTH 200
+#define MAX_NAME_LENGTH 30
+#define MAX_CLASSNAME_LENGTH 20
 
 typedef struct {
-    char student_id[MAX_ID_LENGTH];
+    char student_ID[MAX_ID_LENGTH];
     char student_name[MAX_NAME_LENGTH];
+    char student_email[MAX_NAME_LENGTH];    
+    int student_number;
     float tuition_paid;
     char class_attend[MAX_CLASSNAME_LENGTH];
 } students;
 
 typedef struct { // old classes renamed, same function (30/10)
-    char course_id[MAX_ID_LENGTH];
-    char course_name[MAX_CLASSNAME_LENGTH];
+    char course_ID[MAX_ID_LENGTH];
+    char course_name[MAX_NAME_LENGTH];
     int tuition;
-    int total_students; // new data type 
+    int total_students; // new data type
     int total_class; // new data type
 } courses;
 
 typedef struct {
-    int student_no;
-    char course_id[MAX_ID_LENGTH];
-    char student_id[MAX_ID_LENGTH];
+    char class_ID[MAX_ID_LENGTH];
+    char course_ID[MAX_ID_LENGTH];
+    char student_ID[MAX_ID_LENGTH];
     char student_name[MAX_NAME_LENGTH];
     char class_name[MAX_CLASSNAME_LENGTH];
+    int student_no;
 } classes;
 
-void experimental_insert_student() {
+void experimental_insert_student() { // Added new Student's Information (21/11, N)
     FILE *file;
     students new_student, existing_student;
     int student_count = 0;
     char no_class[MAX_CLASSNAME_LENGTH] = "Not Registered";
-    bool id_found = false;
+    bool ID_found = false;
 
     //Open file in append and read mode
     file = fopen("ex_student.txt", "a+b");
@@ -87,35 +90,40 @@ void experimental_insert_student() {
     printf("\n\tEntering new Student's Information\n");
     printf("Enter Student's ID: ");
     fflush(stdin);
-    fgets(new_student.student_id, sizeof(new_student.student_id), stdin);
-    new_student.student_id[ strcspn(new_student.student_id, "\n") ] = 0;
+    fgets(new_student.student_ID, sizeof(new_student.student_ID), stdin);
+    new_student.student_ID[ strcspn(new_student.student_ID, "\n") ] = 0;
 
     //Check if ID already exists
     rewind(file);
     while ( fread(&existing_student, sizeof(students), 1, file) == 1) {
         student_count++;
-        if ( strcmp(existing_student.student_id, new_student.student_id) == 0) {
-            id_found = true;
+        if ( strcmp(existing_student.student_ID, new_student.student_ID) == 0) {
+            ID_found = true;
             break;
         }
     }
 
-    if (id_found) {
-        printf("Error: Student ID [ %s ] already exists (>_<)!\n", new_student.student_id);
+    if (ID_found) {
+        printf("Error: Student ID [ %s ] already exists (>_<)!\n", new_student.student_ID);
     }
     else {
         printf("Enter Student's Name: ");
         fflush(stdin);
         fgets(new_student.student_name, sizeof(new_student.student_name), stdin);
 
-        printf("Enter the amount that the Student has paid: ");
-        scanf("%f", &new_student.tuition_paid);
+        printf("Enter Student's Phone Number: ");
+        scanf("%d", &new_student.student_number);
+
+        printf("Enter Student's Email: ");
+        fflush(stdin);
+        fgets(new_student.student_email, sizeof(new_student.student_email), stdin);
 
         strcpy(new_student.class_attend, no_class);
 
+
         //Write new student to file
         fseek(file, 0, SEEK_END);
-        new_student.student_id[ strcspn(new_student.student_id, "\n") ] = 0;
+        new_student.student_ID[ strcspn(new_student.student_ID, "\n") ] = 0;
         new_student.student_name[ strcspn(new_student.student_name, "\n") ] = 0;
         fwrite(&new_student, sizeof(students), 1, file);
         printf("\nStudent added sucessfully ( =^.^=). Number: %d\n", student_count + 1);
@@ -130,10 +138,13 @@ void experimental_insert_student() {
     system("cls");
 }
 
-void experimental_print_students_list() {
+void experimental_print_students_list() { // Added Student Query for Detailed Information (21/11, N)
     FILE *file;
     students st;
-    int student_count = 0;
+    int Student_Count = 0;
+    int Choice_View;
+    char ID_Search[MAX_ID_LENGTH];
+    bool Search_Check = false;
 
     // Open the file in binary read mode
     file = fopen("ex_student.txt", "r+b");
@@ -151,22 +162,62 @@ void experimental_print_students_list() {
     system("cls");  // Clear the screen
 
     printf("\t\t\tList of Students\n\n");
-    printf("%-5s %-15s %-30s %-15s %-30s\n", 
-           "No.", "ID", "Full Name", "Tuition Paid", "Attending Classes");
+    printf("%-5s %-15s %-30s %-30s\n", 
+           "No.", "ID", "Full Name", "Class");
     printf("--------------------------------------------------------------------------------\n");
 
     // Read and print each student
     while (fread(&st, sizeof(students), 1, file) == 1) {
-        student_count++;
-        printf("%-5d %-15s %-30s %-15.2f %-30s", 
-            student_count, st.student_id, st.student_name, st.tuition_paid, st.class_attend);
+        Student_Count++;
+        printf("%-5d %-15s %-30s %-30s", 
+            Student_Count, st.student_ID, st.student_name, st.class_attend);
         printf("\n");
     }
 
-    if (student_count == 0) {
+    if (Student_Count == 0) {
         printf("Cannot Detect any Student (>~<)\n");
     } else {
-        printf("\nTotal number of Students: %d\n", student_count);
+        printf("\nTotal number of Students: %d\n", Student_Count);
+
+        printf("\n\n1. View Detailed Information Of A Student");
+        printf("\n2. Return");
+
+        printf("\n\nEnter your choice (1-2) : ");
+
+        while (scanf("%d", &Choice_View) != 1) {
+            while (getchar() != '\n');
+            printf("\t  Invalid input (>_<)! Please enter a number (1-2): ");
+            _getch();
+            eraseLines(2);
+        }
+        switch(Choice_View) {
+            case 1:
+            do {
+                printf("\nEnter Student's ID to look: ");
+                fflush(stdin);
+                fgets(ID_Search, sizeof(ID_Search), stdin);
+                ID_Search[ strcspn(ID_Search, "\n") ] = 0;
+                rewind(file);
+                while (fread (&st, sizeof(students), 1, file) == 1) {
+                    if (strcmp(ID_Search, st.student_ID) == 0) {
+                        printf("\n\n%-30s %-30s", "ID", st.student_ID);
+                        printf("\n%-30s %-30s", "Full Name", st.student_name);
+                        printf("\n%-30s %-10d", "Phone Number", st.student_number);
+                        printf("\n%-30s %-30s", "Email", st.student_email);
+                        printf("\n%-30s %-30s", "Class", st.class_attend);
+                        printf("\n%-30s %-10f", "Tuition Paid", st.tuition_paid);
+                        Search_Check = true;
+                    }
+                }
+                if (!Search_Check) {
+                    printf("\nStudent ID [ %s ] was not found.", ID_Search);
+                }
+                printf("\n\nTo do another detailed search, press 'y'.");
+                printf("\nPress any other key to return.");
+            } while (getche() == 'y');
+            case 2:
+            break;
+        }
     }
 
     fclose(file);
@@ -195,21 +246,21 @@ void experimental_insert_course() {
     printf("\n\tEntering new Course's Information\n");
     printf("Enter Course ID: ");
     fflush(stdin);
-    fgets(new_course.course_id, sizeof(new_course.course_id), stdin);
-    new_course.course_id[ strcspn(new_course.course_id,"\n") ] = 0;
+    fgets(new_course.course_ID, sizeof(new_course.course_ID), stdin);
+    new_course.course_ID[ strcspn(new_course.course_ID,"\n") ] = 0;
 
     // Check if Course ID already exist
     rewind(file);
     while ( fread(&existing_course, sizeof(courses), 1, file) == 1) {
         course_count++;
-        if (strcmp(existing_course.course_id, new_course.course_id) == 0) {
+        if (strcmp(existing_course.course_ID, new_course.course_ID) == 0) {
             course_found = true;
             break;
         }
     }
 
     if (course_found) {
-        printf("Error: Course ID [ %s ] already exists (>~<)!\n", new_course.course_id);
+        printf("Error: Course ID [ %s ] already exists (>~<)!\n", new_course.course_ID);
     }
     else {
         printf("Enter Course's Name: ");
@@ -224,7 +275,7 @@ void experimental_insert_course() {
 
         //Write new class to file
         fseek(file, 0, SEEK_END);
-        new_course.course_id[ strcspn(new_course.course_id, "\n") ] = 0;
+        new_course.course_ID[ strcspn(new_course.course_ID, "\n") ] = 0;
         new_course.course_name[ strcspn(new_course.course_name, "\n") ] = 0;
         fwrite(&new_course, sizeof(courses), 1, file);
 
@@ -269,7 +320,7 @@ void experimental_print_course_list() {
     while (fread(&cs, sizeof(courses), 1, file) == 1) {
         course_count++;
         printf("%-5d %-15s %-30s %-15d\n", 
-            course_count, cs.course_id, cs.course_name, cs.tuition);
+            course_count, cs.course_ID, cs.course_name, cs.tuition);
     }
 
     if (course_count == 0) {
@@ -292,8 +343,8 @@ void experimental_class_register() { // that one bug was fixed by using binary o
     students st;
     courses cs;
     classes cl;
-    char student_id_s[MAX_ID_LENGTH];
-    char course_id_s[MAX_ID_LENGTH];
+    char student_ID_s[MAX_ID_LENGTH];
+    char course_ID_s[MAX_ID_LENGTH];
     char ans[5];
     bool student_found = false;
     bool class_check = false;
@@ -315,12 +366,12 @@ void experimental_class_register() { // that one bug was fixed by using binary o
     // Get student ID
     printf("Enter Student ID to register: ");
     fflush(stdin);
-    fgets(student_id_s, sizeof(student_id_s), stdin);
-    student_id_s[ strcspn(student_id_s, "\n") ] = 0;
+    fgets(student_ID_s, sizeof(student_ID_s), stdin);
+    student_ID_s[ strcspn(student_ID_s, "\n") ] = 0;
 
     //Find student
     while (fread(&st, sizeof(students), 1, student_file) == 1) {
-        if (strcmp(st.student_id, student_id_s) == 0) {
+        if (strcmp(st.student_ID, student_ID_s) == 0) {
             student_found = true;
             student_pos = ftell(student_file) - sizeof(students);
             break;
@@ -328,7 +379,7 @@ void experimental_class_register() { // that one bug was fixed by using binary o
     }
 
     if (!student_found) {
-        printf("Student [ %s ] not found (>~<)!\n", student_id_s);
+        printf("Student [ %s ] not found (>~<)!\n", student_ID_s);
         fclose(student_file);
         fclose(course_file);
         fclose(class_file);
@@ -371,13 +422,13 @@ void experimental_class_register() { // that one bug was fixed by using binary o
     // Get Class ID
     printf("\nEnter Course's ID to register for: ");
     fflush(stdin);
-    fgets(course_id_s, sizeof(course_id_s), stdin);
-    course_id_s[ strcspn(course_id_s, "\n") ] = 0;
+    fgets(course_ID_s, sizeof(course_ID_s), stdin);
+    course_ID_s[ strcspn(course_ID_s, "\n") ] = 0;
 
     // Find Course
     rewind(course_file);
     while (fread(&cs, sizeof(courses), 1, course_file) == 1) {
-        if (strcmp(cs.course_id, course_id_s) == 0) {
+        if (strcmp(cs.course_ID, course_ID_s) == 0) {
             course_found = true;
             course_pos = ftell(course_file) - sizeof(courses);
             break;
@@ -385,7 +436,7 @@ void experimental_class_register() { // that one bug was fixed by using binary o
     }
 
     if (!course_found) {
-        printf("There is no course with the ID [ %s ] (>~<)!\n", course_id_s);
+        printf("There is no course with the ID [ %s ] (>~<)!\n", course_ID_s);
     }
 
     else if (strcmp(st.class_attend, cs.course_name) == 0) {
@@ -411,15 +462,17 @@ void experimental_class_register() { // that one bug was fixed by using binary o
         int length = snprintf(NULL, 0, "%d", cs.total_class); // Length required to convert
         char* count = (char*)malloc(length + 1); // Allocate size to new char for convert (+1 for null at END)
         snprintf(count, length + 1, "%d", cs.total_class);
+        char holder[3] = "_0";
+        holder[ strcspn(holder, "\n") ] = 0;
 
             // Get Course ID, Student ID, Student Name
-        strcpy(cl.course_id, cs.course_id);
-        strcpy(cl.student_id, st.student_id);
+        strcpy(cl.course_ID, cs.course_ID);
+        strcpy(cl.student_ID, st.student_ID);
         strcpy(cl.student_name, st.student_name);
 
             // Get new Class Name
-        strcpy(cl.class_name, cs.course_id); // Copy Class Name into Course ID (ex: BAS)
-        appendChar(cl.class_name, "_0"); // Append into Class Name, C++ will give warning as direct value is unsafe (ex: BAS_0)
+        strcpy(cl.class_name, cs.course_ID); // Copy Class Name into Course ID (ex: BAS)
+        appendChar(cl.class_name, holder); // yippie no ISO C++ warning
         appendChar(cl.class_name, count); // Append class number into Class Name (ex: if cs.total_class = 1 then BAS_01)
         cl.class_name[ strcspn(cl.class_name, "\n") ] = 0;
 
@@ -453,7 +506,7 @@ void experimental_class_unregister() { // Is not up-to-date, currently only dele
     students st;
     courses cs;
     classes cl[100];
-    char student_id_s[MAX_ID_LENGTH];
+    char student_ID_s[MAX_ID_LENGTH];
     char course_name_s[MAX_CLASSNAME_LENGTH];
     char no_class[MAX_CLASSNAME_LENGTH] = "Not Registered";
     char ans[5];
@@ -461,7 +514,6 @@ void experimental_class_unregister() { // Is not up-to-date, currently only dele
     int i, all_students;
     long int student_pos;
     long int course_pos;
-    long int class_pos;
 
     student_file = fopen("ex_student.txt", "r+b");
     course_file = fopen("ex_course.txt","r+b");
@@ -476,12 +528,12 @@ void experimental_class_unregister() { // Is not up-to-date, currently only dele
     // Get Student ID
     printf("Enter Student ID: ");
     fflush(stdin);
-    fgets(student_id_s, MAX_CLASSNAME_LENGTH, stdin);
-    student_id_s[ strcspn(student_id_s, "\n") ] = 0;
+    fgets(student_ID_s, MAX_CLASSNAME_LENGTH, stdin);
+    student_ID_s[ strcspn(student_ID_s, "\n") ] = 0;
 
     // Find Student Position
     while (fread(&st, sizeof(students), 1, student_file) == 1) {
-        if (strcmp(st.student_id, student_id_s) == 0) {
+        if (strcmp(st.student_ID, student_ID_s) == 0) {
             student_found = true;
             student_pos = ftell(student_file) - sizeof(students);
             break;
@@ -489,7 +541,7 @@ void experimental_class_unregister() { // Is not up-to-date, currently only dele
     }
 
     if (!student_found) {
-        printf("Student ID %s has not been found (>_<)!\n", student_id_s);
+        printf("Student ID %s has not been found (>_<)!\n", student_ID_s);
     }
 
     else if (strcmp(st.class_attend, no_class) == 0) {
@@ -550,7 +602,7 @@ void experimental_class_unregister() { // Is not up-to-date, currently only dele
         fclose(class_file);
         class_file = fopen("ex_class.txt", "wb");
         for (i = 0; i < all_students; i++) {
-            if (strcmp(st.student_id, cl[i].student_id) != 0) {
+            if (strcmp(st.student_ID, cl[i].student_ID) != 0) {
                 fwrite(&cl[i], sizeof(classes), 1, class_file);
             }
         }
@@ -580,7 +632,7 @@ void experimental_view_class() { // Implemented Student, Course, Class (30/10, N
     FILE *class_file, *course_file;
     classes cl;
     courses  cs;
-    char course_id_s[MAX_ID_LENGTH];
+    char course_ID_s[MAX_ID_LENGTH];
     int enrolled_count = 0;
     bool course_found = false;
 
@@ -596,19 +648,19 @@ void experimental_view_class() { // Implemented Student, Course, Class (30/10, N
 
     printf("Enter Class ID to view enrollment: ");
     fflush(stdin);
-    fgets(course_id_s, MAX_ID_LENGTH, stdin);
-    course_id_s[ strcspn(course_id_s, "\n") ] = 0;
+    fgets(course_ID_s, MAX_ID_LENGTH, stdin);
+    course_ID_s[ strcspn(course_ID_s, "\n") ] = 0;
 
     // Find class
     while (fread(&cs, sizeof(courses), 1, course_file) == 1) {
-        if (strcmp(cs.course_id, course_id_s) == 0) {
+        if (strcmp(cs.course_ID, course_ID_s) == 0) {
             course_found = true;
             break;
         }
     }
 
     if (!course_found) {
-        printf("Class ID [ %s ] has not been found (>~<)!\n", course_id_s);
+        printf("Class ID [ %s ] has not been found (>~<)!\n", course_ID_s);
     }
 
     else {
@@ -617,10 +669,10 @@ void experimental_view_class() { // Implemented Student, Course, Class (30/10, N
                "No.", "Student-ID", "Full-Name", "Class");
         printf("----------------------------------------------------------\n");
         while (fread(&cl, sizeof(classes), 1, class_file) == 1) {
-            if (strcmp(cl.course_id, cs.course_id) == 0) {
+            if (strcmp(cl.course_ID, cs.course_ID) == 0) {
                 enrolled_count++;
                 cl.student_no = enrolled_count;
-                printf("%-5d %-15s %-30s %-30s\n", cl.student_no, cl.student_id, cl.student_name, cl.class_name);
+                printf("%-5d %-15s %-30s %-30s\n", cl.student_no, cl.student_ID, cl.student_name, cl.class_name);
                 if (enrolled_count % 10 == 0) {
                     printf("----------------------------------------------------------\n");
                 }
@@ -629,10 +681,10 @@ void experimental_view_class() { // Implemented Student, Course, Class (30/10, N
 
         for (int i = 0; i < cs.total_class; i++) {
             if (i < cs.total_class - 1) {
-                printf("\nTotal Student(s) in Class %s_0%d: %d Student(s)", cs.course_id, i + 1, 10);
+                printf("\nTotal Student(s) in Class %s_0%d: %d Student(s)", cs.course_ID, i + 1, 10);
             }
             else {
-                printf("\nTotal Student(s) in class %s_0%d: %d Student(s)", cs.course_id, i + 1, enrolled_count - 10 * i);
+                printf("\nTotal Student(s) in class %s_0%d: %d Student(s)", cs.course_ID, i + 1, enrolled_count - 10 * i);
             }
         }
 
@@ -652,7 +704,7 @@ void experimental_calculate_tuition() {
     FILE *student_file, *course_file;
     students st;
     courses  cs;
-    char student_id_s[MAX_ID_LENGTH];
+    char student_ID_s[MAX_ID_LENGTH];
     char no_class[MAX_CLASSNAME_LENGTH] = "Not Registered";
     float total_tuition = 0;
     int total_semester, total_remain;
@@ -669,19 +721,19 @@ void experimental_calculate_tuition() {
     }
     printf("Enter Student ID: ");
     fflush(stdin);
-    fgets(student_id_s, MAX_ID_LENGTH, stdin);
-    student_id_s[ strcspn(student_id_s, "\n") ] = 0;
+    fgets(student_ID_s, MAX_ID_LENGTH, stdin);
+    student_ID_s[ strcspn(student_ID_s, "\n") ] = 0;
 
     // Find Student
     while (fread(&st, sizeof(students), 1, student_file) == 1) {
-        if (strcmp(st.student_id, student_id_s) == 0) {
+        if (strcmp(st.student_ID, student_ID_s) == 0) {
             student_found = true;
             break;
         }
     }
 
     if (!student_found) {
-        printf("Student ID [ %s ] has not been found (>~<)!\n", student_id_s);
+        printf("Student ID [ %s ] has not been found (>~<)!\n", student_ID_s);
     }
     
     else if (strcmp(st.class_attend, no_class) == 0) {
@@ -743,13 +795,12 @@ void experimental_delete_student_ID() {
     students st;
     classes cl;
     courses cs;
-    char student_id_s[MAX_ID_LENGTH];
+    char student_ID_s[MAX_ID_LENGTH];
     char ans[5];
     bool student_found = false;
-    bool needs_update = false;
     bool has_class_files = true;
     int id_count = 0;
-    char student_ids_to_delete[100][MAX_ID_LENGTH];
+    char student_IDs_to_delete[100][MAX_ID_LENGTH];
 
     // Open all required files
     student_file = fopen("ex_student.txt", "rb");
@@ -787,15 +838,15 @@ void experimental_delete_student_ID() {
     // Get student ID to delete
     printf("Enter Student ID to delete: ");
     fflush(stdin);
-    fgets(student_id_s, sizeof(student_id_s), stdin);
-    student_id_s[strcspn(student_id_s, "\n")] = 0;
+    fgets(student_ID_s, sizeof(student_ID_s), stdin);
+    student_ID_s[strcspn(student_ID_s, "\n")] = 0;
 
     // Check if student exists and get confirmation
     while (fread(&st, sizeof(students), 1, student_file) == 1) {
-        if (strcmp(st.student_id, student_id_s) == 0) {
+        if (strcmp(st.student_ID, student_ID_s) == 0) {
             student_found = true;
             printf("\nStudent found:\nID: %s\nName: %s\nClass: %s\n", 
-                   st.student_id, st.student_name, st.class_attend);
+                   st.student_ID, st.student_name, st.class_attend);
             printf("\nAre you sure you want to delete this student?\n"
                    "Type 'yes' to continue or 'no' to cancel: ");
             do {
@@ -824,7 +875,7 @@ void experimental_delete_student_ID() {
     }
 
     if (!student_found) {
-        printf("Student ID [ %s ] not found (>_<)!\n", student_id_s);
+        printf("Student ID [ %s ] not found (>_<)!\n", student_ID_s);
         fclose(student_file);
         fclose(temp_student_file);
         fclose(class_file);
@@ -838,7 +889,7 @@ void experimental_delete_student_ID() {
     // Copy all records except the one to be deleted
     rewind(student_file);
     while (fread(&st, sizeof(students), 1, student_file) == 1) {
-        if (strcmp(st.student_id, student_id_s) != 0) {
+        if (strcmp(st.student_ID, student_ID_s) != 0) {
             fwrite(&st, sizeof(students), 1, temp_student_file);
         }
     }
@@ -848,12 +899,12 @@ void experimental_delete_student_ID() {
         while (fread(&cl, sizeof(classes), 1, class_file) == 1) {
             bool should_delete = false;
             for (int i = 0; i < id_count; i++) {
-                if (strcmp(cl.student_id, student_ids_to_delete[i]) == 0) {
+                if (strcmp(cl.student_ID, student_IDs_to_delete[i]) == 0) {
                     should_delete = true;
                     // Update course total students
                     rewind(course_file);
                     while (fread(&cs, sizeof(courses), 1, course_file) == 1) {
-                        if (strcmp(cs.course_id, cl.course_id) == 0) {
+                        if (strcmp(cs.course_ID, cl.course_ID) == 0) {
                             cs.total_students--;
                             cs.total_class = (cs.total_students + 9) / 10;
                             if (fseek(course_file, -(long)sizeof(courses), SEEK_CUR) == 0) {
@@ -909,7 +960,7 @@ void experimental_delete_student_name() { //same as ID
     classes cl;
     courses cs;
     char student_name_s[MAX_NAME_LENGTH];
-    char student_ids_to_delete[100][MAX_ID_LENGTH];
+    char student_IDs_to_delete[100][MAX_ID_LENGTH];
     int id_count = 0;
     char ans[5];
     bool student_found = false;
@@ -954,10 +1005,10 @@ void experimental_delete_student_name() { //same as ID
     while (fread(&st, sizeof(students), 1, student_file) == 1) {
         if (strcmp(st.student_name, student_name_s) == 0) {
             student_found = true;
-            strcpy(student_ids_to_delete[id_count], st.student_id);
+            strcpy(student_IDs_to_delete[id_count], st.student_ID);
             id_count++;
             printf("\nFound student:\nID: %s\nName: %s\nClass: %s\n", 
-                   st.student_id, st.student_name, st.class_attend);
+                   st.student_ID, st.student_name, st.class_attend);
         }
     }
 
@@ -1010,7 +1061,7 @@ void experimental_delete_student_name() { //same as ID
     while (fread(&st, sizeof(students), 1, student_file) == 1) {
         bool should_delete = false;
         for (int i = 0; i < id_count; i++) {
-            if (strcmp(st.student_id, student_ids_to_delete[i]) == 0) {
+            if (strcmp(st.student_ID, student_IDs_to_delete[i]) == 0) {
                 should_delete = true;
                 deleted_count++;
                 break;
@@ -1025,12 +1076,12 @@ void experimental_delete_student_name() { //same as ID
         while (fread(&cl, sizeof(classes), 1, class_file) == 1) {
             bool should_delete = false;
             for (int i = 0; i < id_count; i++) {
-                if (strcmp(cl.student_id, student_ids_to_delete[i]) == 0) {
+                if (strcmp(cl.student_ID, student_IDs_to_delete[i]) == 0) {
                     should_delete = true;
                     // Update course total students
                     rewind(course_file);
                     while (fread(&cs, sizeof(courses), 1, course_file) == 1) {
-                        if (strcmp(cs.course_id, cl.course_id) == 0) {
+                        if (strcmp(cs.course_ID, cl.course_ID) == 0) {
                             cs.total_students--;
                             cs.total_class = (cs.total_students + 9) / 10;
                             if (fseek(course_file, -(long)sizeof(courses), SEEK_CUR) == 0) {
@@ -1080,7 +1131,7 @@ void experimental_delete_course_ID() {
     courses cs;
     students st;
     classes cl;
-    char course_id_s[MAX_ID_LENGTH];
+    char course_ID_s[MAX_ID_LENGTH];
     char ans[5];
     bool course_found = false;
     char no_class[MAX_CLASSNAME_LENGTH] = "Not Registered";
@@ -1123,22 +1174,22 @@ void experimental_delete_course_ID() {
 
     printf("Enter Course ID to delete: ");
     fflush(stdin);
-    fgets(course_id_s, sizeof(course_id_s), stdin);
-    course_id_s[strcspn(course_id_s, "\n")] = 0;
+    fgets(course_ID_s, sizeof(course_ID_s), stdin);
+    course_ID_s[strcspn(course_ID_s, "\n")] = 0;
 
     while (fread(&cs, sizeof(courses), 1, course_file) == 1) {
-        if (strcmp(cs.course_id, course_id_s) == 0) {
+        if (strcmp(cs.course_ID, course_ID_s) == 0) {
             course_found = true;
             printf("\nFound course:\nID: %s\nName: %s\nTuition: %d\n"
                    "Total Students: %d\nTotal Classes: %d\n", 
-                   cs.course_id, cs.course_name, cs.tuition,
+                   cs.course_ID, cs.course_name, cs.tuition,
                    cs.total_students, cs.total_class);
             break;
         }
     }
 
     if (!course_found) {
-        printf("Course ID [ %s ] not found (>_<)!\n", course_id_s);
+        printf("Course ID [ %s ] not found (>_<)!\n", course_ID_s);
         fclose(course_file);
         fclose(temp_course_file);
         remove("temp_course.txt");
@@ -1182,7 +1233,7 @@ void experimental_delete_course_ID() {
 
     rewind(course_file);
     while (fread(&cs, sizeof(courses), 1, course_file) == 1) {
-        if (strcmp(cs.course_id, course_id_s) != 0) {
+        if (strcmp(cs.course_ID, course_ID_s) != 0) {
             fwrite(&cs, sizeof(courses), 1, temp_course_file);
         }
     }
@@ -1197,7 +1248,7 @@ void experimental_delete_course_ID() {
         }
 
         while (fread(&cl, sizeof(classes), 1, class_file) == 1) {
-            if (strcmp(cl.course_id, course_id_s) != 0) {
+            if (strcmp(cl.course_ID, course_ID_s) != 0) {
                 fwrite(&cl, sizeof(classes), 1, temp_class_file);
             }
         }

@@ -404,7 +404,7 @@ void experimental_class_register() { // Will have to Redefine this to fit new Un
         int length = snprintf(NULL, 0, "%d", cs.total_class); // Length required to convert
         char* count = (char*)malloc(length + 1); // Allocate size to new char for convert (+1 for null at END)
         snprintf(count, length + 1, "%d", cs.total_class);
-        char holder = "_0";
+        char holder[3] = "_0";
         holder[ strcspn(holder, "\n") ] = 0;
 
             // Get Course ID, Student ID, Student Name
