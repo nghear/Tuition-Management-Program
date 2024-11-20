@@ -404,16 +404,19 @@ void experimental_class_register() { // Will have to Redefine this to fit new Un
         int length = snprintf(NULL, 0, "%d", cs.total_class); // Length required to convert
         char* count = (char*)malloc(length + 1); // Allocate size to new char for convert (+1 for null at END)
         snprintf(count, length + 1, "%d", cs.total_class);
+        char holder = "_0";
+        holder[ strcspn(holder, "\n") ] = 0;
 
             // Get Course ID, Student ID, Student Name
         strcpy(cl.course_id, cs.course_id);
         strcpy(cl.student_id, st.student_id);
         strcpy(cl.student_name, st.student_name);
 
-            // Get new Class Name
+            // Get new Class Name (This WILL be reworked once again due to the demand of create seperate class,
+            // but it will stay here temp for now).
         strcpy(cl.class_name, cs.course_id); // Copy Class Name into Course ID (ex: BAS)
-        appendChar(cl.class_name, "_0"); // Append into Class Name, C++ will give warning as direct value is unsafe (ex: BAS_0)
-        appendChar(cl.class_name, count); // Append class number into Class Name (ex: if cs.total_class = 1 then BAS_01)
+        appendChar(cl.class_name, holder); // No more C++ warning, yippie
+        appendChar(cl.class_name, count); // Append class number into Class Name (ex: IF cs.total_class = 1 then BAS_01)
         cl.class_name[ strcspn(cl.class_name, "\n") ] = 0;
 
         // Update Class Record

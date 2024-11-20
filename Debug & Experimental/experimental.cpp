@@ -60,11 +60,11 @@ typedef struct { // old classes renamed, same function (30/10)
 } courses;
 
 typedef struct {
+    int student_no;
     char course_id[MAX_ID_LENGTH];
     char student_id[MAX_ID_LENGTH];
     char student_name[MAX_NAME_LENGTH];
     char class_name[MAX_CLASSNAME_LENGTH];
-    int student_no;
 } classes;
 
 void experimental_insert_student() {
@@ -287,7 +287,7 @@ void experimental_print_course_list() {
     system("cls");
 }
 
-void experimental_class_register() { // Still has that weird extra 1 key bug (30/10, N)
+void experimental_class_register() { // that one bug was fixed by using binary open (Forgor to mention this, 2/11, N)
     FILE *student_file, *course_file, *class_file;
     students st;
     courses cs;
@@ -396,6 +396,7 @@ void experimental_class_register() { // Still has that weird extra 1 key bug (30
     else {
         // Register Process (30/10)
         strcpy(st.class_attend, cs.course_name);
+        st.class_attend[ strcspn(st.class_attend, "\n") ] = 0;
 
             // Get new Total Student(s) & Total Class(es)
         cs.total_students = cs.total_students + 1;
@@ -431,7 +432,7 @@ void experimental_class_register() { // Still has that weird extra 1 key bug (30
     
         // Update Course Record
         fseek(course_file, course_pos, SEEK_SET);
-        fwrite(&cs, sizeof(courses), 1, course_file); // You're here
+        fwrite(&cs, sizeof(courses), 1, course_file);
 
         printf("\nSuccessfully Registered Student %s for class %s ( =^.^=)!\n", st.student_name, st.class_attend);
     }
@@ -451,19 +452,20 @@ void experimental_class_unregister() { // Is not up-to-date, currently only dele
     FILE *student_file, *course_file, *class_file;
     students st;
     courses cs;
-    classes cl;
+    classes cl[100];
     char student_id_s[MAX_ID_LENGTH];
     char course_name_s[MAX_CLASSNAME_LENGTH];
     char no_class[MAX_CLASSNAME_LENGTH] = "Not Registered";
     char ans[5];
     bool student_found = false;
+    int i, all_students;
     long int student_pos;
     long int course_pos;
     long int class_pos;
 
     student_file = fopen("ex_student.txt", "r+b");
     course_file = fopen("ex_course.txt","r+b");
-    class_file = fopen("ex_class.txt", "r+b");
+    class_file = fopen("ex_class.txt", "rb");
     
     if (student_file == NULL || course_file == NULL || class_file == NULL) {
         printf("Error opening file (>_<)!\n");
@@ -477,7 +479,7 @@ void experimental_class_unregister() { // Is not up-to-date, currently only dele
     fgets(student_id_s, MAX_CLASSNAME_LENGTH, stdin);
     student_id_s[ strcspn(student_id_s, "\n") ] = 0;
 
-    // Find student
+    // Find Student Position
     while (fread(&st, sizeof(students), 1, student_file) == 1) {
         if (strcmp(st.student_id, student_id_s) == 0) {
             student_found = true;
@@ -514,7 +516,14 @@ void experimental_class_unregister() { // Is not up-to-date, currently only dele
         printf("\nInvalid Input (>~<)! Please type either yes or no: ");
         } while (true);
 
-        // Find in Course
+        // Count all Students That are registered
+        all_students = 0;
+        while (fread(&cs, sizeof(courses), 1, course_file) == 1) {
+            all_students = all_students + cs.total_students;
+        }
+        rewind(course_file);
+
+        // Find Course Position
         while (fread(&cs, sizeof(courses), 1, course_file) == 1) {
             if (strcmp(cs.course_name, st.class_attend) == 0) {
                 course_pos = ftell(course_file) - sizeof(courses);
@@ -522,30 +531,37 @@ void experimental_class_unregister() { // Is not up-to-date, currently only dele
             }
         }
 
-        // Find in Class
-        while (fread(&cl, sizeof(classes), 1, class_file) == 1) {
-            if (strcmp(cl.course_id, cs.course_id) == 0) {
-                class_pos = ftell(class_file) - sizeof(classes);
-                break;
-            }
+        for (i = 0; i < all_students; i++) {
+            fread(&cl[i], sizeof(classes), 1, class_file);
         }
+        rewind(class_file);
 
         // Unregister the class
         strcpy(course_name_s, st.class_attend); // Copy for confirmation line.
         strcpy(st.class_attend, no_class);
 
+
         cs.total_students = cs.total_students - 1;
         if (cs.total_students % 10 == 0) {
             cs.total_class = cs.total_class - 1;
         }
-
         
+        // Update Class Record
+        fclose(class_file);
+        class_file = fopen("ex_class.txt", "wb");
+        for (i = 0; i < all_students; i++) {
+            if (strcmp(st.student_id, cl[i].student_id) != 0) {
+                fwrite(&cl[i], sizeof(classes), 1, class_file);
+            }
+        }
 
         // Update Student Record
         fseek(student_file, student_pos, SEEK_SET);
         fwrite(&st, sizeof(students), 1, student_file);
 
         // Update Course Record
+        fseek(course_file, course_pos, SEEK_SET);
+        fwrite(&cs, sizeof(courses), 1, course_file);
 
         printf("\nSuccessfully removed Student %s from class %s ( =^.^=)!\n", st.student_name, course_name_s);
     }
