@@ -123,6 +123,7 @@ void experimental_insert_student() {
 
     fclose(file);
 
+    printf("\n");
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
@@ -139,6 +140,7 @@ void experimental_print_students_list() {
     if (file == NULL) {
         printf("Error opening file or file doesn't exist (>_<)!\n");
 
+        printf("\n");
         printf("                        (\\(\\ \n");
         printf("Press any key to return ( -.-) \n");
         getch();
@@ -169,6 +171,7 @@ void experimental_print_students_list() {
 
     fclose(file);
 
+    printf("\n");
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
@@ -230,6 +233,7 @@ void experimental_insert_course() {
 
     fclose(file);
 
+    printf("\n");
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
@@ -246,6 +250,7 @@ void experimental_print_course_list() {
     if (file == NULL) {
         printf("Error opening file or file doesn't exist (>_<)!\n");
 
+        printf("\n");
         printf("                        (\\(\\ \n");
         printf("Press any key to return ( -.-) \n");
         getch();
@@ -275,6 +280,7 @@ void experimental_print_course_list() {
 
     fclose(file);
 
+    printf("\n");
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
@@ -434,6 +440,7 @@ void experimental_class_register() { // Still has that weird extra 1 key bug (30
     fclose(course_file);
     fclose(class_file);
 
+    printf("\n");
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
@@ -471,7 +478,7 @@ void experimental_class_unregister() { // Is not up-to-date, currently only dele
     student_id_s[ strcspn(student_id_s, "\n") ] = 0;
 
     // Find student
-    while (fread(&st, sizeof(students), 1, file) == 1) {
+    while (fread(&st, sizeof(students), 1, student_file) == 1) {
         if (strcmp(st.student_id, student_id_s) == 0) {
             student_found = true;
             student_pos = ftell(student_file) - sizeof(students);
@@ -543,7 +550,10 @@ void experimental_class_unregister() { // Is not up-to-date, currently only dele
         printf("\nSuccessfully removed Student %s from class %s ( =^.^=)!\n", st.student_name, course_name_s);
     }
 
-    fclose(file);
+    fclose(student_file);
+    fclose(course_file);
+    fclose(class_file);
+    printf("\n");
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
@@ -615,6 +625,7 @@ void experimental_view_class() { // Implemented Student, Course, Class (30/10, N
 
     fclose(class_file);
     fclose(course_file);
+    printf("\n");
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
@@ -702,6 +713,7 @@ void experimental_calculate_tuition() {
 
     fclose(student_file);
     fclose(course_file);
+    printf("\n");
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
@@ -867,6 +879,7 @@ void experimental_delete_student_ID() {
 
     printf("\nStudent successfully deleted ( =^.^=)!\n");
 
+    printf("\n");
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
@@ -1037,6 +1050,7 @@ void experimental_delete_student_name() { //same as ID
 
     printf("\n%d student(s) successfully deleted ( =^.^=)!\n", deleted_count);
 
+    printf("\n");
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
@@ -1196,6 +1210,7 @@ void experimental_delete_course_ID() {
         printf("%d student(s) have been unregistered from the course.\n", deleted_count);
     }
 
+    printf("\n");
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
@@ -1206,22 +1221,27 @@ void sub_student() {
     system("cls");
     int choice_student;
     do {
-        printf("\n\t\t ===== Study Center Management System =====\n"
-               "\t\t\t === Student Management ===\n\n"
-               "\t1: Create a new Student\n"
-               "\t2: List out all current student(s)\n"
-               "\t3: Check Student's Tuition Fee\n"
-               "\t4: Delete a Student by ID\n"
-               "\t5: Delete a Student by Name\n"
-               "\t6: Return to Main Menu"
-               "\nTo select, please enter the according number from 1 to 6\n");
-                
-        while (printf("\nChoice: ") && scanf("%d", &choice_student) != 1) {
+        printf("\n");
+        printf("\t+========================================================+\n");
+        printf("\t|          Study Center Management System                |\n");
+        printf("\t|========================================================|\n");
+        printf("\t|                  Student Management                    |\n");
+        printf("\t+========================================================+\n\n");
+        printf("\n\t\tSelect your choice:\n\n");
+        printf("\t\t* 1: Create a new Student\n");
+        printf("\t\t* 2: List out all current student(s)\n");
+        printf("\t\t* 3: Check Student's Tuition Fee\n");
+        printf("\t\t* 4: Delete a Student by ID\n");
+        printf("\t\t* 5: Delete a Student by Name\n");
+        printf("\t\t* 6: Return to Main Menu\n");
+        printf("\t+------------------------------------------------------+\n");
+        printf("\t  Enter your choice (1-6): ");
+
+        while (scanf("%d", &choice_student) != 1) {
             while (getchar() != '\n');
-            printf("Invalid data type! Please enter numeric data only!\n"
-                   "Press any key to return.");
+            printf("\t  (!_!) Invalid input! Please enter a number (1-6): ");
             _getch();
-            eraseLines(4);
+            eraseLines(2);
         }
 
         switch(choice_student) {
@@ -1260,23 +1280,28 @@ void sub_class() {
     int choice_class;
     system("cls");
     do {
-        printf("\n\t\t ===== Study Center Management System =====\n"
-               "\t\t\t === Class Management ===\n\n"
-               "\t1: Create a new Course\n"
-               "\t2: List out all existing Course(s)\n"
-               "\t3: Register a new Student into Class\n"
-               "\t4: Remove an old student from Class\n"
-               "\t5: View Class's List of Student(s)\n"
-               "\t6: Delete a Course by ID\n"
-               "\t7: Return to Main Menu"
-               "\nTo select, please enter the according number from 1 to 7\n");
-                
-        while (printf("\nChoice: ") && scanf("%d", &choice_class) != 1) {
+        printf("\n");
+        printf("\t+========================================================+\n");
+        printf("\t|          Study Center Management System                |\n");
+        printf("\t|========================================================|\n");
+        printf("\t|                  Class Management                      |\n");
+        printf("\t+========================================================+\n\n");
+        printf("\n\t\tSelect your choice:\n\n");
+        printf("\t\t* 1: Create a new Course\n"
+               "\t\t* 2: List out all existing Course(s)\n"
+               "\t\t* 3: Register a new Student into Class\n"
+               "\t\t* 4: Remove an old student from Class\n"
+               "\t\t* 5: View Class's List of Student(s)\n"
+               "\t\t* 6: Delete a Course by ID\n"
+               "\t\t* 7: Return to Main Menu\n");
+        printf("\t+--------------------------------------------------------+\n");
+        printf("\t  Enter your choice (1-7): ");
+
+        while (scanf("%d", &choice_class) != 1) {
             while (getchar() != '\n');
-            printf("Invalid data type! Please enter number only!\n"
-                   "Press any key to return ( ='.'=) \n");
+            printf("\t  (!_!) Invalid input! Please enter a number (1-7): ");
             _getch();
-            eraseLines(4);
+            eraseLines(2);
         }
 
         switch(choice_class) {
@@ -1314,23 +1339,32 @@ void sub_class() {
     return;
 }
 
-main() {
-    int choice_main;
+//menu for head admin
+void sub_head_admin() {
+    int choice_head_admin;
+    system("cls");
     do {
-        printf("\n\t\t ===== Student Data Management System =====\n\n"
-               "\t1: Student Management\n"
-               "\t2: Class Management\n"
-               "\t3: Exit System"
-               "\nEnter your choice (1 to 3)\n");
+        printf("\n");
+        printf("\t+========================================================+\n");
+        printf("\t|          Study Center Management System                |\n");
+        printf("\t|========================================================|\n");
+        printf("\t|                  Student Management                    |\n");
+        printf("\t+========================================================+\n\n");
+        printf("\n\t\tSelect your choice:\n\n");
+        printf("\t\t* 1: Student related\n"
+               "\t\t* 2: Class related\n"
+               "\t\t* 3: Return to Main Menu\n");
+        printf("\t+--------------------------------------------------------+\n");
+        printf("\t  Enter your choice (1-3): ");
 
-        while (printf("\nChoice: ") && scanf("%d", &choice_main) != 1) {
+        while (scanf("%d", &choice_head_admin) != 1) {
             while (getchar() != '\n');
-            printf("Please enter again (>~<)!\n");
+            printf("\t  (!_!) Invalid input! Please enter a number (1-3): ");
             _getch();
-            eraseLines(3);
+            eraseLines(2);
         }
-
-        switch(choice_main) {
+    
+        switch(choice_head_admin) {
             case 1:
                 sub_student();
                 break;
@@ -1338,306 +1372,62 @@ main() {
                 sub_class();
                 break;
             case 3:
-                printf("Exiting System... (-_-)zzz\n");
-                exit(0);
+                printf("\nReturning to Main Menu.\n"
+                       "Press any key to return ( ='.'=) \n");
+                getch();
+                system("cls");
+                break;  
             default:
                 printf("From 1 to 3 only (>_<)!\n");
                 getch();
                 system("cls");
                 break;
         }
-    } while (choice_main != 3);
+    } while (choice_head_admin != 3);
+    return;
 }
 
+main() {
+    int choice_main;
+    do {
+        printf("\n\t+=======================================================+\n");
+        printf("\t|          Extracurricular Center Management System     |\n");
+        printf("\t|=======================================================|\n");
+        printf("\t|                      Main Menu                        |\n");
+        printf("\t+=======================================================+\n\n");
+        printf("\t\tSelect your role:\n\n");
+        printf("\t\t* 1: Head Admin\n");
+        printf("\t\t* 2: Accountant\n");
+        printf("\t\t* 3: Student Management Officer\n");
+        printf("\t\t* 4: Exit System\n");
+        printf("\t+-------------------------------------------------------+\n");
+        printf("\t  Enter your choice (1-4): ");
 
-/* Old Function (no longer in use, 29/10)
-void Insert_Students_List() {
-    int n, r; // n for new list counter, r for old counter
-    int pos = 0; // start of new list counter
-    long lsize; // file size check
-    char student_id[15];
-    char student_name[30];
-    students st;
-    students temp[100]; // Temp data to save old list
-    FILE *write1, *read1, *file2;
-    read1 = fopen("students_input.txt", "r");
-    file2 = fopen("students.txt", "a");
-
-    printf("\nType the number of students you want to insert: ");
-    scanf("%d", &n);
-
-    //Obtain file size
-    fseek(read1, 0, SEEK_END);
-    lsize = ftell(read1);
-    rewind(read1);
-
-    if (lsize == 0) { // If file is empty
-        fclose(read1);
-    }
-    else {
-        fread(&r, sizeof(int),1, read1); // Save previous data to temp
-        for (int a = 0; a < r; a++) {
-            fread(&temp[a], sizeof(students), 1, read1);
-            pos++; // move counter from the start to end of old list
-            n++; // counter of old and new insert combined
+        while (scanf("%d", &choice_main) != 1) {
+            while (getchar() != '\n');
+            printf("\t  Invalid input (>_<)! Please enter a number (1-4): ");
+            _getch();
+            eraseLines(2);
         }
-        fclose(read1);
-    }
 
-    //Because "w" overwrites ALL data in file, so you have to call it AFTER saving all original data to temp
-    //(I wasted 2 hours on this part).
-    write1 = fopen("students_input.txt", "w");
-
-    if (write1 == NULL) {
-        printf("Khong mo duoc file (>_<)!");
-        exit(0);
-    }
-
-    //Despite the repetition, It is also important to rewrite previous data
-    //For 'fread' is based on int n (the counter) and "a"(append) does not continue the counter.
-    //Do try to find other clean methods that resolve around "a"(append), otherwise this stays the same.
-    fwrite(&n, sizeof(int), 1, write1);
-    for (int i = 0; i < pos; i++) {
-        fwrite(&temp[i], sizeof(students), 1, write1);
-    }
-
-    for (pos; pos < n; pos++) { // Continue off from the end of old list
-        printf("\n\nEnter Student %d's Information\n", pos+1);
-
-        printf("Enter Student's ID: ");
-        fflush(stdin);
-        fgets(st.student_id, sizeof(student_id), stdin);
-        
-
-        printf("Enter Student's Name: ");
-        fflush(stdin);
-        fgets(st.student_name, sizeof(student_name), stdin);
-        
-
-
-        fwrite(&st, sizeof(students), 1, write1); // Write first THEN delete null at end of char/string or else strcmp doesn't work.
-        st.student_id[strcspn(st.student_id, "\n")] = 0;
-        st.student_name[strcspn(st.student_name, "\n")] = 0;
-        fprintf(file2, "%d.ID: %s\n| Name: %s\n\n", pos+1, st.student_id, st.student_name); // Readable text file
-    }
-    fclose(write1);
-    fclose(file2);
-
-    printf("Press any key to return.");
-    getch();
-    system("cls");
+        switch(choice_main) {
+            case 1:
+                sub_head_admin();
+                break;
+            case 2:
+                //sub_accountant();
+                break;
+            case 3:
+                //sub_student_management_officer();
+                break;
+            case 4: 
+                printf("\nExiting System... (-_-)zzz\n");
+                exit(0);
+            default:
+                printf("\t  Invalid input (>_<)! Please select options 1-4 only!\n");
+                getch();
+                system("cls");
+                break;
+        }
+    } while (choice_main != 4);
 }
-
-void Insert_Subjects_list() { // The same as Students List, just different data
-    int n, r;
-    int pos = 0;
-    long lsize;
-    char course_id[15];
-    char course_name[30];
-    int tuition;
-    setlocale(LC_NUMERIC, ""); // Number division by 1,000 (depend on system to work or not)
-    courses cs;
-    courses temp[100];
-    FILE *write1, *read1, *file2;
-    read1 = fopen("subjects_input.txt", "r");
-    file2 = fopen("subjects.txt", "a");
-
-    printf("Type the number of Subject you want to add: ");
-    scanf("%d", &n);
-
-    //Obtain file size
-    fseek(read1, 0, SEEK_END);
-    lsize = ftell(read1);
-    rewind(read1);
-
-    if (lsize == 0) { // If file is empty
-        fclose(read1);
-    }
-    else {
-        fread(&r, sizeof(int), 1, read1); // Save previous data to temp
-        for (int a = 0; a < r; a++) {
-            fread(&temp[a], sizeof(courses), 1, read1);
-            pos++;
-            n++;
-        }
-        fclose(read1);
-    }
-
-    write1 = fopen("subjects_input.txt", "w");
-
-    if (write1 == NULL) {
-        printf("Can't open file (>_<)!");
-        exit(0);
-    }
-
-    fwrite(&n, sizeof(int), 1, write1);
-    for (int i = 0; i < pos; i++) {
-        fwrite(&temp[i], sizeof(courses), 1, write1);
-    }
-
-    for(pos; pos < n; pos++) {
-        printf("\n\nInsert Subject %d's Information\n", pos+1);
-
-        printf("Enter class ID: ");
-        fflush(stdin);
-        fgets(cs.course_id, sizeof(course_id), stdin);
-
-        printf("Enter Class Name: ");
-        fflush(stdin);
-        fgets(cs.course_name, sizeof(course_name), stdin);
-
-        printf("Enter Class's Tuition Cost: ");
-        scanf("%d", &cs.tuition);
-
-        fwrite(&cs, sizeof(courses), 1, write1); // Write first, delete null after.
-        cs.course_id[strcspn(cs.course_id, "\n")] = 0;
-        cs.course_name[strcspn(cs.course_name, "\n")] = 0;
-        fprintf(file2, "%d.ID:%s\n|Subject: %s\n| Tuition: %'d\n\n", pos+1, cs.course_id, cs.course_name, cs.tuition);
-    }
-    fclose(write1);
-    fclose(file2);
-
-    printf("Press any key to return.");
-    _getch();
-    system("cls");
-}
-
-void Register_Subject() { // Not finished
-    int i, n, m, k;
-    int s1 = -1; int s2 = -1;
-    char search_st[16];
-    char search_class[16];
-    FILE *file1, *file2, *file3;
-    students st[100]; courses cs[100]; check ck;
-    file1 = fopen("students_input.txt", "r");
-    file2 = fopen("subjects_input.txt", "r");
-    check *t = new check();
-    check *head = nullptr;
-
-    fread(&n, sizeof(int), 1, file1);
-    for (i = 0; i < n; i++) {
-        fread(&st[i], sizeof(students), 1, file1);
-    }
-    fclose(file1);
-
-    fread(&m, sizeof(int), 1 , file2);
-    for (i = 0; i < m; i++) {
-        fread(&cs[i], sizeof(courses), 1, file2);
-    }
-    fclose(file2);
-
-    printf("Enter Student's ID: ");
-    fflush(stdin);
-    fgets(search_st,sizeof(search_st), stdin);
-    for (i = 0; i < n; i++) { // Search for the student's ID position
-        if (strcmp(st[i].student_id, search_st) == 0) {
-            s1 = i; // s is the current student's ID position
-            printf("\nSelected ID: %s", st[s1].student_id);
-            printf("Student's Name: %s", st[s1].student_name);
-        }
-    }
-    if (s1 < 0) {
-        printf("Invalid ID. Press any key to return");
-    }
-    else {
-        printf("\nEnter the Class's ID registering to: ");
-        fflush(stdin);
-        fgets(search_class, sizeof(search_class), stdin);
-        for (i = 0; i < m; i++) { // Search for Class's ID position
-            if (strcmp(cs[i].course_id, search_class) == 0) {
-                s2 = i; // s is the current Class's ID position
-                printf("\nSelected Class: %s", cs[s2].course_id);
-
-            }
-        }
-        if (s2 < 0) {
-            printf("Invalid ID. Press any key to return");
-        }
-        else {
-            // Idea 2: Create a new struct specifically defining
-            // student's ID and Class's ID only
-            strcpy(ck.id_st_link, st[s1].student_id);
-            strcpy(ck.id_class_link, cs[s2].course_id);
-            file3 = fopen("link.txt", "w");
-            fwrite(&ck, sizeof(check), 1, file3);
-            fclose(file3);
-        }
-    }
-    file3 = fopen("link.txt", "r");
-    fread(&ck, sizeof(check), 1, file3);
-    fclose(file3);
-    printf("\n%s", ck.id_st_link);
-    printf("\n%s", ck.id_class_link);
-    _getch();
-}
-
-void Print_Students_List() {
-    FILE *file;
-    int n;
-    students st[100];
-    long lsize;
-    system("cls");
-    file = fopen("ex_student.txt", "rb");
-
-    //Obtain file size
-        fread(&n, sizeof(int), 1, file);
-        for (int i = 0; i < n; i++) {
-            fread(&st[i], sizeof(students), 1, file);
-        }
-        fclose(file);
-        printf("\t\t\tList of Students\n");
-        gotoxy(2,3);  printf("STT"); 
-        gotoxy(10,3); printf("ID");
-        gotoxy(25,3); printf("Full Name");
-        for(int i = 0; i < n; i++) {
-            gotoxy(2, i+4);  printf("%d", i+1);
-            gotoxy(10, i+4); printf("%s", st[i].student_id);
-            gotoxy(25, i+4); printf("%s", st[i].student_name);
-            gotoxy(50, i+4); printf("%f", st[i].tuition_paid);
-            gotoxy(75, i+4); printf("%s", st[i].class_attend);
-        }
-    
-    printf("\n\nPress any key to return.");
-    _getch();
-    system("cls");
-}
-
-void Print_Subjects_List() {
-    FILE *file;
-    int n;
-    courses cs[100];
-    long lsize;
-    setlocale(LC_NUMERIC, ""); //Number Division by 1,000 (depend on system to work or not)
-    system("cls");
-    file = fopen("subjects_input.txt", "r");
-
-    //Obtain file size
-    fseek(file, 0, SEEK_END);
-    lsize = ftell(file);
-    rewind(file);
-
-    if (lsize == 0) {
-        printf("File is empty.");
-    }
-    else {
-        fread(&n, sizeof(int), 1, file);
-        for (int i = 0; i < n; i++) {
-            fread(&cs[i], sizeof(courses), 1, file);
-        }
-        fclose(file);
-        printf("\t\t\tList of Classes\n");
-        gotoxy(2,3);  printf("STT");
-        gotoxy(10,3); printf("Subject");
-        gotoxy(40,3); printf("Tuition");
-        for (int i = 0; i < n; i++) {
-            gotoxy(2, i+4);  printf("%d", i+1);
-            gotoxy(10, i+4); printf("%s", cs[i].course_name);
-            gotoxy(40, i+4); printf("%'d", cs[i].tuition);
-        }
-    }
-
-    printf("\n\nPress any key to return.");
-    _getch();
-    system("cls");
-}
-*/
