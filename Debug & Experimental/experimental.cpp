@@ -1284,29 +1284,83 @@ void experimental_delete_course_ID() {
     system("cls");
 }
 
+void sub_update_student() {
+    system("cls");
+    int choice_update_student;
+    do {
+        printf("\n");
+        printf("\t+========================================================+\n");
+        printf("\t|              Study Center Management System            |\n");
+        printf("\t|========================================================|\n");
+        printf("\t|                     Student Update                     |\n");
+        printf("\t+========================================================+\n\n");
+        printf("\n\t\tSelect your choice:\n\n");
+        printf("\t\t* 1: Change Student's Name\n");
+        printf("\t\t* 2: Change Student's Phone Number\n");
+        printf("\t\t* 3: Change Student's Email\n");
+        printf("\t\t* 4: Change Student's Class\n");
+        printf("\t\t* 5: Go Back\n");
+        printf("\t+------------------------------------------------------+\n");
+        printf("\t  Enter your choice (1-5): ");
+
+        while (scanf("%d", &choice_update_student) != 1) {
+            while (getchar() != '\n');
+            printf("\t  (!_!) Invalid input! Please enter a number (1-5): ");
+            _getch();
+            eraseLines(2);
+        }
+
+        switch(choice_update_student) {
+            case 1:
+                //experimental_Update_Student_Name();
+                break;
+            case 2:
+                //experimental_Update_Student_Phone_Number();
+                break;
+            case 3:
+                //experimental_Update_Student_Email();
+                break;
+            case 4:
+                //experimental_Update_Student_Class();
+                break;
+            case 5:
+                printf("\nReturning to Main Menu.\n"
+                       "Press any key to return ( ='.'=) \n");
+                getch();
+                system("cls");
+                break;
+            default:
+                printf("From 1 to 5 only (>~<)!\n");
+                getch();
+                system("cls");
+                break;
+        }
+    } while (choice_update_student != 5);
+    return;
+}
+
+
 void sub_student() {
     system("cls");
     int choice_student;
     do {
         printf("\n");
         printf("\t+========================================================+\n");
-        printf("\t|          Study Center Management System                |\n");
+        printf("\t|              Study Center Management System            |\n");
         printf("\t|========================================================|\n");
-        printf("\t|                  Student Management                    |\n");
+        printf("\t|                    Student Managment                   |\n");
         printf("\t+========================================================+\n\n");
         printf("\n\t\tSelect your choice:\n\n");
-        printf("\t\t* 1: Create a new Student\n");
-        printf("\t\t* 2: List out all current student(s)\n");
-        printf("\t\t* 3: Check Student's Tuition Fee\n");
-        printf("\t\t* 4: Delete a Student by ID\n");
-        printf("\t\t* 5: Delete a Student by Name\n");
-        printf("\t\t* 6: Return to Main Menu\n");
+        printf("\t\t* 1: Add new Student\n");
+        printf("\t\t* 2: Update a Student\n");
+        printf("\t\t* 3: Delete a Student\n");
+        printf("\t\t* 4: Return to Main Menu\n");
         printf("\t+------------------------------------------------------+\n");
-        printf("\t  Enter your choice (1-6): ");
+        printf("\t  Enter your choice (1-4): ");
 
         while (scanf("%d", &choice_student) != 1) {
             while (getchar() != '\n');
-            printf("\t  (!_!) Invalid input! Please enter a number (1-6): ");
+            printf("\t  (!_!) Invalid input! Please enter a number (1-4): ");
             _getch();
             eraseLines(2);
         }
@@ -1316,51 +1370,45 @@ void sub_student() {
                 experimental_insert_student();
                 break;
             case 2:
-                experimental_print_students_list();
+                sub_update_student();
                 break;
             case 3:
-                experimental_calculate_tuition();
-                break;
-            case 4:
                 experimental_delete_student_ID();
                 break;
-            case 5:
-                experimental_delete_student_name();
-                break;
-            case 6:
+            case 4:
                 printf("\nReturning to Main Menu.\n"
                        "Press any key to return ( ='.'=) \n");
                 getch();
                 system("cls");
                 break;
             default:
-                printf("From 1 to 6 only (>~<)!\n");
+                printf("From 1 to 4 only (>~<)!\n");
                 getch();
                 system("cls");
                 break;
         }
-    } while (choice_student != 6);
+    } while (choice_student != 4);
     return;
 }
 
 void sub_class() {
-    int choice_class;
     system("cls");
+    int choice_class;
     do {
         printf("\n");
         printf("\t+========================================================+\n");
-        printf("\t|          Study Center Management System                |\n");
+        printf("\t|              Study Center Management System            |\n");
         printf("\t|========================================================|\n");
-        printf("\t|                  Class Management                      |\n");
+        printf("\t|                     Class Managment                    |\n");
         printf("\t+========================================================+\n\n");
         printf("\n\t\tSelect your choice:\n\n");
-        printf("\t\t* 1: Create a new Course\n"
-               "\t\t* 2: List out all existing Course(s)\n"
-               "\t\t* 3: Register a new Student into Class\n"
-               "\t\t* 4: Remove an old student from Class\n"
-               "\t\t* 5: View Class's List of Student(s)\n"
-               "\t\t* 6: Delete a Course by ID\n"
-               "\t\t* 7: Return to Main Menu\n");
+        printf("\t\t* 1: Add new Course\n"
+               "\t\t* 2: Add new Class\n"
+               "\t\t* 3: Update a Course\n"
+               "\t\t* 4: Update a Course\n"
+               "\t\t* 5: Delete a Class\n"
+               "\t\t* 6: Delete a Course\n"
+               "\t\t* 7: Return\n");
         printf("\t+--------------------------------------------------------+\n");
         printf("\t  Enter your choice (1-7): ");
 
@@ -1376,16 +1424,16 @@ void sub_class() {
                 experimental_insert_course();
                 break;
             case 2:
-                experimental_print_course_list();
+                //experimental_insert_class();
                 break;
             case 3:
-                experimental_class_register();
+                //experimental_update_course();
                 break;
             case 4:
-                experimental_class_unregister();
+                //experimental_update_class();
                 break;
             case 5:
-                experimental_view_class();
+                //experimental_delete_class_ID();
                 break;
             case 6:
                 experimental_delete_course_ID();
@@ -1406,6 +1454,62 @@ void sub_class() {
     return;
 }
 
+void sub_view() {
+    system("cls");
+    int choice_view;
+    do {
+        printf("\n");
+        printf("\t+========================================================+\n");
+        printf("\t|              Study Center Management System            |\n");
+        printf("\t|========================================================|\n");
+        printf("\t|                     Information View                   |\n");
+        printf("\t+========================================================+\n\n");
+        printf("\n\t\tSelect your choice:\n\n");
+        printf("\t\t* 1: View Student(s)\n");
+        printf("\t\t* 2: View Course(s)\n");
+        printf("\t\t* 3: View Class(es)\n");
+        printf("\t\t* 4: View Tuition\n");
+        printf("\t\t* 5: Go Back\n");
+        printf("\t+------------------------------------------------------+\n");
+        printf("\t  Enter your choice (1-5): ");
+
+        while (scanf("%d", &choice_view) != 1) {
+            while (getchar() != '\n');
+            printf("\t  (!_!) Invalid input! Please enter a number (1-5): ");
+            _getch();
+            eraseLines(2);
+        }
+
+        switch(choice_view) {
+            case 1:
+                experimental_print_students_list();
+                break;
+            case 2:
+                experimental_print_course_list();
+                break;
+            case 3:
+                //experimental_print_class_list();
+                break;
+            case 4:
+                //experimental_print_tuition_list();
+                break;
+            case 5:
+                printf("\nReturning to Main Menu.\n"
+                       "Press any key to return ( ='.'=) \n");
+                getch();
+                system("cls");
+                break;
+            default:
+                printf("From 1 to 5 only (>~<)!\n");
+                getch();
+                system("cls");
+                break;
+        }
+    } while (choice_view != 5);
+    return;
+}
+
+
 //menu for head admin
 void sub_head_admin() {
     int choice_head_admin;
@@ -1413,20 +1517,21 @@ void sub_head_admin() {
     do {
         printf("\n");
         printf("\t+========================================================+\n");
-        printf("\t|          Study Center Management System                |\n");
+        printf("\t|              Study Center Management System            |\n");
         printf("\t|========================================================|\n");
-        printf("\t|                  Student Management                    |\n");
+        printf("\t|                       Head Admin                       |\n");
         printf("\t+========================================================+\n\n");
         printf("\n\t\tSelect your choice:\n\n");
-        printf("\t\t* 1: Student related\n"
-               "\t\t* 2: Class related\n"
-               "\t\t* 3: Return to Main Menu\n");
+        printf("\t\t* 1: Student Management\n"
+               "\t\t* 2: Class Management\n"
+               "\t\t* 3: View Info\n"
+               "\t\t* 4: Return to Main Menu\n");
         printf("\t+--------------------------------------------------------+\n");
-        printf("\t  Enter your choice (1-3): ");
+        printf("\t  Enter your choice (1-4): ");
 
         while (scanf("%d", &choice_head_admin) != 1) {
             while (getchar() != '\n');
-            printf("\t  (!_!) Invalid input! Please enter a number (1-3): ");
+            printf("\t  (!_!) Invalid input! Please enter a number (1-4): ");
             _getch();
             eraseLines(2);
         }
@@ -1439,29 +1544,33 @@ void sub_head_admin() {
                 sub_class();
                 break;
             case 3:
+                sub_view();
+                break;
+            case 4:
                 printf("\nReturning to Main Menu.\n"
                        "Press any key to return ( ='.'=) \n");
                 getch();
                 system("cls");
                 break;  
             default:
-                printf("From 1 to 3 only (>_<)!\n");
+                printf("From 1 to 4 only (>_<)!\n");
                 getch();
                 system("cls");
                 break;
         }
-    } while (choice_head_admin != 3);
+    } while (choice_head_admin != 4);
     return;
 }
 
 main() {
     int choice_main;
     do {
-        printf("\n\t+=======================================================+\n");
-        printf("\t|          Extracurricular Center Management System     |\n");
-        printf("\t|=======================================================|\n");
-        printf("\t|                      Main Menu                        |\n");
-        printf("\t+=======================================================+\n\n");
+        printf("\n");
+        printf("\t+========================================================+\n");
+        printf("\t|              Study Center Management System            |\n");
+        printf("\t|========================================================|\n");
+        printf("\t|                        Main Menu                       |\n");
+        printf("\t+========================================================+\n\n");
         printf("\t\tSelect your role:\n\n");
         printf("\t\t* 1: Head Admin\n");
         printf("\t\t* 2: Accountant\n");
