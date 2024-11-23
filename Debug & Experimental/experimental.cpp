@@ -62,11 +62,10 @@ typedef struct { // old classes renamed, same function (30/10)
 } courses;
 
 typedef struct {
-    char class_ID[MAX_ID_LENGTH];
     char course_ID[MAX_ID_LENGTH];
-    char student_ID[MAX_ID_LENGTH];
-    char student_name[MAX_NAME_LENGTH];
+    char class_ID[MAX_ID_LENGTH];
     char class_name[MAX_CLASSNAME_LENGTH];
+    int total_students; // copy from course struct (23/11, N)
     int student_no;
 } classes;
 
@@ -123,7 +122,6 @@ void experimental_insert_student() { // Added new Student's Information (21/11, 
 
         //Write new student to file
         fseek(file, 0, SEEK_END);
-        new_student.student_ID[ strcspn(new_student.student_ID, "\n") ] = 0;
         new_student.student_name[ strcspn(new_student.student_name, "\n") ] = 0;
         fwrite(&new_student, sizeof(students), 1, file);
         printf("\nStudent added sucessfully ( =^.^=). Number: %d\n", student_count + 1);
@@ -138,98 +136,7 @@ void experimental_insert_student() { // Added new Student's Information (21/11, 
     system("cls");
 }
 
-void experimental_print_students_list() { // Added Student Query for Detailed Information (21/11, N)
-    FILE *file;
-    students st;
-    int Student_Count = 0;
-    int Choice_View;
-    char ID_Search[MAX_ID_LENGTH];
-    bool Search_Check = false;
-
-    // Open the file in binary read mode
-    file = fopen("ex_student.txt", "r+b");
-    if (file == NULL) {
-        printf("Error opening file or file doesn't exist (>_<)!\n");
-
-        printf("\n");
-        printf("                        (\\(\\ \n");
-        printf("Press any key to return ( -.-) \n");
-        getch();
-        system("cls");
-        return;
-    }
-
-    system("cls");  // Clear the screen
-
-    printf("\t\t\tList of Students\n\n");
-    printf("%-5s %-15s %-30s %-30s\n", 
-           "No.", "ID", "Full Name", "Class");
-    printf("--------------------------------------------------------------------------------\n");
-
-    // Read and print each student
-    while (fread(&st, sizeof(students), 1, file) == 1) {
-        Student_Count++;
-        printf("%-5d %-15s %-30s %-30s", 
-            Student_Count, st.student_ID, st.student_name, st.class_attend);
-        printf("\n");
-    }
-
-    if (Student_Count == 0) {
-        printf("Cannot Detect any Student (>~<)\n");
-    } else {
-        printf("\nTotal number of Students: %d\n", Student_Count);
-
-        printf("\n\n1. View Detailed Information Of A Student");
-        printf("\n2. Return");
-
-        printf("\n\nEnter your choice (1-2) : ");
-
-        while (scanf("%d", &Choice_View) != 1) {
-            while (getchar() != '\n');
-            printf("\t  Invalid input (>_<)! Please enter a number (1-2): ");
-            _getch();
-            eraseLines(2);
-        }
-        switch(Choice_View) {
-            case 1:
-            do {
-                printf("\nEnter Student's ID to look: ");
-                fflush(stdin);
-                fgets(ID_Search, sizeof(ID_Search), stdin);
-                ID_Search[ strcspn(ID_Search, "\n") ] = 0;
-                rewind(file);
-                while (fread (&st, sizeof(students), 1, file) == 1) {
-                    if (strcmp(ID_Search, st.student_ID) == 0) {
-                        printf("\n\n%-30s %-30s", "ID", st.student_ID);
-                        printf("\n%-30s %-30s", "Full Name", st.student_name);
-                        printf("\n%-30s %-10d", "Phone Number", st.student_number);
-                        printf("\n%-30s %-30s", "Email", st.student_email);
-                        printf("\n%-30s %-30s", "Class", st.class_attend);
-                        printf("\n%-30s %-10f", "Tuition Paid", st.tuition_paid);
-                        Search_Check = true;
-                    }
-                }
-                if (!Search_Check) {
-                    printf("\nStudent ID [ %s ] was not found.", ID_Search);
-                }
-                printf("\n\nTo do another detailed search, press 'y'.");
-                printf("\nPress any other key to return.");
-            } while (getche() == 'y');
-            case 2:
-            break;
-        }
-    }
-
-    fclose(file);
-
-    printf("\n");
-    printf("                        (\\(\\ \n");
-    printf("Press any key to return ( -.-) \n");
-    getch();
-    system("cls");
-}
-
-void experimental_insert_course() {
+void experimental_insert_course() { // Minor adjustment (23/11, N)
     FILE *file;
     courses new_course, existing_course;
     int course_count = 0;
@@ -243,6 +150,7 @@ void experimental_insert_course() {
     }
 
     // Get new class information
+    system("cls");
     printf("\n\tEntering new Course's Information\n");
     printf("Enter Course ID: ");
     fflush(stdin);
@@ -270,16 +178,204 @@ void experimental_insert_course() {
         printf("Enter Course's Tuition Cost: ");
         scanf("%d", &new_course.tuition);
 
-        new_course.total_students = 0;
-        new_course.total_class = 0;
+        printf("Enter total amount of students can be in one class: ");
+        scanf("%d", &new_course.total_students);
 
         //Write new class to file
         fseek(file, 0, SEEK_END);
-        new_course.course_ID[ strcspn(new_course.course_ID, "\n") ] = 0;
         new_course.course_name[ strcspn(new_course.course_name, "\n") ] = 0;
         fwrite(&new_course, sizeof(courses), 1, file);
 
         printf("\nCourse added sucessfully ( =^.^=). Number: %d\n", course_count + 1);
+    }
+
+    fclose(file);
+
+    printf("\n");
+    printf("                        (\\(\\ \n");
+    printf("Press any key to return ( -.-) \n");
+    getch();
+    system("cls");
+}
+
+void experimental_insert_class() { // New Function to add class indepentdently (23/11, N)
+    FILE *course_file, *class_file;
+    courses cs;
+    classes new_class, existing_class;
+    int class_count = 0;
+    char course_search[30];
+    bool course_found = false;
+    bool class_found = false;
+
+    // Open the file in Append and Read mode
+    course_file = fopen("ex_course.txt", "r+b");
+    class_file = fopen("ex_class.txt", "a+b");
+    if (course_file == NULL || class_file == NULL) {
+        printf("Error Opening File (>_<)!\n");
+        return;
+    }
+
+    // Get Course ID
+    system("cls");
+    printf("\n\tCreating new Class for a Course\n");
+    printf("Enter Course ID: ");
+    fflush(stdin);
+    fgets(course_search, sizeof(course_search), stdin);
+    course_search[ strcspn(course_search,"\n") ] = 0;
+
+    // Query for Course
+    while ( fread(&cs, sizeof(courses), 1, course_file) == 1) {
+        if (strcmp(cs.course_ID, course_search) == 0) {
+            course_found = true;
+            break;
+        }
+    }
+
+    // If course don't exist, return.
+    if (!course_found) {
+        printf("Error: Course ID [ %s ] was not found!\n", course_search);
+
+        fclose(course_file);
+        fclose(class_file);
+
+        printf("\n");
+        printf("                        (\\(\\ \n");
+        printf("Press any key to return ( -.-) \n");
+        getch();
+        system("cls");
+        return;
+    }
+
+    // Course found then proceed
+    system("cls");
+    printf("\n\tCreating a new class for Course %s\n", cs.course_name);
+    printf("Enter Class ID: ");
+    fflush(stdin);
+    fgets(new_class.class_ID, sizeof(new_class.class_ID), stdin);
+    new_class.class_ID[ strcspn(new_class.class_ID,"\n") ] = 0;
+
+    // Check If Class ID already exist
+    rewind(class_file);
+    while ( fread(&existing_class, sizeof(classes), 1, class_file) == 1) {
+        class_count++;
+        if (strcmp(existing_class.class_ID, new_class.class_ID) == 0) {
+            class_found = true;
+            break;
+        }
+    }
+
+    if (class_found) {
+        printf("Error: Class ID [ %s ] already exists (>~<)!\n", new_class.class_ID);
+    }
+    else {
+        //Enter Class's Information
+        printf("Enter Class's Name: ");
+        fflush(stdin);
+        fgets(new_class.class_name, sizeof(new_class.class_name), stdin);
+
+        new_class.total_students = cs.total_students;
+        
+        //Write new class to file
+        fseek(class_file, 0 , SEEK_END);
+        new_class.class_name[ strcspn(new_class.class_name,"\n") ] = 0;
+        fwrite(&new_class, sizeof(classes), 1, class_file);
+
+        printf("\nClass %s added sucessfully ( =^.^=). Number: %d\n", new_class.class_name, class_count +1);
+    }
+
+    fclose(course_file);
+    fclose(class_file);
+
+    printf("\n");
+    printf("                        (\\(\\ \n");
+    printf("Press any key to return ( -.-) \n");
+    getch();
+    system("cls");
+}
+
+
+void experimental_print_students_list() { // Added Student Query for Detailed Information (21/11, N)
+    FILE *file;
+    students st;
+    int Student_Count = 0;
+    int Choice_View;
+    char ID_Search[MAX_ID_LENGTH];
+    bool Search_Check = false;
+
+    // Open the file in binary read mode
+    file = fopen("ex_student.txt", "r+b");
+    if (file == NULL) {
+        printf("Error opening file or file doesn't exist (>_<)!\n");
+
+        printf("\n");
+        printf("                        (\\(\\ \n");
+        printf("Press any key to return ( -.-) \n");
+        getch();
+        system("cls");
+        return;
+    }
+
+    system("cls");  // Clear the screen
+
+    printf("\t\t\tList of Students\n\n");
+    printf("%-5s %-15s %-30s %-30s\n", 
+           "No.", "|ID", "|Full Name", "|Class");
+    printf("--------------------------------------------------------------------------------\n");
+
+    // Read and print each student
+    while (fread(&st, sizeof(students), 1, file) == 1) {
+        Student_Count++;
+        printf("%-5d |%-15s |%-30s |%-30s", 
+            Student_Count, st.student_ID, st.student_name, st.class_attend);
+        printf("\n");
+    }
+
+    if (Student_Count == 0) {
+        printf("Cannot Detect any Student (>~<)\n");
+    } else {
+        printf("\nTotal number of Student(s): %d\n", Student_Count);
+
+        printf("\n\n1. View Detailed Information Of A Student");
+        printf("\n2. Return");
+
+        printf("\n\nEnter your choice (1-2) : ");
+
+        while (scanf("%d", &Choice_View) != 1) {
+            while (getchar() != '\n');
+            printf("\t  Invalid input (>_<)! Please enter a number (1-2): ");
+            _getch();
+            eraseLines(2);
+        }
+        switch(Choice_View) {
+            case 1:
+            do {
+                system("cls");
+                printf("\nEnter Student's ID to look: ");
+                fflush(stdin);
+                fgets(ID_Search, sizeof(ID_Search), stdin);
+                ID_Search[ strcspn(ID_Search, "\n") ] = 0;
+                rewind(file);
+                while (fread (&st, sizeof(students), 1, file) == 1) {
+                    if (strcmp(ID_Search, st.student_ID) == 0) {
+                        printf("\n\n%-20s %s", "ID:", st.student_ID);
+                        printf("\n%-20s %s", "Full Name:", st.student_name);
+                        printf("\n%-20s %d", "Phone Number:", st.student_number);
+                        printf("\n%-20s %s", "Email:", st.student_email);
+                        printf("\n%-20s %s", "Class:", st.class_attend);
+                        printf("\n%-20s %f", "Tuition Paid:", st.tuition_paid);
+                        Search_Check = true;
+                    }
+                }
+                if (!Search_Check) {
+                    printf("\nStudent ID [ %s ] was not found.", ID_Search);
+                }
+                printf("\n\nTo do another detailed search, press 'y'.");
+                printf("\nPress any other key to return.");
+                printf("\nEnter your choice: ");
+            } while (getche() == 'y');
+            case 2:
+            break;
+        }
     }
 
     fclose(file);
@@ -312,21 +408,21 @@ void experimental_print_course_list() {
     system("cls");  // Clear the screen
 
     printf("\t\t\tList of Course(s)\n\n");
-    printf("%-5s %-15s %-30s %-15s\n", 
+    printf("%-5s |%-15s |%-30s |%-15s\n", 
            "No.", "Course ID", "Course Name", "Tuition Cost");
     printf("----------------------------------------------------------\n");
 
     // Read and print each subject
     while (fread(&cs, sizeof(courses), 1, file) == 1) {
         course_count++;
-        printf("%-5d %-15s %-30s %-15d\n", 
+        printf("%-5d |%-15s |%-30s |%-15d\n", 
             course_count, cs.course_ID, cs.course_name, cs.tuition);
     }
 
     if (course_count == 0) {
         printf("Cannot detect any Course (>~<).\n");
     } else {
-        printf("\nTotal number of Courses: %d\n", course_count);
+        printf("\nTotal number of Course(s): %d\n", course_count);
     }
 
     fclose(file);
@@ -338,7 +434,53 @@ void experimental_print_course_list() {
     system("cls");
 }
 
-void experimental_class_register() { // that one bug was fixed by using binary open (Forgor to mention this, 2/11, N)
+void experimental_print_class_list() { // New Function to query all class, will at specific course search later (23/11, N)
+    FILE *file;
+    classes cl;
+    int class_count = 0;
+
+    // Open the file in binary read mode
+    file = fopen("ex_class.txt", "r+b");
+    if (file == NULL) {
+        printf("Error opening file or file doesn't exist (>_<)!\n");
+
+        printf("\n");
+        printf("                        (\\(\\ \n");
+        printf("Press any key to return ( -.-) \n");
+        getch();
+        system("cls");
+        return;
+    }
+
+    system("cls");  // Clear the screen
+    
+    printf("%-5s |%-15s |%-30s\n", 
+           "No.", "Class ID", "Class Name");
+    printf("----------------------------------------------------------\n");
+
+    // Read and print each subject
+    while (fread(&cl, sizeof(classes), 1, file) == 1) {
+        class_count++;
+        printf("%-5d |%-15s |%-30s\n", 
+            class_count, cl.class_ID, cl.class_name);
+    }
+
+    if (class_count == 0) {
+        printf("Cannot detect any Class (>~<).\n");
+    } else {
+        printf("\nTotal number of Class(es): %d\n", class_count);
+    }
+
+    fclose(file);
+
+    printf("\n");
+    printf("                        (\\(\\ \n");
+    printf("Press any key to return ( -.-) \n");
+    getch();
+    system("cls");
+}
+
+void experimental_class_register() { // Currently not Working due to new class struct rework (23/11, N)
     FILE *student_file, *course_file, *class_file;
     students st;
     courses cs;
@@ -467,8 +609,6 @@ void experimental_class_register() { // that one bug was fixed by using binary o
 
             // Get Course ID, Student ID, Student Name
         strcpy(cl.course_ID, cs.course_ID);
-        strcpy(cl.student_ID, st.student_ID);
-        strcpy(cl.student_name, st.student_name);
 
             // Get new Class Name
         strcpy(cl.class_name, cs.course_ID); // Copy Class Name into Course ID (ex: BAS)
@@ -501,7 +641,7 @@ void experimental_class_register() { // that one bug was fixed by using binary o
     system("cls");
 }
 
-void experimental_class_unregister() { // Is not up-to-date, currently only delete from ex_student.txt (30/10, N)
+void experimental_class_unregister() { // Currently not Working due to new class struct rework (23/11, N)
     FILE *student_file, *course_file, *class_file;
     students st;
     courses cs;
@@ -597,15 +737,6 @@ void experimental_class_unregister() { // Is not up-to-date, currently only dele
         if (cs.total_students % 10 == 0) {
             cs.total_class = cs.total_class - 1;
         }
-        
-        // Update Class Record
-        fclose(class_file);
-        class_file = fopen("ex_class.txt", "wb");
-        for (i = 0; i < all_students; i++) {
-            if (strcmp(st.student_ID, cl[i].student_ID) != 0) {
-                fwrite(&cl[i], sizeof(classes), 1, class_file);
-            }
-        }
 
         // Update Student Record
         fseek(student_file, student_pos, SEEK_SET);
@@ -627,8 +758,8 @@ void experimental_class_unregister() { // Is not up-to-date, currently only dele
     getch();
     system("cls");
 }
-
-void experimental_view_class() { // Implemented Student, Course, Class (30/10, N)
+/*
+void experimental_view_class() { // Currently not Working due to new class struct rework (23/11, N)
     FILE *class_file, *course_file;
     classes cl;
     courses  cs;
@@ -699,6 +830,7 @@ void experimental_view_class() { // Implemented Student, Course, Class (30/10, N
     getch();
     system("cls");
 }
+*/
 
 void experimental_calculate_tuition() {
     FILE *student_file, *course_file;
@@ -788,8 +920,9 @@ void experimental_calculate_tuition() {
     system("cls");
 }
 
-
-//Experimental delete student by ID (delete from ex_student.txt, and unregister from ex_class.txt) (31/10, D)
+/*
+// Experimental delete student by ID (delete from ex_student.txt, and unregister from ex_class.txt) (31/10, D)
+// Currently not Working due to new class struct rework, sorry D. (23/11, N)
 void experimental_delete_student_ID() {
     FILE *student_file, *temp_student_file, *class_file, *temp_class_file, *course_file;
     students st;
@@ -954,6 +1087,7 @@ void experimental_delete_student_ID() {
 }
 
 //Experimental delete student by name (delete from ex_student.txt, decrease count in course and unregister from ex_class.txt) (31/10, D)
+// Currently not Working due to new class struct rework, sorry D. (23/11, N)
 void experimental_delete_student_name() { //same as ID 
     FILE *student_file, *temp_student_file, *class_file, *temp_class_file, *course_file;
     students st;
@@ -1123,6 +1257,7 @@ void experimental_delete_student_name() { //same as ID
     getch();
     system("cls");
 }
+*/
 
 
 //delete course by ID (delete from ex_course.txt, decrease count in class and unregister student from ex_student.txt) (31/10, D)
@@ -1284,6 +1419,8 @@ void experimental_delete_course_ID() {
     system("cls");
 }
 
+
+
 void sub_update_student() {
     system("cls");
     int choice_update_student;
@@ -1373,7 +1510,7 @@ void sub_student() {
                 sub_update_student();
                 break;
             case 3:
-                experimental_delete_student_ID();
+                // experimental_delete_student_ID();
                 break;
             case 4:
                 printf("\nReturning to Main Menu.\n"
@@ -1424,7 +1561,7 @@ void sub_class() {
                 experimental_insert_course();
                 break;
             case 2:
-                //experimental_insert_class();
+                experimental_insert_class();
                 break;
             case 3:
                 //experimental_update_course();
@@ -1488,7 +1625,7 @@ void sub_view() {
                 experimental_print_course_list();
                 break;
             case 3:
-                //experimental_print_class_list();
+                experimental_print_class_list();
                 break;
             case 4:
                 //experimental_print_tuition_list();
