@@ -326,186 +326,6 @@ void experimental_insert_class() { // Minor fix (25/11, N)
     getch();
 }
 
-void experimental_print_students_list() { // Added Student Query for Detailed Information (21/11, N)
-    FILE *file;
-    students st;
-    int Student_Count = 0;
-    int Choice_View;
-    char ID_Search[MAX_ID_LENGTH];
-    bool Search_Check = false;
-
-    // Open the file in binary read mode
-    file = fopen("ex_student.txt", "r+b");
-    if (file == NULL) {
-        printf("Error opening file or file doesn't exist (>_<)!\n");
-
-        printf("\n");
-        printf("                        (\\(\\ \n");
-        printf("Press any key to return ( -.-) \n");
-        getch();
-        return;
-    }
-
-    system("cls");  // Clear the screen
-
-    printf("\t\t\tList of Students\n\n");
-    printf("%-5s |%-15s |%-30s |%-30s\n", 
-           "No.", "ID", "Full Name", "Class");
-    printf("--------------------------------------------------------------------------------\n");
-
-    // Read and print each student
-    while (fread(&st, sizeof(students), 1, file) == 1) {
-        Student_Count++;
-        printf("%-5d |%-15s |%-30s |%-30s", 
-            Student_Count, st.student_ID, st.student_name, st.class_attend);
-        printf("\n");
-    }
-
-    if (Student_Count == 0) {
-        printf("Cannot Detect any Student (>~<)\n");
-    } else {
-        printf("\nTotal number of Student(s): %d\n", Student_Count);
-
-        printf("\n\n1. View Detailed Information Of A Student");
-        printf("\n2. Return");
-
-        printf("\n\nEnter your choice (1-2) : ");
-
-        while (scanf("%d", &Choice_View) != 1) {
-            while (getchar() != '\n');
-            printf("\t  Invalid input (>_<)! Please enter a number (1-2): ");
-            _getch();
-            eraseLines(2);
-        }
-        switch(Choice_View) {
-            case 1:
-            do {
-                system("cls");
-                printf("\nEnter Student's ID to look: ");
-                fflush(stdin);
-                fgets(ID_Search, sizeof(ID_Search), stdin);
-                ID_Search[ strcspn(ID_Search, "\n") ] = 0;
-                rewind(file);
-                while (fread (&st, sizeof(students), 1, file) == 1) {
-                    if (strcmp(ID_Search, st.student_ID) == 0) {
-                        printf("\n\n%-20s %s", "ID:", st.student_ID);
-                        printf("\n%-20s %s", "Full Name:", st.student_name);
-                        printf("\n%-20s %d", "Phone Number:", st.student_number);
-                        printf("\n%-20s %s", "Email:", st.student_email);
-                        printf("\n%-20s %s", "Class:", st.class_attend);
-                        printf("\n%-20s %f", "Tuition Paid:", st.tuition_paid);
-                        Search_Check = true;
-                    }
-                }
-                if (!Search_Check) {
-                    printf("\nStudent ID [ %s ] was not found.", ID_Search);
-                }
-                printf("\n\nTo do another detailed search, press 'y'.");
-                printf("\nPress any other key to return.");
-                printf("\nEnter your choice: ");
-            } while (getche() == 'y');
-            case 2:
-            break;
-        }
-    }
-
-    fclose(file);
-
-    printf("\n");
-    printf("                        (\\(\\ \n");
-    printf("Press any key to return ( -.-) \n");
-    getch();
-}
-
-void experimental_print_course_list() {
-    FILE *file;
-    courses cs;
-    int course_count = 0;
-
-    //Open the file in binary read mode
-    file = fopen("ex_course.txt", "r+b");
-    if (file == NULL) {
-        printf("Error opening file or file doesn't exist (>_<)!\n");
-
-        printf("\n");
-        printf("                        (\\(\\ \n");
-        printf("Press any key to return ( -.-) \n");
-        getch();
-        return;
-    }
-
-    system("cls");  // Clear the screen
-
-    printf("\t\t\tList of Course(s)\n\n");
-    printf("%-5s |%-15s |%-30s |%-15s\n", 
-           "No.", "Course ID", "Course Name", "Tuition Cost");
-    printf("----------------------------------------------------------\n");
-
-    // Read and print each subject
-    while (fread(&cs, sizeof(courses), 1, file) == 1) {
-        course_count++;
-        printf("%-5d |%-15s |%-30s |%-15d\n", 
-            course_count, cs.course_ID, cs.course_name, cs.tuition);
-    }
-
-    if (course_count == 0) {
-        printf("Cannot detect any Course (>~<).\n");
-    } else {
-        printf("\nTotal number of Course(s): %d\n", course_count);
-    }
-
-    fclose(file);
-
-    printf("\n");
-    printf("                        (\\(\\ \n");
-    printf("Press any key to return ( -.-) \n");
-    getch();
-}
-
-void experimental_print_class_list() { // New Function to query all class, will have specific course search later (23/11, N)
-    FILE *file;
-    classes cl;
-    int class_count = 0;
-
-    // Open the file in binary read mode
-    file = fopen("ex_class.txt", "r+b");
-    if (file == NULL) {
-        printf("Error opening file or file doesn't exist (>_<)!\n");
-
-        printf("\n");
-        printf("                        (\\(\\ \n");
-        printf("Press any key to return ( -.-) \n");
-        getch();
-        return;
-    }
-
-    system("cls");  // Clear the screen
-    
-    printf("%-5s |%-15s |%-30s\n", 
-           "No.", "Class ID", "Class Name");
-    printf("----------------------------------------------------------\n");
-
-    // Read and print each subject
-    while (fread(&cl, sizeof(classes), 1, file) == 1) {
-        class_count++;
-        printf("%-5d |%-15s |%-30s\n", 
-            class_count, cl.class_ID, cl.class_name);
-    }
-
-    if (class_count == 0) {
-        printf("Cannot detect any Class (>~<).\n");
-    } else {
-        printf("\nTotal number of Class(es): %d\n", class_count);
-    }
-
-    fclose(file);
-
-    printf("\n");
-    printf("                        (\\(\\ \n");
-    printf("Press any key to return ( -.-) \n");
-    getch();
-}
-
 void experimental_class_register() { // Fixed and good to go! (25/11, N)
     FILE *student_file, *course_file, *class_file;
     students st;
@@ -1536,6 +1356,276 @@ void experimental_delete_course_ID() {
     printf("Press any key to return ( -.-) \n");
     getch();
 }
+
+
+
+
+
+
+
+// List Print Functions
+void experimental_print_students_list() { // Added Student Query for Detailed Information (21/11, N)
+    FILE *file;
+    students st;
+    int student_count = 0;
+    int choice_view;
+    char student_search[MAX_ID_LENGTH];
+    bool search_check = false;
+
+    // Open the file in binary read mode
+    file = fopen("ex_student.txt", "rb");
+    if (file == NULL) {
+        printf("Error opening file or file doesn't exist (>_<)!\n");
+
+        printf("\n");
+        printf("                        (\\(\\ \n");
+        printf("Press any key to return ( -.-) \n");
+        getch();
+        return;
+    }
+
+    system("cls");  // Clear the screen
+
+    printf("\t\t\tList of Students\n\n");
+    printf("%-5s |%-15s |%-30s |%-30s\n", 
+           "No.", "ID", "Full Name", "Class");
+    printf("--------------------------------------------------------------------------------\n");
+
+    // Read and print each student
+    while (fread(&st, sizeof(students), 1, file) == 1) {
+        student_count++;
+        printf("%-5d |%-15s |%-30s |%-30s", 
+            student_count, st.student_ID, st.student_name, st.class_attend);
+        printf("\n");
+    }
+
+    if (student_count == 0) {
+        printf("Cannot Detect any Student (>~<)\n");
+    } else {
+        printf("\nTotal number of Student(s): %d\n\n", student_count);
+
+        printf("\n1. View Detailed Information Of A Student");
+        printf("\n2. Return");
+
+        printf("\n\nEnter your choice (1-2) : ");
+
+        while (scanf("%d", &choice_view) != 1) {
+            while (getchar() != '\n');
+            printf("\t  Invalid input (>_<)! Please enter a number (1-2): ");
+            _getch();
+            eraseLines(2);
+        }
+        switch(choice_view) {
+            case 1:
+                system("cls");
+                printf("\nEnter Student's ID to look: ");
+                fflush(stdin);
+                fgets(student_search, sizeof(student_search), stdin);
+                student_search[ strcspn(student_search, "\n") ] = 0;
+                rewind(file);
+                while (fread (&st, sizeof(students), 1, file) == 1) {
+                    if (strcmp(student_search, st.student_ID) == 0) {
+                        printf("\n\n%-20s %s", "ID:", st.student_ID);
+                        printf("\n%-20s %s", "Full Name:", st.student_name);
+                        printf("\n%-20s %d", "Phone Number:", st.student_number);
+                        printf("\n%-20s %s", "Email:", st.student_email);
+                        printf("\n%-20s %s", "Class:", st.class_attend);
+                        printf("\n%-20s %f", "Tuition Paid:", st.tuition_paid);
+                        search_check = true;
+                    }
+                }
+                if (!search_check) {
+                    printf("\nStudent ID [ %s ] was not found.", student_search);
+                }             
+                printf("\n");
+                printf("                        (\\(\\ \n");
+                printf("Press any key to return ( -.-) \n");
+                getch();
+                break;
+            case 2:
+                printf("\n");
+                printf("                        (\\(\\ \n");
+                printf("Press any key to return ( -.-) \n");
+                getch();
+                break;
+        }
+    }
+    fclose(file);
+}
+
+void experimental_print_course_list() {
+    FILE *file;
+    courses cs;
+    int course_count = 0;
+    int choice_view;
+    char course_search[MAX_ID_LENGTH];
+    bool search_check = false;
+
+    //Open the file in binary read mode
+    file = fopen("ex_course.txt", "rb");
+    if (file == NULL) {
+        printf("Error opening file or file doesn't exist (>_<)!\n");
+
+        printf("\n");
+        printf("                        (\\(\\ \n");
+        printf("Press any key to return ( -.-) \n");
+        getch();
+        return;
+    }
+
+    system("cls");  // Clear the screen
+
+    printf("\t\t\tList of Course(s)\n\n");
+    printf("%-5s |%-15s |%-30s |%-15s\n", 
+           "No.", "Course ID", "Course Name", "Tuition Cost");
+    printf("----------------------------------------------------------\n");
+
+    // Read and print each subject
+    while (fread(&cs, sizeof(courses), 1, file) == 1) {
+        course_count++;
+        printf("%-5d |%-15s |%-30s |%-15d\n", 
+            course_count, cs.course_ID, cs.course_name, cs.tuition);
+    }
+
+    if (course_count == 0) {
+        printf("Cannot detect any Course (>~<).\n");
+    } else {
+        printf("\nTotal number of Course(s): %d\n\n", course_count);
+
+        printf("\n1. View Detailed Information Of A Course");
+        printf("\n2. Return");
+
+        printf("\n\nEnter your choice (1-2) : ");
+
+        while (scanf("%d", &choice_view) != 1) {
+            while (getchar() != '\n');
+            printf("\t  Invalid input (>_<)! Please enter a number (1-2): ");
+            _getch();
+            eraseLines(2);
+        }
+        switch(choice_view) {
+            case 1:
+                system("cls");
+                printf("\nEnter Course's ID to look: ");
+                fflush(stdin);
+                fgets(course_search, sizeof(course_search), stdin);
+                course_search[ strcspn(course_search, "\n") ] = 0;
+                rewind(file);
+                while (fread (&cs, sizeof(courses), 1, file) == 1) {
+                    if (strcmp(course_search, cs.course_ID) == 0) {
+                        printf("\n\n%-20s %s", "ID:", cs.course_ID);
+                        printf("\n%-20s %s", "Course Name:", cs.course_name);
+                        printf("\n%-20s %d", "Fee:", cs.tuition);
+                        printf("\n%-20s %s", "Number Of Class(es):", cs.total_class);
+                        printf("\n%-20s %f", "Number Of Student(s):", cs.total_students);
+                        search_check = true;
+                    }
+                }
+                if (!search_check) {
+                    printf("\nStudent ID [ %s ] was not found.", course_search);
+                }             
+                printf("\n");
+                printf("                        (\\(\\ \n");
+                printf("Press any key to return ( -.-) \n");
+                getch();
+                break;
+            case 2:
+                printf("\n");
+                printf("                        (\\(\\ \n");
+                printf("Press any key to return ( -.-) \n");
+                getch();
+                break;
+        }
+    }
+    fclose(file);
+}
+
+void experimental_print_class_list() {
+    FILE *file;
+    classes cl;
+    int class_count = 0;
+    int choice_view;
+    char class_search[MAX_ID_LENGTH];
+    bool search_check = false;
+
+    // Open the file in binary read mode
+    file = fopen("ex_class.txt", "rb");
+    if (file == NULL) {
+        printf("Error opening file or file doesn't exist (>_<)!\n");
+
+        printf("\n");
+        printf("                        (\\(\\ \n");
+        printf("Press any key to return ( -.-) \n");
+        getch();
+        return;
+    }
+
+    system("cls");  // Clear the screen
+    
+    printf("%-5s |%-15s |%-30s\n", 
+           "No.", "Class ID", "Class Name");
+    printf("----------------------------------------------------------\n");
+
+    // Read and print each subject
+    while (fread(&cl, sizeof(classes), 1, file) == 1) {
+        class_count++;
+        printf("%-5d |%-15s |%-30s\n", 
+            class_count, cl.class_ID, cl.class_name);
+    }
+
+    if (class_count == 0) {
+        printf("Cannot detect any Class (>~<).\n");
+    } else {
+        printf("\nTotal number of Class(es): %d\n\n", class_count);
+
+        printf("\n1. View Detailed Information Of A Class");
+        printf("\n2. Return");
+
+        printf("\n\nEnter your choice (1-2) : ");
+
+        while (scanf("%d", &choice_view) != 1) {
+            while (getchar() != '\n');
+            printf("\t  Invalid input (>_<)! Please enter a number (1-2): ");
+            _getch();
+            eraseLines(2);
+        }
+        switch(choice_view) {
+            case 1:
+                system("cls");
+                printf("\nEnter Course's ID to look: ");
+                fflush(stdin);
+                fgets(class_search, sizeof(class_search), stdin);
+                class_search[ strcspn(class_search, "\n") ] = 0;
+                rewind(file);
+                while (fread (&cl, sizeof(classes), 1, file) == 1) {
+                    if (strcmp(class_search, cl.class_ID) == 0) {
+                        printf("\n\n%-20s %s", "ID:", cl.class_ID);
+                        printf("\n%-20s %s", "Class Name:", cl.class_name);
+                        printf("\n%-20s %d", "Maximum Allowed In Class:", cl.max_students);
+                        printf("\n%-20s %f", "Number Of Student(s):", cl.total_students);
+                        search_check = true;
+                    }
+                }
+                if (!search_check) {
+                    printf("\nStudent ID [ %s ] was not found.", class_search);
+                }             
+                printf("\n");
+                printf("                        (\\(\\ \n");
+                printf("Press any key to return ( -.-) \n");
+                getch();
+                break;
+            case 2:
+                printf("\n");
+                printf("                        (\\(\\ \n");
+                printf("Press any key to return ( -.-) \n");
+                getch();
+                break;
+        }
+    }
+    fclose(file);
+}
+
+
 
 
 
