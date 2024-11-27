@@ -802,92 +802,84 @@ void experimental_class_unregister() { // Fixed and good to go! (27/11, N)
     getch();
     system("cls");
 }
-/*
-void experimental_view_class() { // Currently not Working due to new class struct rework (23/11, N)
-    FILE *class_file, *course_file;
+
+void experimental_view_class() { // Fixed and good to go! (27/11, N)
+    FILE *class_file, *student_file;
     classes cl;
-    courses  cs;
-    char course_ID_s[MAX_ID_LENGTH];
+    students st;
+    char class_search[MAX_ID_LENGTH];
     int enrolled_count = 0;
-    bool course_found = false;
+    bool class_found = false;
 
     class_file = fopen("ex_class.txt", "rb");
-    course_file = fopen("ex_course.txt", "rb");
+    student_file = fopen("ex_student.txt", "rb");
 
-    if (course_file == NULL || class_file == NULL) {
+    if (student_file == NULL || class_file == NULL) {
         printf("Error opening file(s) (>_<)!\n");
         getch();
         system("cls");
         return;
     }
 
+    system("cls");
+
     printf("Enter Class ID to view enrollment: ");
     fflush(stdin);
-    fgets(course_ID_s, MAX_ID_LENGTH, stdin);
-    course_ID_s[ strcspn(course_ID_s, "\n") ] = 0;
+    fgets(class_search, sizeof(class_search), stdin);
+    class_search[ strcspn(class_search, "\n") ] = 0;
 
     // Find class
-    while (fread(&cs, sizeof(courses), 1, course_file) == 1) {
-        if (strcmp(cs.course_ID, course_ID_s) == 0) {
-            course_found = true;
+    while (fread(&cl, sizeof(classes), 1, class_file) == 1) {
+        if (strcmp(cl.class_ID, class_search) == 0) {
+            class_found = true;
             break;
         }
     }
 
-    if (!course_found) {
-        printf("Class ID [ %s ] has not been found (>~<)!\n", course_ID_s);
+    if (!class_found) {
+        printf("Class ID [ %s ] has not been found (>~<)!\n", class_search);
     }
 
     else {
         system("cls");
-        printf("%-5s %-15s %-30s %-30s\n",
-               "No.", "Student-ID", "Full-Name", "Class");
+        printf("Class [ %s ]\n", cl.class_name);
+        printf("%-5s |%-15s |%-30s |%-30s\n",
+               "No.", "Student ID", "Full Name", "Tuition");
         printf("----------------------------------------------------------\n");
-        while (fread(&cl, sizeof(classes), 1, class_file) == 1) {
-            if (strcmp(cl.course_ID, cs.course_ID) == 0) {
+        while (fread(&st, sizeof(students), 1, student_file) == 1) {
+            if (strcmp(cl.class_name, st.class_attend) == 0) {
                 enrolled_count++;
-                cl.student_no = enrolled_count;
-                printf("%-5d %-15s %-30s %-30s\n", cl.student_no, cl.student_ID, cl.student_name, cl.class_name);
-                if (enrolled_count % 10 == 0) {
-                    printf("----------------------------------------------------------\n");
-                }
+                printf("%-5d |%-15s |%-30s |%-10f\n", enrolled_count, st.student_ID, st.student_name, st.tuition_paid);
             }
         }
-
-        for (int i = 0; i < cs.total_class; i++) {
-            if (i < cs.total_class - 1) {
-                printf("\nTotal Student(s) in Class %s_0%d: %d Student(s)", cs.course_ID, i + 1, 10);
-            }
-            else {
-                printf("\nTotal Student(s) in class %s_0%d: %d Student(s)", cs.course_ID, i + 1, enrolled_count - 10 * i);
-            }
-        }
-
-        printf("\nTotal Student(s) of enroll for Course %s: %d Student(s).\n", cs.course_name, cs.total_students);
+        
+        printf("\nTotal Student(s) in Class %s: %d Student(s)", cl.class_name, cl.total_students);
     }
 
     fclose(class_file);
-    fclose(course_file);
+    fclose(student_file);
     printf("\n");
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
     system("cls");
 }
-*/
 
-void experimental_calculate_tuition() {
-    FILE *student_file, *course_file;
+
+void experimental_calculate_tuition() { // Fixed and Good to go! (27/11, N)
+    FILE *student_file, *course_file, *class_file;
     students st;
     courses  cs;
-    char student_ID_s[MAX_ID_LENGTH];
+    classes cl;
+    char student_search[MAX_ID_LENGTH];
     char no_class[MAX_CLASSNAME_LENGTH] = "Not Registered";
-    float total_tuition = 0;
-    int total_semester, total_remain;
+    float paid;
+    int fee, overpaid;
     bool student_found = false;
 
     student_file = fopen("ex_student.txt", "rb");
     course_file = fopen("ex_course.txt", "rb");
+    class_file = fopen("ex_class.txt", "rb");
 
     if (student_file == NULL || course_file == NULL) {
         printf("Error opening file(s) (>_<)!\n");
@@ -895,21 +887,24 @@ void experimental_calculate_tuition() {
         system("cls");
         return;
     }
+
+    system("cls");
+
     printf("Enter Student ID: ");
     fflush(stdin);
-    fgets(student_ID_s, MAX_ID_LENGTH, stdin);
-    student_ID_s[ strcspn(student_ID_s, "\n") ] = 0;
+    fgets(student_search, sizeof(student_search), stdin);
+    student_search[ strcspn(student_search, "\n") ] = 0;
 
     // Find Student
     while (fread(&st, sizeof(students), 1, student_file) == 1) {
-        if (strcmp(st.student_ID, student_ID_s) == 0) {
+        if (strcmp(st.student_ID, student_search) == 0) {
             student_found = true;
             break;
         }
     }
 
     if (!student_found) {
-        printf("Student ID [ %s ] has not been found (>~<)!\n", student_ID_s);
+        printf("Student ID [ %s ] has not been found (>~<)!\n", student_search);
     }
     
     else if (strcmp(st.class_attend, no_class) == 0) {
@@ -918,45 +913,145 @@ void experimental_calculate_tuition() {
 
     else {
         system("cls");
-        printf("\nStudent %s's Tuition Fee:\n", st.student_name);
-        printf("%-30s %-15s\n", "Subject", "Tuition Fee");
-        printf("----------------------------------------\n");
 
-        // Tuition Fee's Calculation
-        while(fread(&cs, sizeof(courses), 1, course_file) == 1) {
-            if (strcmp(st.class_attend, cs.course_name) == 0) {
-                printf("%-30s %-15d\n", cs.course_name, cs.tuition);
-                total_tuition = cs.tuition;
-                total_semester = st.tuition_paid / total_tuition;
-                total_remain = st.tuition_paid - (total_tuition * total_semester);
+        // Get Course ID
+        while(fread(&cl, sizeof(classes), 1, class_file) == 1) {
+            if (strcmp(st.class_attend, cl.class_name) == 0) {
                 break;
             }
         }
 
-        printf("----------------------------------------\n");
-        printf("%-30s %-15.2f\n", "Total Tuition: ", total_tuition);
-        printf("%-30s %-15.2f\n", "Amount Paid: ", st.tuition_paid);
+        // Get Course's Fee
+        while(fread(&cs, sizeof(courses), 1, course_file) == 1) {
+            if (strcmp(cl.course_ID, cs.course_ID) == 0 ) {
+                break;
+            }
+        }
+        
+        // Calculate Fee
+        paid = st.tuition_paid;
+        fee = cs.tuition;
+        overpaid = paid / fee;
+
+        // Print out Result
+        printf("%-30s |%-30s |%-30s\n", "Student", "Class", "Fee");
+        printf("%-30s |%-30s |%-15d\n", st.student_name, st.class_attend, cs.tuition);
+        printf("+=======================================================================+\n");
 
         printf("\n");
-        if (st.tuition_paid < total_tuition) {
-            printf("%-30s %-15.2f\n", "Amount Required Left: ", total_tuition - st.tuition_paid);
+        if (paid < 0) {
+            printf("%-20s %-15.2f\n", "Unpaid Fee: ", paid);
         }
-        else if (total_semester > 1) {
-            printf("Student %s has paid enough for %d semesters", st.student_name, total_semester);
-            if (total_remain > 0) {
-                printf("\nStudent %s has overpaid and has %d remain.", st.student_name, total_remain);
+        else if (paid > 0) {
+            printf("%-20s %-15.2f\n", "Overpaid Amount: ", paid);
+            if (overpaid < 1) {
+                printf("Student %s has paid for the current semester.\n", st.student_name);
+                printf("The extra %.2f will be accounted for the next semester.\n". paid);
+            }
+            else {
+                printf("Student %s has paid for the current semester.\n", st.student_name);
+                printf("And eligible for %d extra semester(s) after the current one.\n", overpaid);
             }
         }
         else {
-            printf("Student %s has paid the amount required for 1 semester.", st.student_name);
-            if (total_remain > 0) {
-                printf("\nStudent %s has overpaid and has %d remain.", st.student_name, total_remain);
-            }
+            printf("Student %s has paid the exact amount for the current semester.\n", st.student_name);
         }
     }
 
     fclose(student_file);
     fclose(course_file);
+    printf("\n");
+    printf("                        (\\(\\ \n");
+    printf("Press any key to return ( -.-) \n");
+    getch();
+    system("cls");
+}
+
+void experimental_student_pay() {
+    FILE *student_file;
+    students st;
+    char student_search[MAX_ID_LENGTH];
+    float pay;
+    long int student_pos;
+    bool student_found = false;
+
+    student_file = fopen("ex_student.txt", "r+b");
+
+    if (student_file == NULL) {
+        printf("Error opening file(s) (>_<)!\n");
+        getch();
+        system("cls");
+        return;
+    }
+
+    system("cls");
+
+    printf("Enter Student ID: ");
+    fflush(stdin);
+    fgets(student_search, sizeof(student_search), stdin);
+    student_search[ strcspn(student_search, "\n") ] = 0;
+
+    // Find Student
+    while (fread(&st, sizeof(students), 1, student_file) == 1) {
+        if (strcmp(st.student_ID, student_search) == 0) {
+            student_found = true;
+            student_pos = ftell(student_file) - sizeof(students);
+            break;
+        }
+    }
+
+    if (!student_found) {
+        printf("Student ID [ %s ] has not been found (>~<)!\n", student_search);
+    }
+
+    else {
+        system("cls");
+
+        printf("Student [ %s ]\n", st.student_name);
+        if (st.tuition_paid < 0) {
+            printf("Current Fee required to pay: %.2f\n", st.tuition_paid);
+        }
+        else if (st.tuition_paid > 0) {
+            printf("Current Overpaid Amount: %.2f\n", st.tuition_paid);
+        }
+        else {
+            printf("No Fee Required to Pay.\n");
+        }
+        printf("+========================================================+\n\n");
+
+        // Get the new amount
+        printf("Type the amount of money student %s has paid: ", st.student_name);
+        while (scanf("%f", &pay) != 1) {
+            while (getchar() != '\n') {
+                printf("\t  (!_!) Invalid input! Please enter numeric value only!");
+                _getch();
+                eraseLines(2);
+            }
+        }
+        
+        // Update Student Fee
+        st.tuition_paid = st.tuition_paid + pay;
+
+        system("cls");
+
+        // Confirmation Line
+        printf("Confirming student %s has paid %.2f\n", st.student_name, pay);
+        if (st.tuition_paid > 0) {
+            printf("New Overpaid Amount: %.2f\n", st.tuition_paid);
+        }
+        else if (st.tuition_paid < 0) {
+            printf("Fee remaining after: %.2f\n", st.tuition_paid);
+        }
+        else {
+            printf("The remaining fee has been paid.\n");
+        }
+
+        // Update Student Record
+        fseek(student_file, student_pos, SEEK_SET);
+        fwrite(&st, sizeof(students), 1, student_file);
+    }
+
+    fclose(student_file);
     printf("\n");
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
@@ -1546,7 +1641,7 @@ void sub_update_student() {
                 sub_class_student();
                 break;
             case 3:
-                //experimental_Student_Pay();
+                experimental_student_pay();
             case 4:
                 break;
             default:
@@ -1718,7 +1813,7 @@ void sub_view() {
                 experimental_print_class_list();
                 break;
             case 4:
-                //experimental_print_tuition_list();
+                experimental_calculate_tuition();
                 break;
             case 5:
                 printf("\nReturning to Main Menu.\n"
