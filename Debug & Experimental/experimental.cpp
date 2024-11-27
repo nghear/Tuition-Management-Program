@@ -131,7 +131,7 @@ void experimental_insert_student() { // Added new Student's Information (21/11, 
 
     fclose(file);
 
-    printf("\n");
+    printf("\n\n");
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
@@ -192,7 +192,7 @@ void experimental_insert_course() { // Minor adjustment (23/11, N)
 
     fclose(file);
 
-    printf("\n");
+    printf("\n\n");
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
@@ -243,7 +243,7 @@ void experimental_insert_class() { // Minor fix (25/11, N)
         fclose(course_file);
         fclose(class_file);
 
-        printf("\n");
+        printf("\n\n");
         printf("                        (\\(\\ \n");
         printf("Press any key to return ( -.-) \n");
         getch();
@@ -320,7 +320,7 @@ void experimental_insert_class() { // Minor fix (25/11, N)
     fclose(course_file);
     fclose(class_file);
 
-    printf("\n");
+    printf("\n\n");
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
@@ -370,7 +370,7 @@ void experimental_class_register() { // Fixed and good to go! (25/11, N)
 
     if (!student_found) {
         printf("Student [ %s ] not found (>~<)!\n", student_search);
-        printf("\n");
+        printf("\n\n");
         printf("                        (\\(\\ \n");
         printf("Press any key to return ( -.-) \n");
         getch();
@@ -486,7 +486,7 @@ void experimental_class_register() { // Fixed and good to go! (25/11, N)
     fclose(course_file);
     fclose(class_file);
 
-    printf("\n");
+    printf("\n\n");
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
@@ -599,7 +599,7 @@ void experimental_class_unregister() { // Fixed and good to go! (27/11, N)
     fclose(student_file);
     fclose(course_file);
     fclose(class_file);
-    printf("\n");
+    printf("\n\n");
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
@@ -643,7 +643,7 @@ void experimental_view_class() { // Fixed and good to go! (27/11, N)
 
     else {
         system("cls");
-        printf("Class [ %s ]\n", cl.class_name);
+        printf("Class [ %s ]\n\n", cl.class_name);
         printf("%-5s |%-15s |%-30s |%-30s\n",
                "No.", "Student ID", "Full Name", "Tuition");
         printf("----------------------------------------------------------\n");
@@ -655,11 +655,12 @@ void experimental_view_class() { // Fixed and good to go! (27/11, N)
         }
         
         printf("\nTotal Student(s) in Class %s: %d Student(s)", cl.class_name, cl.total_students);
+        printf("\nMaximum allowed in Class: %d Students", cl.max_students);
     }
 
     fclose(class_file);
     fclose(student_file);
-    printf("\n");
+    printf("\n\n");
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
@@ -759,7 +760,7 @@ void experimental_calculate_tuition() { // Fixed and Good to go! (27/11, N)
 
     fclose(student_file);
     fclose(course_file);
-    printf("\n");
+    printf("\n\n");
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
@@ -849,7 +850,7 @@ void experimental_student_pay() {
     }
 
     fclose(student_file);
-    printf("\n");
+    printf("\n\n");
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
@@ -1016,7 +1017,7 @@ void experimental_delete_student_ID() {
 
     printf("\nStudent successfully deleted ( =^.^=)!\n");
 
-    printf("\n");
+    printf("\n\n");
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
@@ -1189,7 +1190,7 @@ void experimental_delete_student_name() { //same as ID
 
     printf("\n%d student(s) successfully deleted ( =^.^=)!\n", deleted_count);
 
-    printf("\n");
+    printf("\n\n");
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
@@ -1351,7 +1352,7 @@ void experimental_delete_course_ID() {
         printf("%d student(s) have been unregistered from the course.\n", deleted_count);
     }
 
-    printf("\n");
+    printf("\n\n");
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
@@ -1377,7 +1378,7 @@ void experimental_print_students_list() { // Added Student Query for Detailed In
     if (file == NULL) {
         printf("Error opening file or file doesn't exist (>_<)!\n");
 
-        printf("\n");
+        printf("\n\n");
         printf("                        (\\(\\ \n");
         printf("Press any key to return ( -.-) \n");
         getch();
@@ -1437,13 +1438,13 @@ void experimental_print_students_list() { // Added Student Query for Detailed In
                 if (!search_check) {
                     printf("\nStudent ID [ %s ] was not found.", student_search);
                 }             
-                printf("\n");
+                printf("\n\n");
                 printf("                        (\\(\\ \n");
                 printf("Press any key to return ( -.-) \n");
                 getch();
                 break;
             case 2:
-                printf("\n");
+                printf("\n\n");
                 printf("                        (\\(\\ \n");
                 printf("Press any key to return ( -.-) \n");
                 getch();
@@ -1466,7 +1467,7 @@ void experimental_print_course_list() {
     if (file == NULL) {
         printf("Error opening file or file doesn't exist (>_<)!\n");
 
-        printf("\n");
+        printf("\n\n");
         printf("                        (\\(\\ \n");
         printf("Press any key to return ( -.-) \n");
         getch();
@@ -1516,21 +1517,21 @@ void experimental_print_course_list() {
                         printf("\n\n%-20s %s", "ID:", cs.course_ID);
                         printf("\n%-20s %s", "Course Name:", cs.course_name);
                         printf("\n%-20s %d", "Fee:", cs.tuition);
-                        printf("\n%-20s %s", "Number Of Class(es):", cs.total_class);
-                        printf("\n%-20s %f", "Number Of Student(s):", cs.total_students);
+                        printf("\n%-20s %d", "Number Of Class(es):", cs.total_class);
+                        printf("\n%-20s %d", "Number Of Student(s):", cs.total_students);
                         search_check = true;
                     }
                 }
                 if (!search_check) {
                     printf("\nStudent ID [ %s ] was not found.", course_search);
                 }             
-                printf("\n");
+                printf("\n\n");
                 printf("                        (\\(\\ \n");
                 printf("Press any key to return ( -.-) \n");
                 getch();
                 break;
             case 2:
-                printf("\n");
+                printf("\n\n");
                 printf("                        (\\(\\ \n");
                 printf("Press any key to return ( -.-) \n");
                 getch();
@@ -1545,15 +1546,13 @@ void experimental_print_class_list() {
     classes cl;
     int class_count = 0;
     int choice_view;
-    char class_search[MAX_ID_LENGTH];
-    bool search_check = false;
 
     // Open the file in binary read mode
     file = fopen("ex_class.txt", "rb");
     if (file == NULL) {
         printf("Error opening file or file doesn't exist (>_<)!\n");
 
-        printf("\n");
+        printf("\n\n");
         printf("                        (\\(\\ \n");
         printf("Press any key to return ( -.-) \n");
         getch();
@@ -1591,31 +1590,10 @@ void experimental_print_class_list() {
         }
         switch(choice_view) {
             case 1:
-                system("cls");
-                printf("\nEnter Course's ID to look: ");
-                fflush(stdin);
-                fgets(class_search, sizeof(class_search), stdin);
-                class_search[ strcspn(class_search, "\n") ] = 0;
-                rewind(file);
-                while (fread (&cl, sizeof(classes), 1, file) == 1) {
-                    if (strcmp(class_search, cl.class_ID) == 0) {
-                        printf("\n\n%-20s %s", "ID:", cl.class_ID);
-                        printf("\n%-20s %s", "Class Name:", cl.class_name);
-                        printf("\n%-20s %d", "Maximum Allowed In Class:", cl.max_students);
-                        printf("\n%-20s %f", "Number Of Student(s):", cl.total_students);
-                        search_check = true;
-                    }
-                }
-                if (!search_check) {
-                    printf("\nStudent ID [ %s ] was not found.", class_search);
-                }             
-                printf("\n");
-                printf("                        (\\(\\ \n");
-                printf("Press any key to return ( -.-) \n");
-                getch();
+                experimental_view_class();
                 break;
             case 2:
-                printf("\n");
+                printf("\n\n");
                 printf("                        (\\(\\ \n");
                 printf("Press any key to return ( -.-) \n");
                 getch();
@@ -1670,12 +1648,7 @@ void sub_class_student() {
                 getch();
                 break;
         }
-    } while (choice_class_student != 3);
-
-
-    printf("\nReturning to Student Update.\n"
-           "Press any key to return ( ='.'=) \n");
-    getch();                
+    } while (choice_class_student != 3);                
     return;
 }
 
@@ -1691,12 +1664,12 @@ void sub_update_student() {
         printf("\t|                     Student Update                     |\n");
         printf("\t+========================================================+\n\n");
         printf("\n\t\tSelect your choice:\n\n");
-        printf("\t\t* 1: Change a Student's Information\n");
-        printf("\t\t* 2: Change a Student's Class\n");
-        printf("\t\t* 3: Change a Student's Tuition Fee\n");
-        printf("\t\t* 4: Go Back\n");
+        printf("\t\t* 1: Update Personal Information\n");
+        printf("\t\t* 2: Update Class\n");
+        printf("\t\t* 3: Update Fee\n");
+        printf("\t\t* 4: Return\n");
         printf("\t+------------------------------------------------------+\n");
-        printf("\t  Enter your choice (1-3): ");
+        printf("\t  Enter your choice (1-4): ");
 
         while (scanf("%d", &choice_update_student) != 1) {
             while (getchar() != '\n');
@@ -1722,11 +1695,6 @@ void sub_update_student() {
                 break;
         }
     } while (choice_update_student != 4);
-
-
-    printf("\nReturning to Student Management.\n"
-           "Press any key to return ( ='.'=) \n");
-    getch();                
     return;
 }
 
@@ -1768,9 +1736,6 @@ void sub_student() {
                 // experimental_delete_student_ID();
                 break;
             case 4:
-                printf("\nReturning to Main Menu.\n"
-                       "Press any key to return ( ='.'=) \n");
-                getch();
                 break;
             default:
                 printf("From 1 to 4 only (>~<)!\n");
@@ -1793,19 +1758,16 @@ void sub_class() {
         printf("\t|                     Class Management                   |\n");
         printf("\t+========================================================+\n\n");
         printf("\n\t\tSelect your choice:\n\n");
-        printf("\t\t* 1: Add new Course\n"
-               "\t\t* 2: Add new Class\n"
-               "\t\t* 3: Update a Course\n"
-               "\t\t* 4: Update a Class\n"
-               "\t\t* 5: Delete a Course\n"
-               "\t\t* 6: Delete a Class\n"
-               "\t\t* 7: Return\n");
+        printf("\t\t* 1: Add\n"
+               "\t\t* 2: Update\n"
+               "\t\t* 3: Delete\n"
+               "\t\t* 4: Return\n");
         printf("\t+--------------------------------------------------------+\n");
-        printf("\t  Enter your choice (1-7): ");
+        printf("\t  Enter your choice (1-4): ");
 
         while (scanf("%d", &choice_class) != 1) {
             while (getchar() != '\n');
-            printf("\t  (!_!) Invalid input! Please enter a number (1-7): ");
+            printf("\t  (!_!) Invalid input! Please enter a number (1-4): ");
             _getch();
             eraseLines(2);
         }
@@ -1821,25 +1783,13 @@ void sub_class() {
                 //experimental_update_course();
                 break;
             case 4:
-                //experimental_update_class();
-                break;
-            case 5:
-                experimental_delete_course_ID();
-                break;
-            case 6:
-                //experimental_delete_class_ID();
-                break;
-            case 7:
-                printf("\nReturning to Main Menu.\n"
-                       "Press any key to return ( ='.'=) \n");
-                getch();
                 break;
             default:
-                printf("From 1 to 7 only (>~<)!\n");
+                printf("From 1 to 4 only (>~<)!\n");
                 getch();
                 break;
         }
-    } while (choice_class != 7);
+    } while (choice_class != 4);
     return;
 }
 
@@ -1880,9 +1830,6 @@ void sub_view() {
                 experimental_print_class_list();
                 break;
             case 4:
-                printf("\nReturning to Main Menu.\n"
-                       "Press any key to return ( ='.'=) \n");
-                getch();
                 break;
             default:
                 printf("From 1 to 4 only (>~<)!\n");
@@ -1932,9 +1879,6 @@ void sub_head_admin() {
                 sub_view();
                 break;
             case 4:
-                printf("\nReturning to Main Menu.\n"
-                       "Press any key to return ( ='.'=) \n");
-                getch();
                 break;  
             default:
                 printf("From 1 to 4 only (>_<)!\n");
@@ -1942,6 +1886,10 @@ void sub_head_admin() {
                 break;
         }
     } while (choice_head_admin != 4);
+
+    printf("\nReturning to Main Menu.\n"
+    "Press any key to return ( ='.'=) \n");
+    getch();
     return;
 }
 
@@ -1981,8 +1929,10 @@ main() {
             case 3:
                 //sub_student_management_officer();
                 break;
-            case 4: 
+            case 4:
+                system("cls");
                 printf("\nExiting System... (-_-)zzz\n");
+                Sleep(1000); // Wait for 1 second
                 exit(0);
             default:
                 printf("\t  Invalid input (>_<)! Please select options 1-4 only!\n");
