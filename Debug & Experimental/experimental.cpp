@@ -81,7 +81,6 @@ void experimental_insert_student() { // Added new Student's Information (21/11, 
     file = fopen("ex_student.txt", "a+b");
     if (file == NULL) {
         printf("Error Opening file (>_<)!\n");
-        system("cls");
         return;
     }
 
@@ -136,7 +135,6 @@ void experimental_insert_student() { // Added new Student's Information (21/11, 
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
-    system("cls");
 }
 
 void experimental_insert_course() { // Minor adjustment (23/11, N)
@@ -198,7 +196,6 @@ void experimental_insert_course() { // Minor adjustment (23/11, N)
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
-    system("cls");
 }
 
 void experimental_insert_class() { // Minor fix (25/11, N)
@@ -250,7 +247,6 @@ void experimental_insert_class() { // Minor fix (25/11, N)
         printf("                        (\\(\\ \n");
         printf("Press any key to return ( -.-) \n");
         getch();
-        system("cls");
         return;
     }
 
@@ -328,7 +324,6 @@ void experimental_insert_class() { // Minor fix (25/11, N)
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
-    system("cls");
 }
 
 void experimental_print_students_list() { // Added Student Query for Detailed Information (21/11, N)
@@ -348,7 +343,6 @@ void experimental_print_students_list() { // Added Student Query for Detailed In
         printf("                        (\\(\\ \n");
         printf("Press any key to return ( -.-) \n");
         getch();
-        system("cls");
         return;
     }
 
@@ -421,7 +415,6 @@ void experimental_print_students_list() { // Added Student Query for Detailed In
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
-    system("cls");
 }
 
 void experimental_print_course_list() {
@@ -438,7 +431,6 @@ void experimental_print_course_list() {
         printf("                        (\\(\\ \n");
         printf("Press any key to return ( -.-) \n");
         getch();
-        system("cls");
         return;
     }
 
@@ -468,7 +460,6 @@ void experimental_print_course_list() {
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
-    system("cls");
 }
 
 void experimental_print_class_list() { // New Function to query all class, will have specific course search later (23/11, N)
@@ -485,7 +476,6 @@ void experimental_print_class_list() { // New Function to query all class, will 
         printf("                        (\\(\\ \n");
         printf("Press any key to return ( -.-) \n");
         getch();
-        system("cls");
         return;
     }
 
@@ -514,7 +504,6 @@ void experimental_print_class_list() { // New Function to query all class, will 
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
-    system("cls");
 }
 
 void experimental_class_register() { // Fixed and good to go! (25/11, N)
@@ -539,7 +528,6 @@ void experimental_class_register() { // Fixed and good to go! (25/11, N)
     
     if (student_file == NULL || course_file == NULL || class_file == NULL) {
         printf("Error opening file(s) (>_<)!\n");
-        system("cls");
         return;
     }
 
@@ -567,7 +555,6 @@ void experimental_class_register() { // Fixed and good to go! (25/11, N)
         printf("Press any key to return ( -.-) \n");
         getch();
 
-        system("cls");
 
         fclose(student_file);
         fclose(course_file);
@@ -600,7 +587,6 @@ void experimental_class_register() { // Fixed and good to go! (25/11, N)
                 printf("\nThe process has been cancelled.\n"
                         "Press any key to return.\n");
                 getch();
-                system("cls");
                 return;
             }
 
@@ -684,7 +670,6 @@ void experimental_class_register() { // Fixed and good to go! (25/11, N)
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
-    system("cls");
 }
 
 void experimental_class_unregister() { // Fixed and good to go! (27/11, N)
@@ -707,7 +692,6 @@ void experimental_class_unregister() { // Fixed and good to go! (27/11, N)
     
     if (student_file == NULL || course_file == NULL || class_file == NULL) {
         printf("Error opening file (>_<)!\n");
-        system("cls");
         return;
     }
 
@@ -745,7 +729,6 @@ void experimental_class_unregister() { // Fixed and good to go! (27/11, N)
                 printf("\nThe process has been cancelled.\n"
                        "Press any key to return.\n");
                 getch();
-                system("cls");
                 return;
             }
             if (strcmp(ans, "yes") == 0 || strcmp(ans, "Yes") == 0 || strcmp(ans, "YES") == 0 || strcmp(ans, "yEs") == 0) {
@@ -800,7 +783,6 @@ void experimental_class_unregister() { // Fixed and good to go! (27/11, N)
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
-    system("cls");
 }
 
 void experimental_view_class() { // Fixed and good to go! (27/11, N)
@@ -817,7 +799,6 @@ void experimental_view_class() { // Fixed and good to go! (27/11, N)
     if (student_file == NULL || class_file == NULL) {
         printf("Error opening file(s) (>_<)!\n");
         getch();
-        system("cls");
         return;
     }
 
@@ -862,7 +843,6 @@ void experimental_view_class() { // Fixed and good to go! (27/11, N)
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
-    system("cls");
 }
 
 
@@ -884,7 +864,6 @@ void experimental_calculate_tuition() { // Fixed and Good to go! (27/11, N)
     if (student_file == NULL || course_file == NULL) {
         printf("Error opening file(s) (>_<)!\n");
         getch();
-        system("cls");
         return;
     }
 
@@ -946,7 +925,7 @@ void experimental_calculate_tuition() { // Fixed and Good to go! (27/11, N)
             printf("%-20s %-15.2f\n", "Overpaid Amount: ", paid);
             if (overpaid < 1) {
                 printf("Student %s has paid for the current semester.\n", st.student_name);
-                printf("The extra %.2f will be accounted for the next semester.\n". paid);
+                printf("The extra %.2f will be accounted for the next semester.\n", paid);
             }
             else {
                 printf("Student %s has paid for the current semester.\n", st.student_name);
@@ -964,7 +943,6 @@ void experimental_calculate_tuition() { // Fixed and Good to go! (27/11, N)
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
-    system("cls");
 }
 
 void experimental_student_pay() {
@@ -980,7 +958,6 @@ void experimental_student_pay() {
     if (student_file == NULL) {
         printf("Error opening file(s) (>_<)!\n");
         getch();
-        system("cls");
         return;
     }
 
@@ -1056,7 +1033,6 @@ void experimental_student_pay() {
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
-    system("cls");
 }
 
 /*
@@ -1106,6 +1082,8 @@ void experimental_delete_student_ID() {
             fclose(course_file);
         }
     }
+
+    system("cls");
 
     // Get student ID to delete
     printf("Enter Student ID to delete: ");
@@ -1222,7 +1200,6 @@ void experimental_delete_student_ID() {
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
-    system("cls");
 }
 
 //Experimental delete student by name (delete from ex_student.txt, decrease count in course and unregister from ex_class.txt) (31/10, D)
@@ -1269,6 +1246,8 @@ void experimental_delete_student_name() { //same as ID
             fclose(course_file);
         }
     }
+
+    system("cls");
 
     printf("Enter Student Name to delete: ");
     fflush(stdin);
@@ -1394,7 +1373,6 @@ void experimental_delete_student_name() { //same as ID
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
-    system("cls");
 }
 */
 
@@ -1445,6 +1423,8 @@ void experimental_delete_course_ID() {
             fclose(temp_class_file);
         }
     }
+
+    system("cls");
 
     printf("Enter Course ID to delete: ");
     fflush(stdin);
@@ -1555,18 +1535,22 @@ void experimental_delete_course_ID() {
     printf("                        (\\(\\ \n");
     printf("Press any key to return ( -.-) \n");
     getch();
-    system("cls");
 }
 
+
+
+
+// Menu System
 void sub_class_student() {
     int choice_class_student;
     
     do {
+        system("cls");
         printf("\n");
         printf("\t+========================================================+\n");
         printf("\t|              Study Center Management System            |\n");
         printf("\t|========================================================|\n");
-        printf("\t|               Student Class Update                     |\n");
+        printf("\t|                   Student Class Update                 |\n");
         printf("\t+========================================================+\n\n");
         printf("\n\t\tSelect your choice:\n\n");
         printf("\t\t* 1: Register a Student\n");
@@ -1594,7 +1578,6 @@ void sub_class_student() {
             default:
                 printf("From 1 to 3 only (>~<)!\n");
                 getch();
-                system("cls");
                 break;
         }
     } while (choice_class_student != 3);
@@ -1602,9 +1585,7 @@ void sub_class_student() {
 
     printf("\nReturning to Student Update.\n"
            "Press any key to return ( ='.'=) \n");
-    getch();
-    system("cls");
-                
+    getch();                
     return;
 }
 
@@ -1612,6 +1593,7 @@ void sub_update_student() {
     int choice_update_student;
     
     do {
+        system("cls");
         printf("\n");
         printf("\t+========================================================+\n");
         printf("\t|              Study Center Management System            |\n");
@@ -1647,7 +1629,6 @@ void sub_update_student() {
             default:
                 printf("From 1 to 4 only (>~<)!\n");
                 getch();
-                system("cls");
                 break;
         }
     } while (choice_update_student != 4);
@@ -1655,17 +1636,16 @@ void sub_update_student() {
 
     printf("\nReturning to Student Management.\n"
            "Press any key to return ( ='.'=) \n");
-    getch();
-    system("cls");
-                
+    getch();                
     return;
 }
 
 
 void sub_student() {
-    system("cls");
     int choice_student;
+
     do {
+        system("cls");
         printf("\n");
         printf("\t+========================================================+\n");
         printf("\t|              Study Center Management System            |\n");
@@ -1673,10 +1653,10 @@ void sub_student() {
         printf("\t|                    Student Management                  |\n");
         printf("\t+========================================================+\n\n");
         printf("\n\t\tSelect your choice:\n\n");
-        printf("\t\t* 1: Add new Student\n");
-        printf("\t\t* 2: Update a Student\n");
-        printf("\t\t* 3: Delete a Student\n");
-        printf("\t\t* 4: Return to Main Menu\n");
+        printf("\t\t* 1: Add\n");
+        printf("\t\t* 2: Update\n");
+        printf("\t\t* 3: Delete\n");
+        printf("\t\t* 4: Return\n");
         printf("\t+------------------------------------------------------+\n");
         printf("\t  Enter your choice (1-4): ");
 
@@ -1701,12 +1681,10 @@ void sub_student() {
                 printf("\nReturning to Main Menu.\n"
                        "Press any key to return ( ='.'=) \n");
                 getch();
-                system("cls");
                 break;
             default:
                 printf("From 1 to 4 only (>~<)!\n");
                 getch();
-                system("cls");
                 break;
         }
     } while (choice_student != 4);
@@ -1714,9 +1692,10 @@ void sub_student() {
 }
 
 void sub_class() {
-    system("cls");
     int choice_class;
+
     do {
+        system("cls");
         printf("\n");
         printf("\t+========================================================+\n");
         printf("\t|              Study Center Management System            |\n");
@@ -1764,12 +1743,10 @@ void sub_class() {
                 printf("\nReturning to Main Menu.\n"
                        "Press any key to return ( ='.'=) \n");
                 getch();
-                system("cls");
                 break;
             default:
                 printf("From 1 to 7 only (>~<)!\n");
                 getch();
-                system("cls");
                 break;
         }
     } while (choice_class != 7);
@@ -1777,9 +1754,10 @@ void sub_class() {
 }
 
 void sub_view() {
-    system("cls");
     int choice_view;
+
     do {
+        system("cls");
         printf("\n");
         printf("\t+========================================================+\n");
         printf("\t|              Study Center Management System            |\n");
@@ -1787,17 +1765,16 @@ void sub_view() {
         printf("\t|                     Information View                   |\n");
         printf("\t+========================================================+\n\n");
         printf("\n\t\tSelect your choice:\n\n");
-        printf("\t\t* 1: View Student(s)\n");
-        printf("\t\t* 2: View Course(s)\n");
-        printf("\t\t* 3: View Class(es)\n");
-        printf("\t\t* 4: View Tuition\n");
-        printf("\t\t* 5: Go Back\n");
+        printf("\t\t* 1: Student\n");
+        printf("\t\t* 2: Course\n");
+        printf("\t\t* 3: Class\n");
+        printf("\t\t* 4: Return\n");
         printf("\t+------------------------------------------------------+\n");
-        printf("\t  Enter your choice (1-5): ");
+        printf("\t  Enter your choice (1-4): ");
 
         while (scanf("%d", &choice_view) != 1) {
             while (getchar() != '\n');
-            printf("\t  (!_!) Invalid input! Please enter a number (1-5): ");
+            printf("\t  (!_!) Invalid input! Please enter a number (1-4): ");
             _getch();
             eraseLines(2);
         }
@@ -1813,21 +1790,16 @@ void sub_view() {
                 experimental_print_class_list();
                 break;
             case 4:
-                experimental_calculate_tuition();
-                break;
-            case 5:
                 printf("\nReturning to Main Menu.\n"
                        "Press any key to return ( ='.'=) \n");
                 getch();
-                system("cls");
                 break;
             default:
-                printf("From 1 to 5 only (>~<)!\n");
+                printf("From 1 to 4 only (>~<)!\n");
                 getch();
-                system("cls");
                 break;
         }
-    } while (choice_view != 5);
+    } while (choice_view != 4);
     return;
 }
 
@@ -1835,8 +1807,9 @@ void sub_view() {
 //menu for head admin
 void sub_head_admin() {
     int choice_head_admin;
-    system("cls");
+
     do {
+        system("cls");
         printf("\n");
         printf("\t+========================================================+\n");
         printf("\t|              Study Center Management System            |\n");
@@ -1846,7 +1819,7 @@ void sub_head_admin() {
         printf("\n\t\tSelect your choice:\n\n");
         printf("\t\t* 1: Student Management\n"
                "\t\t* 2: Class Management\n"
-               "\t\t* 3: View Info\n"
+               "\t\t* 3: Information List\n"
                "\t\t* 4: Return to Main Menu\n");
         printf("\t+--------------------------------------------------------+\n");
         printf("\t  Enter your choice (1-4): ");
@@ -1872,12 +1845,10 @@ void sub_head_admin() {
                 printf("\nReturning to Main Menu.\n"
                        "Press any key to return ( ='.'=) \n");
                 getch();
-                system("cls");
                 break;  
             default:
                 printf("From 1 to 4 only (>_<)!\n");
                 getch();
-                system("cls");
                 break;
         }
     } while (choice_head_admin != 4);
@@ -1886,7 +1857,9 @@ void sub_head_admin() {
 
 main() {
     int choice_main;
+
     do {
+        system("cls");
         printf("\n");
         printf("\t+========================================================+\n");
         printf("\t|              Study Center Management System            |\n");
@@ -1924,7 +1897,6 @@ main() {
             default:
                 printf("\t  Invalid input (>_<)! Please select options 1-4 only!\n");
                 getch();
-                system("cls");
                 break;
         }
     } while (choice_main != 4);
