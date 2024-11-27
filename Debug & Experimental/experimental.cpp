@@ -687,19 +687,19 @@ void experimental_class_register() { // Fixed and good to go! (25/11, N)
     system("cls");
 }
 
-void experimental_class_unregister() { // Currently not Working due to new class struct rework (23/11, N)
+void experimental_class_unregister() { // Fixed and good to go! (27/11, N)
     FILE *student_file, *course_file, *class_file;
     students st;
     courses cs;
-    classes cl[100];
-    char student_ID_s[MAX_ID_LENGTH];
-    char course_name_s[MAX_CLASSNAME_LENGTH];
+    classes cl;
+    char student_search[MAX_ID_LENGTH];
+    char class_name_remove[MAX_CLASSNAME_LENGTH];
     char no_class[MAX_CLASSNAME_LENGTH] = "Not Registered";
     char ans[5];
     bool student_found = false;
-    int i, all_students;
     long int student_pos;
     long int course_pos;
+    long int class_pos;
 
     student_file = fopen("ex_student.txt", "r+b");
     course_file = fopen("ex_course.txt","r+b");
@@ -714,12 +714,12 @@ void experimental_class_unregister() { // Currently not Working due to new class
     // Get Student ID
     printf("Enter Student ID: ");
     fflush(stdin);
-    fgets(student_ID_s, MAX_CLASSNAME_LENGTH, stdin);
-    student_ID_s[ strcspn(student_ID_s, "\n") ] = 0;
+    fgets(student_search, MAX_CLASSNAME_LENGTH, stdin);
+    student_search[ strcspn(student_search, "\n") ] = 0;
 
     // Find Student Position
     while (fread(&st, sizeof(students), 1, student_file) == 1) {
-        if (strcmp(st.student_ID, student_ID_s) == 0) {
+        if (strcmp(st.student_ID, student_search) == 0) {
             student_found = true;
             student_pos = ftell(student_file) - sizeof(students);
             break;
@@ -727,7 +727,7 @@ void experimental_class_unregister() { // Currently not Working due to new class
     }
 
     if (!student_found) {
-        printf("Student ID %s has not been found (>_<)!\n", student_ID_s);
+        printf("Student ID %s has not been found (>_<)!\n", student_search);
     }
 
     else if (strcmp(st.class_attend, no_class) == 0) {
@@ -754,35 +754,29 @@ void experimental_class_unregister() { // Currently not Working due to new class
         printf("\nInvalid Input (>~<)! Please type either yes or no: ");
         } while (true);
 
-        // Count all Students That are registered
-        all_students = 0;
-        while (fread(&cs, sizeof(courses), 1, course_file) == 1) {
-            all_students = all_students + cs.total_students;
-        }
-        rewind(course_file);
 
-        // Find Course Position
-        while (fread(&cs, sizeof(courses), 1, course_file) == 1) {
-            if (strcmp(cs.course_name, st.class_attend) == 0) {
-                course_pos = ftell(course_file) - sizeof(courses);
+        // Find Class Position
+        while (fread(&cl, sizeof(classes), 1, class_file) == 1) {
+            if (strcmp(cl.class_name, st.class_attend) == 0) {
+                class_pos = ftell(class_file) - sizeof(classes);
                 break;
             }
         }
 
-        for (i = 0; i < all_students; i++) {
-            fread(&cl[i], sizeof(classes), 1, class_file);
+        // Find Course Position
+        while (fread(&cs, sizeof(courses), 1, course_file) == 1) {
+            if (strcmp(cl.course_ID, cs.course_ID) == 0) {
+                course_pos = ftell(course_file) - sizeof(courses);
+            }
         }
-        rewind(class_file);
 
         // Unregister the class
-        strcpy(course_name_s, st.class_attend); // Copy for confirmation line.
+        strcpy(class_name_remove, st.class_attend); // Copy for confirmation line.
         strcpy(st.class_attend, no_class);
 
-
+        // Reduce the amount of student(s) in Class & Course
         cs.total_students = cs.total_students - 1;
-        if (cs.total_students % 10 == 0) {
-            cs.total_class = cs.total_class - 1;
-        }
+        cl.total_students = cl.total_students - 1;
 
         // Update Student Record
         fseek(student_file, student_pos, SEEK_SET);
@@ -792,7 +786,11 @@ void experimental_class_unregister() { // Currently not Working due to new class
         fseek(course_file, course_pos, SEEK_SET);
         fwrite(&cs, sizeof(courses), 1, course_file);
 
-        printf("\nSuccessfully removed Student %s from class %s ( =^.^=)!\n", st.student_name, course_name_s);
+        // Update Class Record
+        fseek(class_file, class_pos, SEEK_SET);
+        fwrite(&cl, sizeof(classes), 1, class_file);
+
+        printf("\nSuccessfully removed student %s from class %s ( =^.^=)!\n", st.student_name, class_name_remove);
     }
 
     fclose(student_file);
@@ -915,7 +913,7 @@ void experimental_calculate_tuition() {
     }
     
     else if (strcmp(st.class_attend, no_class) == 0) {
-        printf("Student [ %s ] has not register any course (>~<)!\n", st.student_name);
+        printf("Student [ %s ] current is not in a class (>~<)!\n", st.student_name);
     }
 
     else {
