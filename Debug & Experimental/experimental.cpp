@@ -182,6 +182,10 @@ void experimental_insert_course() { // Minor adjustment (23/11, N)
         printf("Enter total amount of students can be in one class: ");
         scanf("%d", &new_course.max_students);
 
+        new_course.total_class = 0;
+
+        new_course.total_students = 0;
+
         //Write new class to file
         fseek(file, 0, SEEK_END);
         new_course.course_name[ strcspn(new_course.course_name, "\n") ] = 0;
@@ -267,6 +271,14 @@ void experimental_insert_class() { // Minor fix (25/11, N)
             break;
         }
     }
+    
+    rewind(course_file);
+    while ( fread(&cs, sizeof(courses), 1, course_file) == 1) {
+        if (strcmp(cs.course_ID, new_class.class_ID) == 0) {
+            class_found = true;
+            break;
+        }
+    }
 
     if (class_found) {
         printf("Error: Class ID [ %s ] already exists (>~<)!\n", new_class.class_ID);
@@ -291,8 +303,7 @@ void experimental_insert_class() { // Minor fix (25/11, N)
                     new_name_valid = false; // set false to repeat loop
                     break;
                 }
-        }
-        
+            }
         } while (!new_name_valid);
 
         strcpy(new_class.class_name, new_class_name); // Copy the valid name
@@ -302,6 +313,8 @@ void experimental_insert_class() { // Minor fix (25/11, N)
         new_class.course_ID[ strcspn(new_class.course_ID, "\n") ] = 0;
 
         new_class.max_students = cs.max_students; // Max Student allowed in class
+
+        new_class.total_students = 0;
 
         // Increase class total number in courses
         cs.total_class = cs.total_class + 1;
@@ -1514,11 +1527,11 @@ void experimental_print_course_list() {
                 rewind(file);
                 while (fread (&cs, sizeof(courses), 1, file) == 1) {
                     if (strcmp(course_search, cs.course_ID) == 0) {
-                        printf("\n\n%-20s %s", "ID:", cs.course_ID);
-                        printf("\n%-20s %s", "Course Name:", cs.course_name);
-                        printf("\n%-20s %d", "Fee:", cs.tuition);
-                        printf("\n%-20s %d", "Number Of Class(es):", cs.total_class);
-                        printf("\n%-20s %d", "Number Of Student(s):", cs.total_students);
+                        printf("\n\n%-25s %s", "ID:", cs.course_ID);
+                        printf("\n%-25s %s", "Course Name:", cs.course_name);
+                        printf("\n%-25s %d", "Fee:", cs.tuition);
+                        printf("\n%-25s %d", "Number Of Class(es):", cs.total_class);
+                        printf("\n%-25s %d", "Number Of Student(s):", cs.total_students);
                         search_check = true;
                     }
                 }
