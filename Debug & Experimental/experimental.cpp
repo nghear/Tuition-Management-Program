@@ -7,8 +7,6 @@
 #include <windows.h>
 #include <iomanip>
 #include <limits>
-#include <cstdlib>
-#include <cstring>
 #include <locale.h>
 
 void eraseLines(int count) {
@@ -552,11 +550,11 @@ void experimental_class_register() { // Fixed and good to go! (25/11, N)
     }
 
     if (!class_found) {
-        printf("There is no course with the ID [ %s ] (>~<)!\n", class_search);
+        printf("There is no class with the ID [ %s ] (>~<)!\n", class_search);
     }
 
     else if (strcmp(st.class_attend, cl.class_name) == 0) {
-        printf("Student [ %s ] is already registered for course [ %s ] (As stated from previous check already (>~<)!)\n",
+        printf("Student [ %s ] is already registered for class [ %s ] (As stated from previous check already (>~<)!)\n",
                 st.student_name, cl.class_name);
     }
 
@@ -1313,13 +1311,211 @@ cleanup:
     getch();
 }
 
+//sort student by name, tuition (30/11, D)
+void experimental_sort_student_ascending() {
+    FILE *file = fopen("ex_student.txt", "rb");
+    if (!file) {
+        printf("Error opening file (>_<)!\n");
+        return;
+    }
 
+    // Count total students
+    fseek(file, 0, SEEK_END);
+    int count = ftell(file) / sizeof(students);
+    rewind(file);
+
+    // Read all students into array
+    students *st = (students*)malloc(count * sizeof(students));
+    fread(st, sizeof(students), count, file);
+    fclose(file);
+
+    // Bubble sort by name
+    for (int i = 0; i < count - 1; i++) {
+        for (int j = 0; j < count - i - 1; j++) {
+            if (strcmp(st[j].student_name, st[j + 1].student_name) > 0) {
+                students temp = st[j];
+                st[j] = st[j + 1];
+                st[j + 1] = temp;
+            }
+        }
+    }
+
+    // Display sorted list
+    system("cls");
+    printf("\t+========================================================+\n");
+    printf("\t|              Study Center Management System            |\n");
+    printf("\t|========================================================|\n");
+    printf("\t|                  Student Information                   |\n");
+    printf("\t+========================================================+\n\n");
+    printf("\n\tSorted Student List (A-Z)\n\n");
+    printf("\t%-5s |%-15s |%-30s |%-30s\n", 
+           "No.", "ID", "Full Name", "Class");
+    printf("\t----------------------------------------------------------\n");
+    
+    for (int i = 0; i < count; i++) {
+        printf("\t%-5d |%-15s |%-30s |%-30s\n", 
+            i + 1, st[i].student_ID, st[i].student_name, st[i].class_attend);
+    }
+
+    free(st);
+    printf("\n\n");
+    printf("                        (\\(\\ \n");
+    printf("Press any key to return ( -.-) \n");
+    getch();
+}
+
+void experimental_sort_student_descending() {
+    FILE *file = fopen("ex_student.txt", "rb");
+    if (!file) {
+        printf("Error opening file (>_<)!\n");
+        return;
+    }
+
+    fseek(file, 0, SEEK_END);
+    int count = ftell(file) / sizeof(students);
+    rewind(file);
+
+    students *st = (students*)malloc(count * sizeof(students));
+    fread(st, sizeof(students), count, file);
+    fclose(file);
+
+    // Bubble sort by name (Z-A)
+    for (int i = 0; i < count - 1; i++) {
+        for (int j = 0; j < count - i - 1; j++) {
+            if (strcmp(st[j].student_name, st[j + 1].student_name) < 0) { // Reversed comparison
+                students temp = st[j];
+                st[j] = st[j + 1];
+                st[j + 1] = temp;
+            }
+        }
+    }
+
+    system("cls");
+    printf("\t+========================================================+\n");
+    printf("\t|              Study Center Management System            |\n");
+    printf("\t|========================================================|\n");
+    printf("\t|                  Student Information                   |\n");
+    printf("\t+========================================================+\n\n");
+    printf("\n\tSorted Student List (Z-A)\n\n");
+    printf("\t%-5s |%-15s |%-30s |%-30s\n", 
+           "No.", "ID", "Full Name", "Class");
+    printf("\t----------------------------------------------------------\n");
+    
+    for (int i = 0; i < count; i++) {
+        printf("\t%-5d |%-15s |%-30s |%-30s\n", 
+            i + 1, st[i].student_ID, st[i].student_name, st[i].class_attend);
+    }
+
+    free(st);
+    printf("\n\n");
+    printf("                        (\\(\\ \n");
+    printf("Press any key to return ( -.-) \n");
+    getch();
+}
+
+void experimental_sort_student_tuition_ascending() {
+    FILE *file = fopen("ex_student.txt", "rb");
+    if (!file) {
+        printf("Error opening file (>_<)!\n");
+        return;
+    }
+
+    fseek(file, 0, SEEK_END);
+    int count = ftell(file) / sizeof(students);
+    rewind(file);
+
+    students *st = (students*)malloc(count * sizeof(students));
+    fread(st, sizeof(students), count, file);
+    fclose(file);
+
+    // Bubble sort by tuition (Low to High)
+    for (int i = 0; i < count - 1; i++) {
+        for (int j = 0; j < count - i - 1; j++) {
+            if (st[j].tuition_paid > st[j + 1].tuition_paid) {
+                students temp = st[j];
+                st[j] = st[j + 1];
+                st[j + 1] = temp;
+            }
+        }
+    }
+
+    system("cls");
+    printf("\t+========================================================+\n");
+    printf("\t|              Study Center Management System            |\n");
+    printf("\t|========================================================|\n");
+    printf("\t|                  Student Information                   |\n");
+    printf("\t+========================================================+\n\n");
+    printf("\n\tSorted Student List (Tuition: Low to High)\n\n");
+    printf("\t%-5s |%-15s |%-30s |%-15s\n", 
+           "No.", "ID", "Full Name", "Tuition");
+    printf("\t----------------------------------------------------------\n");
+    
+    for (int i = 0; i < count; i++) {
+        printf("\t%-5d |%-15s |%-30s |%-15.2f\n", 
+            i + 1, st[i].student_ID, st[i].student_name, st[i].tuition_paid);
+    }
+
+    free(st);
+    printf("\n\n");
+    printf("                        (\\(\\ \n");
+    printf("Press any key to return ( -.-) \n");
+    getch();
+}
+
+void experimental_sort_student_tuition_descending() {
+    FILE *file = fopen("ex_student.txt", "rb");
+    if (!file) {
+        printf("Error opening file (>_<)!\n");
+        return;
+    }
+
+    fseek(file, 0, SEEK_END);
+    int count = ftell(file) / sizeof(students);
+    rewind(file);
+
+    students *st = (students*)malloc(count * sizeof(students));
+    fread(st, sizeof(students), count, file);
+    fclose(file);
+
+    // Bubble sort by tuition (High to Low)
+    for (int i = 0; i < count - 1; i++) {
+        for (int j = 0; j < count - i - 1; j++) {
+            if (st[j].tuition_paid < st[j + 1].tuition_paid) { // Reversed comparison
+                students temp = st[j];
+                st[j] = st[j + 1];
+                st[j + 1] = temp;
+            }
+        }
+    }
+
+    system("cls");
+    printf("\t+========================================================+\n");
+    printf("\t|              Study Center Management System            |\n");
+    printf("\t|========================================================|\n");
+    printf("\t|                  Student Information                   |\n");
+    printf("\t+========================================================+\n\n");
+    printf("\n\tSorted Student List (Tuition: High to Low)\n\n");
+    printf("\t%-5s |%-15s |%-30s |%-15s\n", 
+           "No.", "ID", "Full Name", "Tuition");
+    printf("\t----------------------------------------------------------\n");
+    
+    for (int i = 0; i < count; i++) {
+        printf("\t%-5d |%-15s |%-30s |%-15.2f\n", 
+            i + 1, st[i].student_ID, st[i].student_name, st[i].tuition_paid);
+    }
+
+    free(st);
+    printf("\n\n");
+    printf("                        (\\(\\ \n");
+    printf("Press any key to return ( -.-) \n");
+    getch();
+}
 
 
 
 
 // List Print Functions
-void experimental_print_students_list() { // Added Student Query for Detailed Information (21/11, N)
+void experimental_print_students_list() {
     FILE *file;
     students st;
     int student_count = 0;
@@ -1327,11 +1523,9 @@ void experimental_print_students_list() { // Added Student Query for Detailed In
     char student_search[MAX_ID_LENGTH];
     bool search_check = false;
 
-    // Open the file in binary read mode
     file = fopen("ex_student.txt", "rb");
     if (file == NULL) {
         printf("Error opening file or file doesn't exist (>_<)!\n");
-
         printf("\n\n");
         printf("                        (\\(\\ \n");
         printf("Press any key to return ( -.-) \n");
@@ -1339,65 +1533,141 @@ void experimental_print_students_list() { // Added Student Query for Detailed In
         return;
     }
 
-    system("cls");  // Clear the screen
+    system("cls");
+    printf("\n");
+    printf("\t+========================================================+\n");
+    printf("\t|              Study Center Management System            |\n");
+    printf("\t|========================================================|\n");
+    printf("\t|                    List of Students                    |\n");
+    printf("\t+========================================================+\n\n");
 
-    printf("\t\t\tList of Students\n\n");
-    printf("%-5s |%-15s |%-30s |%-30s\n", 
+    printf("\t%-5s |%-15s |%-30s |%-30s\n", 
            "No.", "ID", "Full Name", "Class");
-    printf("--------------------------------------------------------------------------------\n");
+    printf("\t----------------------------------------------------------\n");
 
-    // Read and print each student
     while (fread(&st, sizeof(students), 1, file) == 1) {
         student_count++;
-        printf("%-5d |%-15s |%-30s |%-30s", 
+        printf("\t%-5d |%-15s |%-30s |%-30s\n", 
             student_count, st.student_ID, st.student_name, st.class_attend);
-        printf("\n");
     }
 
     if (student_count == 0) {
-        printf("Cannot Detect any Student (>~<)\n");
+        printf("\tCannot Detect any Student (>~<)\n");
     } else {
-        printf("\nTotal number of Student(s): %d\n\n", student_count);
+        printf("\n\tTotal number of Student(s): %d\n\n", student_count);
 
-        printf("\n1. View Detailed Information Of A Student");
-        printf("\n2. Return");
-
-        printf("\n\nEnter your choice (1-2) : ");
+        printf("\t\t* 1: View Detailed Information Of A Student\n");
+        printf("\t\t* 2: Sort Student Information\n");
+        printf("\t\t* 3: Return\n");
+        printf("\t+------------------------------------------------------+\n");
+        printf("\t  Enter your choice (1-3): ");
 
         while (scanf("%d", &choice_view) != 1) {
             while (getchar() != '\n');
-            printf("\t  Invalid input (>_<)! Please enter a number (1-2): ");
+            printf("\t  (!_!) Invalid input! Please enter a number (1-3): ");
             _getch();
             eraseLines(2);
         }
+        
         switch(choice_view) {
             case 1:
                 system("cls");
-                printf("\nEnter Student's ID to look: ");
-                fflush(stdin);
-                fgets(student_search, sizeof(student_search), stdin);
-                student_search[ strcspn(student_search, "\n") ] = 0;
+                printf("\n");
+                printf("\t+========================================================+\n");
+                printf("\t|              Study Center Management System            |\n");
+                printf("\t|========================================================|\n");
+                printf("\t|                  Student Information                   |\n");
+                printf("\t+========================================================+\n\n");
+                
+                do {
+                    system("cls");
+                    printf("\n");
+                    printf("\t+========================================================+\n");
+                    printf("\t|              Study Center Management System            |\n");
+                    printf("\t|========================================================|\n");
+                    printf("\t|                  Student Information                   |\n");
+                    printf("\t+========================================================+\n\n");
+                    printf("\tEnter Student's ID to look: ");
+                    fflush(stdin);
+                    fgets(student_search, sizeof(student_search), stdin);
+                    student_search[strcspn(student_search, "\n")] = 0;
+                    if (strlen(student_search) == 0) {
+                        printf("Error: Student ID cannot be empty (>_<)!\n");
+                        system("pause");
+                    }
+                } while (strlen(student_search) == 0);
+                
                 rewind(file);
-                while (fread (&st, sizeof(students), 1, file) == 1) {
+                while (fread(&st, sizeof(students), 1, file) == 1) {
                     if (strcmp(student_search, st.student_ID) == 0) {
-                        printf("\n\n%-20s %s", "ID:", st.student_ID);
-                        printf("\n%-20s %s", "Full Name:", st.student_name);
-                        printf("\n%-20s %s", "Phone Number:", st.student_phone);
-                        printf("\n%-20s %s", "Email:", st.student_email);
-                        printf("\n%-20s %s", "Class:", st.class_attend);
-                        printf("\n%-20s %f", "Tuition Paid:", st.tuition_paid);
+                        printf("\n\t+--------------------------------------------------------+\n");
+                        printf("\t| %-20s | %s \n", "ID:", st.student_ID);
+                        printf("\t| %-20s | %s \n", "Full Name:", st.student_name);
+                        printf("\t| %-20s | %s \n", "Phone Number:", st.student_phone);
+                        printf("\t| %-20s | %s \n", "Email:", st.student_email);
+                        printf("\t| %-20s | %s \n", "Class:", st.class_attend);
+                        printf("\t| %-20s | %.2f |\n", "Tuition Paid:", st.tuition_paid);
+                        printf("\t+--------------------------------------------------------+\n");
                         search_check = true;
                     }
                 }
                 if (!search_check) {
-                    printf("\nStudent ID [ %s ] was not found.", student_search);
-                }             
+                    printf("\n\tStudent ID [ %s ] was not found (>~<)!", student_search);
+                }
                 printf("\n\n");
                 printf("                        (\\(\\ \n");
                 printf("Press any key to return ( -.-) \n");
                 getch();
                 break;
             case 2:
+                do {
+                    system("cls");
+                    printf("\n");
+                    printf("\t+========================================================+\n");
+                    printf("\t|              Study Center Management System            |\n");
+                    printf("\t|========================================================|\n");
+                    printf("\t|                  Sort Student Information              |\n");
+                    printf("\t+========================================================+\n\n");
+                    printf("\t\tSelect sorting criteria:\n\n");
+                    printf("\t\t* 1: Sort by Name (A-Z)\n");
+                    printf("\t\t* 2: Sort by Name (Z-A)\n");
+                    printf("\t\t* 3: Sort by Tuition (Ascending)\n");
+                    printf("\t\t* 4: Sort by Tuition (Descending)\n");
+                    printf("\t\t* 5: Return\n");
+                    printf("\t+------------------------------------------------------+\n");
+                    printf("\t  Enter your choice (1-5): ");
+
+                    int sort_choice;
+                    while (scanf("%d", &sort_choice) != 1) {
+                        while (getchar() != '\n');
+                        printf("\t  (!_!) Invalid input! Please enter a number (1-5): ");
+                        _getch();
+                        eraseLines(2);
+                    }
+
+                    switch(sort_choice) {
+                        case 1:
+                            experimental_sort_student_ascending();
+                            break;
+                        case 2:
+                            experimental_sort_student_descending();
+                            break;
+                        case 3:
+                            experimental_sort_student_tuition_ascending();
+                            break;
+                        case 4:
+                            experimental_sort_student_tuition_descending();
+                            break;
+                        case 5:
+                            return;
+                        default:
+                            printf("\t  Invalid choice! Please select 1-5 only (>_<)!\n");
+                            getch();
+                            break;
+                    }
+                } while (1);
+                break;
+            case 3:
                 printf("\n\n");
                 printf("                        (\\(\\ \n");
                 printf("Press any key to return ( -.-) \n");
@@ -1454,7 +1724,7 @@ void experimental_print_course_list() {
 
         while (scanf("%d", &choice_view) != 1) {
             while (getchar() != '\n');
-            printf("\t  Invalid input (>_<)! Please enter a number (1-2): ");
+            printf("\t  (!_!) Invalid input (>_<)! Please enter a number (1-2): ");
             _getch();
             eraseLines(2);
         }
@@ -1847,6 +2117,13 @@ void sub_head_admin() {
     return;
 }
 
+//accountant menu
+void sub_accountant() {
+
+}
+
+
+//main menu
 main() {
     int choice_main;
 
