@@ -1512,6 +1512,185 @@ void experimental_sort_student_tuition_descending() {
 }
 
 
+//update student personal info (30/11, D)
+void experimental_Update_Student_Info() {
+    FILE *file;
+    students st;
+    char student_search[MAX_ID_LENGTH];
+    bool student_found = false;
+    long int student_pos;
+    int update_choice;
+    char phone_str[MAX_NUMBER_LENGTH];
+    int student_count = 0;
+
+    // Open file in read and write mode
+    file = fopen("ex_student.txt", "r+b");
+    if (file == NULL) {
+        printf("Error opening file (>_<)!\n");
+        return;
+    }
+
+    system("cls");
+    printf("\n");
+    printf("\t+========================================================+\n");
+    printf("\t|              Study Center Management System            |\n");
+    printf("\t|========================================================|\n");
+    printf("\t|               Update Student Information               |\n");
+    printf("\t+========================================================+\n\n");
+
+    //print all student ID and names
+    printf("\t%-5s |%-15s |%-30s |%-30s\n", 
+           "No.", "ID", "Full Name", "Class");
+    printf("\t+--------------------------------------------------------+\n");
+
+    while (fread(&st, sizeof(students), 1, file) == 1) {
+        student_count++;
+        printf("\t%-5d |%-15s |%-30s |%-30s\n", 
+            student_count, st.student_ID, st.student_name, st.class_attend);
+    }
+    printf("\t+--------------------------------------------------------+\n");
+
+    // Get student ID
+    rewind(file);
+    do {
+        printf("\n\tEnter Student ID to update: ");
+        fflush(stdin);
+        fgets(student_search, sizeof(student_search), stdin);
+        student_search[strcspn(student_search, "\n")] = 0;
+        if (strlen(student_search) == 0) {
+            printf("\tError: Student ID cannot be empty (>_<)!\n");
+        }
+    } while (strlen(student_search) == 0);
+
+    // Find student
+    while (fread(&st, sizeof(students), 1, file) == 1) {
+        if (strcmp(st.student_ID, student_search) == 0) {
+            student_found = true;
+            student_pos = ftell(file) - sizeof(students);
+            break;
+        }
+    }
+
+    if (!student_found) {
+        printf("\n\tStudent ID [ %s ] not found (>_<)!\n", student_search);
+    } else {
+        // Display current information
+        printf("\n\tCurrent Student Information:\n");
+        printf("\t+--------------------------------------------------------+\n");
+        printf("\t| %-20s | %s\n", "ID:", st.student_ID);
+        printf("\t| %-20s | %s\n", "Full Name:", st.student_name);
+        printf("\t| %-20s | %s\n", "Phone Number:", st.student_phone);
+        printf("\t| %-20s | %s\n", "Email:", st.student_email);
+        printf("\t+--------------------------------------------------------+\n\n");
+
+        do {
+            printf("\tWhat would you like to update?\n");
+            printf("\t1. Name\n");
+            printf("\t2. Phone Number\n");
+            printf("\t3. Email\n");
+            printf("\t4. Return\n");
+            printf("\tEnter your choice (1-4): ");
+
+            while (scanf("%d", &update_choice) != 1) {
+                while (getchar() != '\n');
+                printf("\t(!_!) Invalid input! Please enter a number (1-4): ");
+                _getch();
+                eraseLines(2);
+            }
+
+            switch(update_choice) {
+                case 1: // Update Name
+                    do {
+                        printf("\n\tEnter new name: ");
+                        fflush(stdin);
+                        fgets(st.student_name, sizeof(st.student_name), stdin);
+                        st.student_name[strcspn(st.student_name, "\n")] = 0;
+                        if (strlen(st.student_name) == 0) {
+                            printf("\tStudent's Name cannot be empty (>_<)!\n");
+                        }
+                    } while (strlen(st.student_name) == 0);
+                    break;
+
+                case 2: // Update Phone
+                    do {
+                        printf("\n\tEnter new phone number: ");
+                        fflush(stdin);
+                        fgets(phone_str, sizeof(phone_str), stdin);
+                        phone_str[strcspn(phone_str, "\n")] = 0;
+                        
+                        size_t len = strlen(phone_str);
+                        bool valid = true;
+                        
+                        // Check if exactly 10 digits
+                        if(len != 10) {
+                            printf("\tPhone number must be exactly 10 digits!\n");
+                            continue;
+                        }
+                        
+                        // Verify all characters are digits
+                        for(int i = 0; i < len; i++) {
+                            if(!isdigit(phone_str[i])) {
+                                valid = false;
+                                break;
+                            }
+                        }
+                        
+                        if(valid) {
+                            strcpy(st.student_phone, phone_str);
+                            break;
+                        }
+                        printf("\tInvalid phone number format (>_<)! Please enter 10 digits only.\n");
+                    } while(1);
+                    break;
+
+                case 3: // Update Email
+                    do {
+                        printf("\n\tEnter new email: ");
+                        fflush(stdin);
+                        fgets(st.student_email, sizeof(st.student_email), stdin);
+                        st.student_email[strcspn(st.student_email, "\n")] = 0;
+                        if (strlen(st.student_email) == 0) {
+                            printf("\tStudent's Email cannot be empty (>_<)!\n");
+                        }
+                    } while (strlen(st.student_email) == 0);
+                    break;
+
+                case 4: // Return
+                    fclose(file);
+                    return;
+
+                default:
+                    printf("\tInvalid choice! Please select 1-4 only (>_<)!\n");
+                    getch();
+                    continue;
+            }
+
+            // Update the record
+            fseek(file, student_pos, SEEK_SET);
+            fwrite(&st, sizeof(students), 1, file);
+            printf("\n\tInformation updated successfully ( =^.^=)!\n");
+            getch();
+
+            // Display updated information
+            system("cls");
+            printf("\n\tUpdated Student Information:\n");
+            printf("\t+--------------------------------------------------------+\n");
+            printf("\t| %-20s | %s\n", "ID:", st.student_ID);
+            printf("\t| %-20s | %s\n", "Full Name:", st.student_name);
+            printf("\t| %-20s | %s\n", "Phone Number:", st.student_phone);
+            printf("\t| %-20s | %s\n", "Email:", st.student_email);
+            printf("\t+--------------------------------------------------------+\n\n");
+
+        } while (update_choice != 4);
+    }
+
+    fclose(file);
+    printf("\n\n");
+    printf("                        (\\(\\ \n");
+    printf("Press any key to return ( -.-) \n");
+    getch();
+}
+
 
 
 // List Print Functions
@@ -1535,24 +1714,34 @@ void experimental_print_students_list() {
 
     system("cls");
     printf("\n");
-    printf("\t+========================================================+\n");
-    printf("\t|              Study Center Management System            |\n");
-    printf("\t|========================================================|\n");
-    printf("\t|                    List of Students                    |\n");
-    printf("\t+========================================================+\n\n");
+    printf("\t+========================================================================+\n");
+    printf("\t|                    Study Center Management System                      |\n");
+    printf("\t|========================================================================|\n");
+    printf("\t|                          List of Students                              |\n");
+    printf("\t+========================================================================+\n\n");
 
-    printf("\t%-5s |%-15s |%-30s |%-30s\n", 
-           "No.", "ID", "Full Name", "Class");
-    printf("\t----------------------------------------------------------\n");
+    // Header row with consistent formatting
+    printf("\t+------+----------------+--------------------------------+");
+    printf("--------------------------------+---------------+\n");
+    printf("\t| %-4s | %-14s | %-30s | %-30s | %-13s |\n",
+           "No.", "ID", "Name", "Class", "Tuition");
+    printf("\t+------+----------------+--------------------------------+");
+    printf("--------------------------------+---------------+\n");
 
+    // Data rows with consistent alignment
     while (fread(&st, sizeof(students), 1, file) == 1) {
         student_count++;
-        printf("\t%-5d |%-15s |%-30s |%-30s\n", 
-            student_count, st.student_ID, st.student_name, st.class_attend);
+        printf("\t| %-4d | %-14s | %-30s | %-30s | %13.2f |\n",
+            student_count, st.student_ID, st.student_name, st.class_attend, st.tuition_paid);
     }
 
+    // Bottom border
+    printf("\t+------+----------------+--------------------------------+");
+    printf("--------------------------------+---------------+\n");
+
     if (student_count == 0) {
-        printf("\tCannot Detect any Student (>~<)\n");
+        printf("\t|                      Cannot Detect any Student (>~<)                        |\n");
+        printf("\t+------------------------------------------------------------------------+\n");
     } else {
         printf("\n\tTotal number of Student(s): %d\n\n", student_count);
 
@@ -1561,16 +1750,26 @@ void experimental_print_students_list() {
         printf("\t\t* 3: Return\n");
         printf("\t+------------------------------------------------------+\n");
         printf("\t  Enter your choice (1-3): ");
+    }
 
-        while (scanf("%d", &choice_view) != 1) {
-            while (getchar() != '\n');
-            printf("\t  (!_!) Invalid input! Please enter a number (1-3): ");
-            _getch();
-            eraseLines(2);
-        }
-        
-        switch(choice_view) {
-            case 1:
+    while (scanf("%d", &choice_view) != 1) {
+        while (getchar() != '\n');
+        printf("\t  (!_!) Invalid input! Please enter a number (1-3): ");
+        _getch();
+        eraseLines(2);
+    }
+    
+    switch(choice_view) {
+        case 1:
+            system("cls");
+            printf("\n");
+            printf("\t+========================================================+\n");
+            printf("\t|              Study Center Management System            |\n");
+            printf("\t|========================================================|\n");
+            printf("\t|                  Student Information                   |\n");
+            printf("\t+========================================================+\n\n");
+            
+            do {
                 system("cls");
                 printf("\n");
                 printf("\t+========================================================+\n");
@@ -1578,102 +1777,92 @@ void experimental_print_students_list() {
                 printf("\t|========================================================|\n");
                 printf("\t|                  Student Information                   |\n");
                 printf("\t+========================================================+\n\n");
-                
-                do {
-                    system("cls");
-                    printf("\n");
-                    printf("\t+========================================================+\n");
-                    printf("\t|              Study Center Management System            |\n");
-                    printf("\t|========================================================|\n");
-                    printf("\t|                  Student Information                   |\n");
-                    printf("\t+========================================================+\n\n");
-                    printf("\tEnter Student's ID to look: ");
-                    fflush(stdin);
-                    fgets(student_search, sizeof(student_search), stdin);
-                    student_search[strcspn(student_search, "\n")] = 0;
-                    if (strlen(student_search) == 0) {
-                        printf("Error: Student ID cannot be empty (>_<)!\n");
-                        system("pause");
-                    }
-                } while (strlen(student_search) == 0);
-                
-                rewind(file);
-                while (fread(&st, sizeof(students), 1, file) == 1) {
-                    if (strcmp(student_search, st.student_ID) == 0) {
-                        printf("\n\t+--------------------------------------------------------+\n");
-                        printf("\t| %-20s | %s \n", "ID:", st.student_ID);
-                        printf("\t| %-20s | %s \n", "Full Name:", st.student_name);
-                        printf("\t| %-20s | %s \n", "Phone Number:", st.student_phone);
-                        printf("\t| %-20s | %s \n", "Email:", st.student_email);
-                        printf("\t| %-20s | %s \n", "Class:", st.class_attend);
-                        printf("\t| %-20s | %.2f |\n", "Tuition Paid:", st.tuition_paid);
-                        printf("\t+--------------------------------------------------------+\n");
-                        search_check = true;
-                    }
+                printf("\tEnter Student's ID to look: ");
+                fflush(stdin);
+                fgets(student_search, sizeof(student_search), stdin);
+                student_search[strcspn(student_search, "\n")] = 0;
+                if (strlen(student_search) == 0) {
+                    printf("Error: Student ID cannot be empty (>_<)!\n");
+                    system("pause");
                 }
-                if (!search_check) {
-                    printf("\n\tStudent ID [ %s ] was not found (>~<)!", student_search);
+            } while (strlen(student_search) == 0);
+            
+            rewind(file);
+            while (fread(&st, sizeof(students), 1, file) == 1) {
+                if (strcmp(student_search, st.student_ID) == 0) {
+                    printf("\n\t+--------------------------------------------------------+\n");
+                    printf("\t| %-20s | %s \n", "ID:", st.student_ID);
+                    printf("\t| %-20s | %s \n", "Full Name:", st.student_name);
+                    printf("\t| %-20s | %s \n", "Phone Number:", st.student_phone);
+                    printf("\t| %-20s | %s \n", "Email:", st.student_email);
+                    printf("\t| %-20s | %s \n", "Class:", st.class_attend);
+                    printf("\t| %-20s | %.2f |\n", "Tuition Paid:", st.tuition_paid);
+                    printf("\t+--------------------------------------------------------+\n");
+                    search_check = true;
                 }
-                printf("\n\n");
-                printf("                        (\\(\\ \n");
-                printf("Press any key to return ( -.-) \n");
-                getch();
-                break;
-            case 2:
-                do {
-                    system("cls");
-                    printf("\n");
-                    printf("\t+========================================================+\n");
-                    printf("\t|              Study Center Management System            |\n");
-                    printf("\t|========================================================|\n");
-                    printf("\t|                  Sort Student Information              |\n");
-                    printf("\t+========================================================+\n\n");
-                    printf("\t\tSelect sorting criteria:\n\n");
-                    printf("\t\t* 1: Sort by Name (A-Z)\n");
-                    printf("\t\t* 2: Sort by Name (Z-A)\n");
-                    printf("\t\t* 3: Sort by Tuition (Ascending)\n");
-                    printf("\t\t* 4: Sort by Tuition (Descending)\n");
-                    printf("\t\t* 5: Return\n");
-                    printf("\t+------------------------------------------------------+\n");
-                    printf("\t  Enter your choice (1-5): ");
+            }
+            if (!search_check) {
+                printf("\n\tStudent ID [ %s ] was not found (>~<)!", student_search);
+            }
+            printf("\n\n");
+            printf("                        (\\(\\ \n");
+            printf("Press any key to return ( -.-) \n");
+            getch();
+            break;
+        case 2:
+            do {
+                system("cls");
+                printf("\n");
+                printf("\t+========================================================+\n");
+                printf("\t|              Study Center Management System            |\n");
+                printf("\t|========================================================|\n");
+                printf("\t|                  Sort Student Information              |\n");
+                printf("\t+========================================================+\n\n");
+                printf("\t\tSelect sorting criteria:\n\n");
+                printf("\t\t* 1: Sort by Name (A-Z)\n");
+                printf("\t\t* 2: Sort by Name (Z-A)\n");
+                printf("\t\t* 3: Sort by Tuition (Ascending)\n");
+                printf("\t\t* 4: Sort by Tuition (Descending)\n");
+                printf("\t\t* 5: Return\n");
+                printf("\t+------------------------------------------------------+\n");
+                printf("\t  Enter your choice (1-5): ");
 
-                    int sort_choice;
-                    while (scanf("%d", &sort_choice) != 1) {
-                        while (getchar() != '\n');
-                        printf("\t  (!_!) Invalid input! Please enter a number (1-5): ");
-                        _getch();
-                        eraseLines(2);
-                    }
+                int sort_choice;
+                while (scanf("%d", &sort_choice) != 1) {
+                    while (getchar() != '\n');
+                    printf("\t  (!_!) Invalid input! Please enter a number (1-5): ");
+                    _getch();
+                    eraseLines(2);
+                }
 
-                    switch(sort_choice) {
-                        case 1:
-                            experimental_sort_student_ascending();
-                            break;
-                        case 2:
-                            experimental_sort_student_descending();
-                            break;
-                        case 3:
-                            experimental_sort_student_tuition_ascending();
-                            break;
-                        case 4:
-                            experimental_sort_student_tuition_descending();
-                            break;
-                        case 5:
-                            return;
-                        default:
-                            printf("\t  Invalid choice! Please select 1-5 only (>_<)!\n");
-                            getch();
-                            break;
-                    }
-                } while (1);
-                break;
-            case 3:
-                printf("\n\n");
-                printf("                        (\\(\\ \n");
-                printf("Press any key to return ( -.-) \n");
-                getch();
-                break;
-        }
+                switch(sort_choice) {
+                    case 1:
+                        experimental_sort_student_ascending();
+                        break;
+                    case 2:
+                        experimental_sort_student_descending();
+                        break;
+                    case 3:
+                        experimental_sort_student_tuition_ascending();
+                        break;
+                    case 4:
+                        experimental_sort_student_tuition_descending();
+                        break;
+                    case 5:
+                        return;
+                    default:
+                        printf("\t  Invalid choice! Please select 1-5 only (>_<)!\n");
+                        getch();
+                        break;
+                }
+            } while (1);
+            break;
+        case 3:
+            printf("\n\n");
+            printf("                        (\\(\\ \n");
+            printf("Press any key to return ( -.-) \n");
+            getch();
+            break;
     }
     fclose(file);
 }
@@ -1700,17 +1889,25 @@ void experimental_print_course_list() {
 
     system("cls");  // Clear the screen
 
-    printf("\t\t\tList of Course(s)\n\n");
-    printf("%-5s |%-15s |%-30s |%-15s\n", 
-           "No.", "Course ID", "Course Name", "Tuition Cost");
-    printf("----------------------------------------------------------\n");
+    printf("\n");
+    printf("\t+========================================================================+\n");
+    printf("\t|                    Study Center Management System                      |\n");
+    printf("\t|========================================================================|\n");
+    printf("\t|                          List of Courses                               |\n");
+    printf("\t+========================================================================+\n\n");
 
-    // Read and print each subject
+    printf("\t+------+----------------+--------------------------------+---------------+\n");
+    printf("\t| %-4s | %-14s | %-30s | %-13s |\n", 
+           "No.", "Course ID", "Course Name", "Tuition Cost");
+    printf("\t+------+----------------+--------------------------------+---------------+\n");
+
     while (fread(&cs, sizeof(courses), 1, file) == 1) {
         course_count++;
-        printf("%-5d |%-15s |%-30s |%-15d\n", 
+        printf("\t| %-4d | %-14s | %-30s | %13d |\n", 
             course_count, cs.course_ID, cs.course_name, cs.tuition);
     }
+
+    printf("\t+------+----------------+--------------------------------+---------------+\n");
 
     if (course_count == 0) {
         printf("Cannot detect any Course (>~<).\n");
@@ -1785,16 +1982,25 @@ void experimental_print_class_list() {
 
     system("cls");  // Clear the screen
     
-    printf("%-5s |%-15s |%-30s\n", 
-           "No.", "Class ID", "Class Name");
-    printf("----------------------------------------------------------\n");
+    printf("\n");
+    printf("\t+========================================================================+\n");
+    printf("\t|                    Study Center Management System                      |\n");
+    printf("\t|========================================================================|\n");
+    printf("\t|                          List of Classes                               |\n");
+    printf("\t+========================================================================+\n\n");
 
-    // Read and print each subject
+    printf("\t+------+----------------+--------------------------------+\n");
+    printf("\t| %-4s | %-14s | %-30s |\n", 
+           "No.", "Class ID", "Class Name");
+    printf("\t+------+----------------+--------------------------------+\n");
+
     while (fread(&cl, sizeof(classes), 1, file) == 1) {
         class_count++;
-        printf("%-5d |%-15s |%-30s\n", 
+        printf("\t| %-4d | %-14s | %-30s |\n", 
             class_count, cl.class_ID, cl.class_name);
     }
+
+    printf("\t+------+----------------+--------------------------------+\n");
 
     if (class_count == 0) {
         printf("Cannot detect any Class (>~<).\n");
@@ -1826,6 +2032,7 @@ void experimental_print_class_list() {
     }
     fclose(file);
 }
+
 
 
 
@@ -1904,7 +2111,7 @@ void sub_update_student() {
 
         switch(choice_update_student) {
             case 1:
-                //experimental_Update_Student_Info();
+                experimental_Update_Student_Info();
                 break;
             case 2:
                 sub_class_student();
@@ -2119,7 +2326,83 @@ void sub_head_admin() {
 
 //accountant menu
 void sub_accountant() {
+    int choice_accountant;
+    int sub_choice_accountant;
+    do
+    {
+        system("cls");
+        printf("\n");
+        printf("\t+========================================================+\n");
+        printf("\t|              Study Center Management System            |\n");
+        printf("\t|========================================================|\n");
+        printf("\t|                       Accountant                       |\n");
+        printf("\t+========================================================+\n\n");
+        printf("\n\t\tSelect your choice:\n\n");
+        printf("\t\t* 1: Check Student Payment\n"
+               "\t\t* 2: Check Class Payment\n"
+               "\t\t* 3: Return to Main Menu\n");
+        printf("\t+--------------------------------------------------------+\n");
+        printf("\t  Enter your choice (1-3): ");
 
+        while (scanf("%d", &choice_accountant) != 1) {
+            while (getchar() != '\n');
+            printf("\t  (!_!) Invalid input (>_<)! Please enter a number (1-3): ");
+            _getch();
+            eraseLines(2);
+        }
+
+         switch(choice_accountant) {
+            case 1:
+                system("cls");
+                printf("\n");
+                printf("\t+========================================================+\n");
+                printf("\t|              Study Center Management System            |\n");
+                printf("\t|========================================================|\n");
+                printf("\t|                       Accountant                       |\n");
+                printf("\t+========================================================+\n\n");
+                printf("\n\t\tSelect your choice:\n\n");
+                printf("\t\t* 1: Add a student payment\n");
+                printf("\t\t* 2: Check all student payment\n");
+                printf("\t+--------------------------------------------------------+\n");
+                printf("\t  Enter your choice (1-2): ");
+
+                 while (scanf("%d", &sub_choice_accountant) != 1) {
+                    while (getchar() != '\n');
+                    printf("\t  (!_!) Invalid input (>_<)! Please enter a number (1-2): ");
+                    _getch();
+                    eraseLines(2);
+                }
+
+                switch(sub_choice_accountant) {
+                    case 1:
+                        experimental_student_pay();
+                        break;
+                    case 2:
+                        experimental_print_students_list();
+                        break;
+                    default:
+                        printf("\t  Invalid input (>_<)! Please select options 1-2 only!\n");
+                        getch();
+                        break;
+                }
+
+                break;
+            case 2:
+                experimental_print_class_list();
+                break;
+            case 3:
+                break;
+            default:
+                printf("\t  Invalid input (>_<)! Please select options 1-3 only!\n");
+                getch();
+                break;
+        }
+    } while (choice_accountant != 3);
+    
+    printf("\nReturning to Main Menu.\n"
+    "Press any key to return ( ='.'=) \n");
+    getch();
+    return;
 }
 
 
@@ -2155,7 +2438,7 @@ main() {
                 sub_head_admin();
                 break;
             case 2:
-                //sub_accountant();
+                sub_accountant();
                 break;
             case 3:
                 //sub_student_management_officer();
