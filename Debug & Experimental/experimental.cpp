@@ -137,11 +137,6 @@ void experimental_insert_student() { // Added new Student's Information (21/11, 
             phone_str[strcspn(phone_str, "\n")] = 0;
             
             size_t len = strlen(phone_str);
-            printf("%d", len);
-            for(int i = 0; i < len; i++) {
-                printf("%c", phone_str[i]);
-            }
-            printf("\n");
             bool valid = true;
             
             // Check if exactly 10 digits
@@ -1144,7 +1139,14 @@ end:
 
 bool get_course_id(char *course_ID) {
     do {
-        printf("Enter Course ID to delete: ");
+        system("cls");
+        printf("\n");
+        printf("\t+========================================================+\n");
+        printf("\t|              Study Center Management System            |\n");
+        printf("\t|========================================================|\n");
+        printf("\t|               Class and Course Management              |\n");
+        printf("\t+========================================================+\n\n");
+        printf("\t Enter Course ID to delete: ");
         fflush(stdin);
         fgets(course_ID, MAX_ID_LENGTH, stdin);
         course_ID[strcspn(course_ID, "\n")] = 0;
@@ -1166,14 +1168,17 @@ bool find_and_confirm_course(FILE *course_file, const char *course_ID, courses *
     while (fread(cs, sizeof(courses), 1, course_file) == 1) {
         if (strcmp(cs->course_ID, course_ID) == 0) {
             course_found = true;
-            printf("\nCourse found:\n");
-            printf("ID: %s\n", cs->course_ID);
-            printf("Name: %s\n", cs->course_name);
-            printf("Tuition: %d\n", cs->tuition);
-            printf("Total Students: %d\n", cs->total_students);
-            printf("Total Classes: %d\n", cs->total_class);
             
-            printf("\nAre you sure you want to delete this course? (yes/no): ");
+            printf("\n\t\tCourse found:\n");
+            printf("\n\t\t+-------------------+-------------------+\n");
+            printf("\t\t| ID:               | %s\n", cs->course_ID);
+            printf("\t\t| Name:             | %s\n", cs->course_name);
+            printf("\t\t| Tuition:          | %d\n", cs->tuition);
+            printf("\t\t| Total Students:   | %d\n", cs->total_students);
+            printf("\t\t| Total Classes:    | %d\n", cs->total_class);
+            printf("\t\t+-------------------+-------------------+\n");
+            
+            printf("\n\t  Are you sure you want to delete this course? (yes/no): ");
             do {
                 fflush(stdin);
                 fgets(confirm, sizeof(confirm), stdin);
@@ -1197,7 +1202,7 @@ bool find_and_confirm_course(FILE *course_file, const char *course_ID, courses *
     return false;
 }
 
-bool process_course_deletion(FILE *files[], const char *course_ID, const char *course_name, int *deleted_count) {
+bool process_course_deletion(FILE *files[], const char *course_ID, int *deleted_count) {
     courses cs;
     classes cl;
     students st;
@@ -1222,8 +1227,6 @@ bool process_course_deletion(FILE *files[], const char *course_ID, const char *c
     // Update student records - unregister from deleted classes
     rewind(files[4]); // student_file
     while (fread(&st, sizeof(students), 1, files[4]) == 1) {
-        bool student_modified = false;
-        
         // Check if student is in any class of the deleted course
         rewind(files[2]); // class_file
         while (fread(&cl, sizeof(classes), 1, files[2]) == 1) {
@@ -1231,7 +1234,6 @@ bool process_course_deletion(FILE *files[], const char *course_ID, const char *c
                 strcmp(st.class_attend, cl.class_name) == 0) {
                 strcpy(st.class_attend, no_class);
                 (*deleted_count)++;
-                student_modified = true;
                 break;
             }
         }
@@ -1247,7 +1249,6 @@ void experimental_delete_course_ID() {
     FILE *files[6] = {NULL}; // Array to track all file handles
     int deleted_count = 0;
     char course_ID[MAX_ID_LENGTH];
-    bool course_found = false;
     
     // Struct to hold all temp file names for cleanup
     struct {
@@ -1282,7 +1283,7 @@ void experimental_delete_course_ID() {
     if (!find_and_confirm_course(files[0], course_ID, &cs)) goto cleanup;
 
     // Process files
-    if (!process_course_deletion(files, course_ID, cs.course_ID, &deleted_count)) goto cleanup;
+    if (!process_course_deletion(files, course_ID, &deleted_count)) goto cleanup;
 
     // Commit changes
     for (int i = 0; i < 6; i++) fclose(files[i]);
@@ -2039,6 +2040,8 @@ void experimental_print_class_list() {
 
 
 
+
+
 // Menu System
 void sub_class_student() {
     int choice_class_student;
@@ -2186,7 +2189,7 @@ void sub_class() {
         printf("\t+========================================================+\n");
         printf("\t|              Study Center Management System            |\n");
         printf("\t|========================================================|\n");
-        printf("\t|                     Class Management                   |\n");
+        printf("\t|               Class and Course Management              |\n");
         printf("\t+========================================================+\n\n");
         printf("\n\t\tSelect your choice:\n\n");
         printf("\t\t* 1: Add\n"
