@@ -1318,6 +1318,7 @@ void experimental_delete_student_ID() {
             printf("\nStudent found:\n");
             printf("ID: %s\n", st.student_ID);
             printf("Name: %s\n", st.student_name);
+            printf("Course: %s\n", st.course_attend);
             printf("Class: %s\n", st.class_attend);
             
             printf("\nAre you sure you want to delete this student? (yes/no): ");
@@ -1490,6 +1491,7 @@ bool process_course_deletion(FILE *files[], const char *course_search, int *dele
     classes cl;
     students st;
     char no_class[MAX_CLASSNAME_LENGTH] = "Not Registered";
+    char no_course[MAX_CLASSNAME_LENGTH] = "Not Registered";
 
     // Copy non-deleted courses
     rewind(files[0]); // course_file
@@ -1517,6 +1519,8 @@ bool process_course_deletion(FILE *files[], const char *course_search, int *dele
             if (strcmp(cl.course_ID, course_search) == 0 && 
                 strcmp(st.class_attend, cl.class_name) == 0) {
                 strcpy(st.class_attend, no_class);
+                strcpy(st.course_attend, no_course);
+                st.tuition_paid = 0;
                 (*deleted_count)++;
                 break;
             }
@@ -1595,6 +1599,156 @@ cleanup:
     printf("Press any key to return ( -.-) \n");
     getch();
 }
+
+//delete class by ID (01/12, D)
+void experimental_delete_class_ID() {
+    FILE *class_file, *temp_class_file;
+    FILE *student_file, *temp_student_file;
+    FILE *course_file;
+    classes cl;
+    students st;
+    courses cs;
+    char class_ID[MAX_ID_LENGTH];
+    char class_name[MAX_CLASSNAME_LENGTH];
+    char no_class[MAX_CLASSNAME_LENGTH] = "Not Registered";
+    char no_course[MAX_CLASSNAME_LENGTH] = "Not Registered";
+    char confirm[5];
+    bool class_found = false;
+    long int course_pos;
+
+    // Open all required files
+    class_file = fopen("ex_class.txt", "rb");
+    temp_class_file = fopen("temp_class.txt", "wb");
+    student_file = fopen("ex_student.txt", "r+b");
+    temp_student_file = fopen("temp_student.txt", "wb");
+    course_file = fopen("ex_course.txt", "r+b");
+
+    if (!class_file || !temp_class_file || !student_file || !temp_student_file || !course_file) {
+        printf("Error opening files (>_<)!\n");
+        goto cleanup;
+    }
+
+    system("cls");
+    printf("\n");
+    printf("\t+========================================================+\n");
+    printf("\t|              Study Center Management System            |\n");
+    printf("\t|========================================================|\n");
+    printf("\t|                    Delete Class                        |\n");
+    printf("\t+========================================================+\n\n");
+
+    // Get class ID with validation
+    do {
+        printf("\tEnter Class ID to delete: ");
+        fflush(stdin);
+        fgets(class_ID, sizeof(class_ID), stdin);
+        class_ID[strcspn(class_ID, "\n")] = 0;
+        if (strlen(class_ID) == 0) {
+            printf("\tError: Class ID cannot be empty (>_<)!\n");
+        }
+    } while (strlen(class_ID) == 0);
+
+    // Find and confirm class deletion
+    while (fread(&cl, sizeof(classes), 1, class_file) == 1) {
+        if (strcmp(cl.class_ID, class_ID) == 0) {
+            class_found = true;
+            strcpy(class_name, cl.class_name);
+            
+            printf("\n\tClass found:\n");
+            printf("\t+--------------------------------------------------------+\n");
+            printf("\t| %-20s | %s\n", "ID:", cl.class_ID);
+            printf("\t| %-20s | %s\n", "Name:", cl.class_name);
+            printf("\t| %-20s | %s\n", "Course ID:", cl.course_ID);
+            printf("\t| %-20s | %s\n", "Professor:", cl.class_teacher);
+            printf("\t| %-20s | %d\n", "Total Students:", cl.total_students);
+            printf("\t+--------------------------------------------------------+\n");
+            
+            printf("\n\tAre you sure you want to delete this class? (yes/no): ");
+            do {
+                fflush(stdin);
+                fgets(confirm, sizeof(confirm), stdin);
+                confirm[strcspn(confirm, "\n")] = 0;
+                
+                if (strcmp(confirm, "no") == 0 || strcmp(confirm, "No") == 0) {
+                    printf("\n\tDeletion cancelled.\n");
+                    goto cleanup;
+                }
+                if (strcmp(confirm, "yes") == 0 || strcmp(confirm, "Yes") == 0) {
+                    break;
+                }
+                printf("\tInvalid input! Please type yes or no: ");
+            } while (true);
+            break;
+        }
+    }
+
+    if (!class_found) {
+        printf("\n\tClass ID [ %s ] not found (>_<)!\n", class_ID);
+        goto cleanup;
+    }
+
+    // Update course total class count
+    rewind(course_file);
+    while (fread(&cs, sizeof(courses), 1, course_file) == 1) {
+        if (strcmp(cs.course_ID, cl.course_ID) == 0) {
+            cs.total_class--;
+            cs.total_students -= cl.total_students;
+            course_pos = ftell(course_file) - sizeof(courses);
+            fseek(course_file, course_pos, SEEK_SET);
+            fwrite(&cs, sizeof(courses), 1, course_file);
+            break;
+        }
+    }
+
+    // Copy classes excluding deleted class
+    rewind(class_file);
+    while (fread(&cl, sizeof(classes), 1, class_file) == 1) {
+        if (strcmp(cl.class_ID, class_ID) != 0) {
+            fwrite(&cl, sizeof(classes), 1, temp_class_file);
+        }
+    }
+
+    // Update student records - unregister from deleted class
+    rewind(student_file);
+    while (fread(&st, sizeof(students), 1, student_file) == 1) {
+        if (strcmp(st.class_attend, class_name) == 0) {
+            strcpy(st.class_attend, no_class);
+            strcpy(st.course_attend, no_course);
+            st.tuition_paid = 0;
+        }
+        fwrite(&st, sizeof(students), 1, temp_student_file);
+    }
+
+    // Close and replace files
+    fclose(class_file);
+    fclose(temp_class_file);
+    fclose(student_file);
+    fclose(temp_student_file);
+    fclose(course_file);
+
+    remove("ex_class.txt");
+    rename("temp_class.txt", "ex_class.txt");
+    remove("ex_student.txt");
+    rename("temp_student.txt", "ex_student.txt");
+
+    printf("\n\tClass successfully deleted ( =^.^=)!\n");
+    goto end;
+
+cleanup:
+    if (class_file) fclose(class_file);
+    if (temp_class_file) fclose(temp_class_file);
+    if (student_file) fclose(student_file);
+    if (temp_student_file) fclose(temp_student_file);
+    if (course_file) fclose(course_file);
+    remove("temp_class.txt");
+    remove("temp_student.txt");
+
+end:
+    printf("\n\n");
+    printf("                        (\\(\\ \n");
+    printf("Press any key to return ( -.-) \n");
+    getch();
+}
+
 
 //sort student by name, tuition (30/11, D)
 void experimental_sort_student_ascending() {
@@ -2338,7 +2492,7 @@ void experimental_Update_Class_Info() {
                         printf("\n\tEnter new Professor's Name: ");
                         fflush(stdin);
                         fgets(cl.class_teacher, MAX_NAME_LENGTH, stdin);
-                        cl.class_teacher[ strcspn(cl.class_teacher, "\n") ] = 0;
+                        cl.class_teacher[ strcspn(cl.class_teacher, "\n") ] =0;
 
                         if (strlen(cl.class_teacher) == 0) {
                             printf("\tProfessor's Name cannot be empty (>_<)!");
@@ -2733,6 +2887,7 @@ void experimental_print_class_list() {
 
 
 
+
 // Menu System
 void sub_class_student() {
     int choice_class_student;
@@ -3102,7 +3257,7 @@ void sub_course_admin() {
         printf("\t\t* 2: Delete a Course\n");
         printf("\t\t* 3: Update a Course's Information\n");
         printf("\t\t* 4: Update a Course's Fee\n");
-        printf("\t\t* 5: View a Course's Tuition Status")
+        printf("\t\t* 5: View a Course's Tuition Status\n");
         printf("\t\t* 6: View all current Course(s)\n");
         printf("\t\t* 7: Return \n");
         printf("\t+------------------------------------------------------+\n");
@@ -3179,7 +3334,7 @@ void sub_class_admin() {
                 experimental_insert_class();
                 break;
             case 2:
-                //experimental_delete_class_ID();
+                experimental_delete_class_ID();
                 break;
             case 3:
                 experimental_Update_Class_Info();
