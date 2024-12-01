@@ -2419,14 +2419,15 @@ void student_list() {
 
         printf("\t\t* 1: View Detailed Information Of A Student\n");
         printf("\t\t* 2: Sort Student Information\n");
-        printf("\t\t* 3: Return\n");
+        printf("\t\t* 3: Print List Out\n");
+        printf("\t\t* 4: Return\n");
         printf("\t+------------------------------------------------------+\n");
-        printf("\t  Enter your choice (1-3): ");
+        printf("\t  Enter your choice (1-4): ");
     }
 
     while (scanf("%d", &choice_view) != 1) {
         while (getchar() != '\n');
-        printf("\t  (!_!) Invalid input! Please enter a number (1-3): ");
+        printf("\t  (!_!) Invalid input! Please enter a number (1-4): ");
         _getch();
         eraseLines(2);
     }
@@ -2531,6 +2532,29 @@ void student_list() {
             } while (1);
             break;
         case 3:
+            FILE *print;
+            print = fopen("student_list.txt","w+b");
+            
+            if (print == NULL) {
+                printf("Error opening file(s) (>_<)!\n");
+                break;
+            }
+
+            rewind(file);
+            student_count = 0;
+
+            // Print
+            fprintf(print,"| %-4s | %-14s | %-30s | %-30s | %-13s |\n",
+           "No.", "ID", "Name", "Class", "Tuition");
+            fprintf(print,"-----------------------------------------------------------------------------+---------------+\n");
+            while (fread(&st, sizeof(students), 1, file) == 1) {
+                student_count++;
+                fprintf(print,"| %-4d | %-14s | %-30s | %-30s | %13.2f |\n",
+                student_count, st.student_ID, st.student_name, st.class_attend, st.tuition_paid);
+            }
+            fclose(print);
+            break;
+        case 4:
             printf("\n\n");
             printf("                        (\\(\\ \n");
             printf("Press any key to return ( -.-) \n");
@@ -2588,13 +2612,14 @@ void course_list() {
         printf("\nTotal number of Course(s): %d\n\n", course_count);
 
         printf("\n1. View Detailed Information Of A Course");
-        printf("\n2. Return");
+        printf("\n2. Print List Out");
+        printf("\n3. Return");
 
-        printf("\n\nEnter your choice (1-2) : ");
+        printf("\n\nEnter your choice (1-3) : ");
 
         while (scanf("%d", &choice_view) != 1) {
             while (getchar() != '\n');
-            printf("\t  (!_!) Invalid input (>_<)! Please enter a number (1-2): ");
+            printf("\t  (!_!) Invalid input (>_<)! Please enter a number (1-3): ");
             _getch();
             eraseLines(2);
         }
@@ -2625,6 +2650,31 @@ void course_list() {
                 getch();
                 break;
             case 2:
+                FILE *print;
+                print = fopen("course_list.txt","w+b");
+            
+                if (print == NULL) {
+                    printf("Error opening file(s) (>_<)!\n");
+                    break;
+                }
+
+                rewind(file);
+                course_count = 0;
+
+                // Print
+                fprintf(print, "| %-4s | %-14s | %-30s | %-13s |\n", 
+                    "No.", "Course ID", "Course Name", "Tuition Cost");
+                fprintf(print, "\t+------+----------------+--------------------------------------------------+---------------+\n");
+
+                while (fread(&cs, sizeof(courses), 1, file) == 1) {
+                    course_count++;
+                    fprintf(print, "\t| %-4d | %-14s | %-30s | %13d |\n", 
+                        course_count, cs.course_ID, cs.course_name, cs.tuition);
+                }
+                fclose(print);
+                break;
+
+            case 3:
                 printf("\n\n");
                 printf("                        (\\(\\ \n");
                 printf("Press any key to return ( -.-) \n");
@@ -2681,13 +2731,14 @@ void class_list() {
         printf("\nTotal number of Class(es): %d\n\n", class_count);
 
         printf("\n1. View Detailed Information Of A Class");
-        printf("\n2. Return");
+        printf("\n2. Print List Out");
+        printf("\n3. Return");
 
-        printf("\n\nEnter your choice (1-2) : ");
+        printf("\n\nEnter your choice (1-3) : ");
 
         while (scanf("%d", &choice_view) != 1) {
             while (getchar() != '\n');
-            printf("\t  (!_!) Invalid input (>_<)! Please enter a number (1-2): ");
+            printf("\t  (!_!) Invalid input (>_<)! Please enter a number (1-3): ");
             _getch();
             eraseLines(2);
         }
@@ -2696,6 +2747,31 @@ void class_list() {
                 class_view();
                 break;
             case 2:
+                FILE *print;
+                print = fopen("class_list.txt","w+b");
+            
+                if (print == NULL) {
+                    printf("Error opening file(s) (>_<)!\n");
+                    break;
+                }
+
+                rewind(file);
+                class_count = 0;
+
+                // Print
+                fprintf(print, "| %-4s | %-14s | %-30s |\n", 
+                    "No.", "Class ID", "Class Name");
+                fprintf(print, "\t+------+----------------+-----------------------------------------------+\n");
+
+                while (fread(&cl, sizeof(classes), 1, file) == 1) {
+                    class_count++;
+                    fprintf(print, "| %-4d | %-14s | %-30s |\n", 
+                    class_count, cl.class_ID, cl.class_name);
+                }
+                fclose(print);
+                break;
+
+            case 3:
                 printf("\n\n");
                 printf("                        (\\(\\ \n");
                 printf("Press any key to return ( -.-) \n");
@@ -2705,13 +2781,6 @@ void class_list() {
     }
     fclose(file);
 }
-
-
-
-
-
-
-
 
 
 // Menu System
