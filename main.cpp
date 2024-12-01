@@ -2731,7 +2731,7 @@ void sub_update_student() {
         printf("\n\t\tSelect your choice:\n\n");
         printf("\t\t* 1: Update a Student's Information\n");
         printf("\t\t* 2: Register a Student Into Class\n");
-        printf("\t\t* 3: Remove a Student from Class")
+        printf("\t\t* 3: Remove a Student from Class\n");
         printf("\t\t* 4: Return\n");
         printf("\t+------------------------------------------------------+\n");
         printf("\t  Enter your choice (1-4): ");
@@ -2825,7 +2825,7 @@ void sub_update_class() {
         printf("\n\t\tSelect your choice:\n\n");
         printf("\t\t* 1: Update a Class's Information\n");
         printf("\t\t* 2: Register a Student Into Class\n");
-        printf("\t\t* 3: Remove a Student from Class")
+        printf("\t\t* 3: Remove a Student from Class\n");
         printf("\t\t* 4: Return\n");
         printf("\t+------------------------------------------------------+\n");
         printf("\t  Enter your choice (1-4): ");
@@ -3327,7 +3327,7 @@ void sub_accountant() {
                 printf("\t+========================================================+\n\n");
                 printf("\n\t\tSelect your choice:\n\n");
                 printf("\t\t* 1: Update a Student's Payment\n");
-                printf("\t\t* 2: Calculate a Student's Payment Progress")
+                printf("\t\t* 2: Calculate a Student's Payment Progress\n");
                 printf("\t\t* 3: View all Students\n");
                 printf("\t\t* 4: Return\n");
                 printf("\t+--------------------------------------------------------+\n");
