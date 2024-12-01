@@ -44,32 +44,35 @@ void appendChar (char *str, char *ch) {
 #define MAX_CLASSNAME_LENGTH 21
 #define MAX_NUMBER_LENGTH 11
 
-typedef struct {
+typedef struct { // (1/12, N)
     char student_ID[MAX_ID_LENGTH];
     char student_name[MAX_NAME_LENGTH];
-    char student_email[MAX_NAME_LENGTH];    
+    char student_email[MAX_NAME_LENGTH];
     char student_phone[MAX_NUMBER_LENGTH];  // Changed from int array to char array
-    float tuition_paid; // Amount need to pay (negative = haven't pay)
-    char class_attend[MAX_CLASSNAME_LENGTH]; // Name of assigned class (copy class_name from classes)
+    char course_attend[MAX_NAME_LENGTH]; // To Cross-Check courses's data
+    char class_attend[MAX_CLASSNAME_LENGTH]; // To Cross-Check classes's data
+    float tuition_paid; // Amount need to pay (negative = haven't pay) 
 } students;
 
 typedef struct { // (25/11, N)
     char course_ID[MAX_ID_LENGTH];
     char course_name[MAX_NAME_LENGTH];
     int tuition; // Course's Fee
-    int total_students; // current number of student(s) on course
+    int total_students; // count all student(s) studying course
     int total_class; // count total class exist
     int max_students; // maximum amount of students can be in a class
 } courses;
 
-typedef struct { // (23,11 N)
+typedef struct { // (1/12 N)
     char course_ID[MAX_ID_LENGTH];
     char class_ID[MAX_ID_LENGTH];
     char class_name[MAX_CLASSNAME_LENGTH];
-    int max_students; // copy from courses
+    char class_teacher[MAX_NAME_LENGTH]; // New data type
     int total_students; // current number of student(s) in class 
 } classes;
 
+
+// Add Functions
 void experimental_insert_student() { // Added new Student's Information (21/11, N)
     FILE *file;
     students new_student, existing_student;
@@ -182,6 +185,8 @@ void experimental_insert_student() { // Added new Student's Information (21/11, 
 
         strcpy(new_student.class_attend, no_class);
 
+        strcpy(new_student.course_attend, no_class);
+
         new_student.tuition_paid = 0;
 
 
@@ -249,17 +254,24 @@ void experimental_insert_course() { // Minor adjustment (23/11, N)
 
         do {
             printf("Enter Course's Tuition Cost: ");
-            scanf("%d", &new_course.tuition);
+            while (scanf("%d", &new_course.tuition) != 1) {
+                while (getchar() != '\n');
+                printf("\t (!_!) Invalid input! Please enter only numeric value!");
+                _getch();
+                eraseLines(2);
+            }
             if (new_course.tuition == 0) {
-                printf("Tuition Cost cannot be empty (>_<)!\n");
+                printf("Tuition Cost cannot be empty (>_<)!");
+                eraseLines(2);
             }
         } while (new_course.tuition == 0);
 
         do {
             printf("Enter total amount of students can be in one class: ");
             scanf("%d", &new_course.max_students);
-            if (new_course.max_students == 0) {
-                printf("Total amount of students cannot be empty (>_<)!\n");
+            if (new_course.max_students <= 0) {
+                printf("Total amount of students must be at least 1 or above (>_<)!\n");
+                new_course.max_students = 0;
             }
         } while (new_course.max_students == 0);
 
@@ -402,18 +414,34 @@ void experimental_insert_class() { // Minor fix (25/11, N)
             }
         } while (!new_name_valid);
 
+        do {
+            printf("Enter Professor's Name: ");
+            fflush(stdin);
+            fgets(new_class.class_teacher, MAX_NAME_LENGTH, stdin);
+            new_class.class_teacher[ strcspn(new_class.class_teacher, "\n") ] = 0;
+            if (strlen(new_class.class_teacher) == 0) {
+                printf("Professor's Name cannot be empty (>_<)!");
+                eraseLines(2);
+            }
+        } while (strlen(new_class.class_teacher) == 0);
+
+        new_class.total_students = 0;
+
+        // Increase class total number in courses
+        rewind(course_file);
+        while (fread(&cs, sizeof(courses), 1, course_file) == 1) {
+            if (strcmp(cs.course_ID, course_search) == 0) {
+                break;
+            }
+        }
+        cs.total_class = cs.total_class + 1;
+
+        
         strcpy(new_class.class_name, new_class_name); // Copy the valid name
         new_class.class_name[ strcspn(new_class.class_name, "\n") ] = 0;
 
         strcpy(new_class.course_ID, cs.course_ID); // Copy course ID
         new_class.course_ID[ strcspn(new_class.course_ID, "\n") ] = 0;
-
-        new_class.max_students = cs.max_students; // Max Student allowed in class
-
-        new_class.total_students = 0;
-
-        // Increase class total number in courses
-        cs.total_class = cs.total_class + 1;
         
         // Write new class to file
         fseek(class_file, 0, SEEK_END);
@@ -435,6 +463,7 @@ void experimental_insert_class() { // Minor fix (25/11, N)
     getch();
 }
 
+// Class Assign Functions
 void experimental_class_register() { // Fixed and good to go! (25/11, N)
     FILE *student_file, *course_file, *class_file;
     students st;
@@ -558,6 +587,16 @@ void experimental_class_register() { // Fixed and good to go! (25/11, N)
         }
     }
 
+    // Get Course Position
+    if (class_found) {
+        while (fread(&cs, sizeof(courses), 1, course_file) == 1) {
+            if (strcmp(cs.course_ID, cl.course_ID) == 0) {
+                course_pos = ftell(course_file) - sizeof(courses);
+                break;
+            }
+        }
+    }
+
     if (!class_found) {
         printf("There is no class with the ID [ %s ] (>~<)!\n", class_search);
     }
@@ -567,7 +606,7 @@ void experimental_class_register() { // Fixed and good to go! (25/11, N)
                 st.student_name, cl.class_name);
     }
 
-    else if (cl.total_students == cl.max_students) {
+    else if (cl.total_students == cs.max_students) {
         printf("Class [ %s ] is filled with maximum amount of students (>~<)!\n", cl.class_name);
     }
 
@@ -576,13 +615,8 @@ void experimental_class_register() { // Fixed and good to go! (25/11, N)
         strcpy(st.class_attend, cl.class_name);
         st.class_attend[ strcspn(st.class_attend, "\n") ] = 0;
 
-        // Get Course Position
-        while (fread(&cs, sizeof(courses), 1, course_file) == 1) {
-            if (strcmp(cl.course_ID, cs.course_ID) == 0) {
-                course_pos = ftell(course_file) - sizeof(courses);
-                break;
-            }
-        }
+        strcpy(st.course_attend, cs.course_name);
+        st.course_attend[ strcspn(st.course_attend, "\n") ] = 0;
 
         // Add one to total_students
         cs.total_students = cs.total_students + 1; // In Course
@@ -714,6 +748,7 @@ void experimental_class_unregister() { // Fixed and good to go! (27/11, N)
 
         // Unregister the class
         strcpy(class_name_remove, st.class_attend); // Copy for confirmation line.
+        strcpy(st.course_attend, no_class);
         strcpy(st.class_attend, no_class);
 
         // Reduce the amount of student(s) in Class & Course
@@ -747,17 +782,19 @@ void experimental_class_unregister() { // Fixed and good to go! (27/11, N)
 }
 
 void experimental_view_class() { // Fixed and good to go! (27/11, N)
-    FILE *class_file, *student_file;
+    FILE *class_file, *student_file, *course_file;
     classes cl;
     students st;
+    courses cs;
     char class_search[MAX_ID_LENGTH];
     int enrolled_count = 0;
     bool class_found = false;
 
     class_file = fopen("ex_class.txt", "rb");
     student_file = fopen("ex_student.txt", "rb");
+    course_file = fopen("ex_course.txt","rb");
 
-    if (student_file == NULL || class_file == NULL) {
+    if (student_file == NULL || class_file == NULL || course_file == NULL) {
         printf("Error opening file(s) (>_<)!\n");
         getch();
         return;
@@ -789,7 +826,8 @@ void experimental_view_class() { // Fixed and good to go! (27/11, N)
 
     else {
         system("cls");
-        printf("Class [ %s ]\n\n", cl.class_name);
+        printf("Class [ %s ]\n", cl.class_name);
+        printf("By Professor [ %s ]\n\n", cl.class_teacher);
         printf("%-5s |%-15s |%-30s |%-30s\n",
                "No.", "Student ID", "Full Name", "Tuition");
         printf("----------------------------------------------------------\n");
@@ -800,8 +838,13 @@ void experimental_view_class() { // Fixed and good to go! (27/11, N)
             }
         }
         
+        while (fread(&cs, sizeof(courses), 1, course_file) == 1) {
+            if (strcmp(cs.course_ID, cl.course_ID) == 0) {
+                break;
+            }
+        }
         printf("\nTotal Student(s) in Class %s: %d Student(s)", cl.class_name, cl.total_students);
-        printf("\nMaximum allowed in Class: %d Students", cl.max_students);
+        printf("\nMaximum allowed in Class: %d Students", cs.max_students);
     }
 
     fclose(class_file);
@@ -1548,6 +1591,7 @@ void experimental_Update_Student_Info() {
     bool student_found = false;
     long int student_pos;
     int update_choice;
+    int phone_length;
     char phone_str[MAX_NUMBER_LENGTH];
     int student_count = 0;
 
@@ -1602,6 +1646,8 @@ void experimental_Update_Student_Info() {
     if (!student_found) {
         printf("\n\tStudent ID [ %s ] not found (>_<)!\n", student_search);
     } else {
+        system("cls");
+
         // Display current information
         printf("\n\tCurrent Student Information:\n");
         printf("\t+--------------------------------------------------------+\n");
@@ -1646,17 +1692,19 @@ void experimental_Update_Student_Info() {
                         fgets(phone_str, sizeof(phone_str), stdin);
                         phone_str[strcspn(phone_str, "\n")] = 0;
                         
-                        size_t len = strlen(phone_str);
+                        phone_length = strlen(phone_str);
+                        printf("\tYou typed in %d digits [ %s ].", phone_length, phone_str);
+                        printf("\n");
                         bool valid = true;
                         
                         // Check if exactly 10 digits
-                        if(len != 10) {
+                        if(phone_length != 10) {
                             printf("\tPhone number must be exactly 10 digits!\n");
                             continue;
                         }
                         
                         // Verify all characters are digits
-                        for(int i = 0; i < len; i++) {
+                        for(int i = 0; i < phone_length; i++) {
                             if(!isdigit(phone_str[i])) {
                                 valid = false;
                                 break;
@@ -1718,6 +1766,224 @@ void experimental_Update_Student_Info() {
     printf("Press any key to return ( -.-) \n");
     getch();
 }
+
+void experimental_Update_Course_Info() {
+    FILE *course_file, *class_file, *student_file;
+    courses cs;
+    classes cl;
+    students st;
+    char course_search[MAX_ID_LENGTH];
+    char course_ex_name[MAX_NAME_LENGTH];
+    bool course_found = false;
+    bool over_max = false;
+    bool ex_check = false;
+    long int course_pos;
+    long int student_pos;
+    int update_choice;
+    int highest_student_count = 0;
+    int course_count = 0;
+
+    // Open file in read and write mode
+    course_file = fopen("ex_course.txt", "r+b");
+    class_file = fopen("ex_class.txt","r+b");
+    student_file = fopen("ex_student.txt","r+b");
+    if (course_file == NULL || class_file == NULL || student_file == NULL) {
+        printf("Error opening file (>_<)!\n");
+        return;
+    }
+
+    system("cls");
+    printf("\n");
+    printf("\t+========================================================+\n");
+    printf("\t|              Study Center Management System            |\n");
+    printf("\t|========================================================|\n");
+    printf("\t|                 Update Course Information              |\n");
+    printf("\t+========================================================+\n\n");
+
+    // Print all course ID and names
+    printf("\t%-5s |%-15s |%-30s |%-30s\n", 
+           "No.", "ID", "Course Name", "Fee");
+    printf("\t+--------------------------------------------------------+\n");
+
+    while (fread(&cs, sizeof(courses), 1, course_file) == 1) {
+        course_count++;
+        printf("\t%-5d |%-15s |%-30s |%-10d\n", 
+            course_count, cs.course_ID, cs.course_name, cs.tuition);
+    }
+    printf("\t+--------------------------------------------------------+\n");
+
+    // Get course ID
+    rewind(course_file);
+    do {
+        printf("\n\tEnter Course ID to update: ");
+        fflush(stdin);
+        fgets(course_search, sizeof(course_search), stdin);
+        course_search[strcspn(course_search, "\n")] = 0;
+        if (strlen(course_search) == 0) {
+            printf("\tError: Student ID cannot be empty (>_<)!\n");
+        }
+    } while (strlen(course_search) == 0);
+
+    // Find course
+    while (fread(&cs, sizeof(courses), 1, course_file) == 1) {
+        if (strcmp(cs.course_ID, course_search) == 0) {
+            course_found = true;
+            course_pos = ftell(course_file) - sizeof(courses);
+            break;
+        }
+    }
+
+    if (!course_found) {
+        printf("\n\tCourse ID [ %s ] not found (>_<)!\n", course_search);
+    } else {
+        system("cls");
+
+        // Display current information
+        printf("\n\tCurrent Course Information:\n");
+        printf("\t+--------------------------------------------------------+\n");
+        printf("\t| %-25s | %s\n", "ID:", cs.course_ID);
+        printf("\t| %-25s | %s\n", "Course Name:", cs.course_name);
+        printf("\t| %-25s | %d\n", "Fee:", cs.tuition);
+        printf("\t| %-25s | %d\n", "Maximum In a Class:", cs.max_students);
+        printf("\t+--------------------------------------------------------+\n\n");
+
+        do {
+            printf("\tWhat would you like to update?\n");
+            printf("\t1. Name\n");
+            printf("\t2. Fee\n");
+            printf("\t3. Maximum allowed in class\n");
+            printf("\t4. Return\n");
+            printf("\tEnter your choice (1-4): ");
+
+            while (scanf("%d", &update_choice) != 1) {
+                while (getchar() != '\n');
+                printf("\t(!_!) Invalid input! Please enter a number (1-4): ");
+                _getch();
+                eraseLines(2);
+            }
+
+            switch(update_choice) {
+                case 1: // Update Name
+                    strcpy(course_ex_name, cs.course_name);
+                    do {
+                        printf("\n\tEnter new name: ");
+                        fflush(stdin);
+                        fgets(cs.course_name, sizeof(cs.course_name), stdin);
+                        cs.course_name[strcspn(cs.course_name, "\n")] = 0;
+                        if (strlen(cs.course_name) == 0) {
+                            printf("\tStudent's Name cannot be empty (>_<)!\n");
+                            eraseLines(2);
+                        }
+                    } while (strlen(cs.course_name) == 0);
+
+                    if (cs.total_students > 0) {
+                        student_pos = 0;
+                    
+                        printf("\n\tUpdating All Student Studying the Course...\n");
+                        do {
+                            ex_check = false;
+                            fseek(student_file, student_pos, SEEK_SET);
+                            while(fread(&st, sizeof(students), 1, student_file) == 1) {
+                                if (strcmp(st.course_attend, course_ex_name) == 0) {
+                                    strcpy(st.course_attend, cs.course_name);
+                                    student_pos = ftell(student_file) - sizeof(students);
+                                    ex_check = true;
+                                    break;
+                                }
+                            }
+                            fseek(student_file, student_pos, SEEK_SET);
+                            fwrite(&st, sizeof(students), 1, student_file);
+                        } while (ex_check);
+                        Sleep(1000);
+                        printf("\n\tFinished!\n");
+                    }
+                    break;
+
+                case 2:
+                    //experimental_course_tuition_update();
+                    break;
+                
+                case 3: // Update Maximum Amount in A Class
+                    printf("\n\tCurrent Max Allowed in Class: %d", cs.max_students);
+                    while (fread(&cl, sizeof(classes), 1, class_file) == 1) {
+                        if (strcmp(cl.course_ID, cs.course_ID) == 0) {
+                            if (cl.total_students == cs.max_students) {
+                                highest_student_count = cs.max_students;
+                                break;
+                            }
+                            else if (highest_student_count < cl.total_students) {
+                                highest_student_count = cl.total_students;
+                            }
+                        }
+                    }
+                    printf("\n\tHighest number currently in Class: %d", highest_student_count);
+                    printf("\n\t(The system will not update if you enter a value below %d)", highest_student_count);
+                    do {
+                        do {
+                            printf("\n\n\tEnter new number of allowed student in a class: ");
+                            while (scanf("%d", &cs.max_students) != 1) {
+                                while (getchar() != '\n');
+                                printf("\t (!_!) Invalid input! Please enter only numeric value!");
+                                _getch();
+                                eraseLines(2);
+                            }
+                            if (cs.max_students <= 0) {
+                                printf("\tThere must be at least 1 student in class (>_<)!");
+                                eraseLines(2);
+                                cs.max_students = 0;
+                            }
+                        } while (cs.max_students == 0);
+
+                        if (cs.max_students < highest_student_count) {
+                            printf("\tCurrent Amount of Student in class exceed new maximum of students.");
+                            eraseLines(2);
+                            getch();
+                        }
+                        else {
+                            over_max = true;
+                            printf("\n\tUpdating...");
+                            Sleep(1000);
+                            printf("\n\tFinished!");
+                        }
+                    } while (!over_max);
+                    break;
+
+                case 4: // Return
+                    fclose(course_file);
+                    return;
+
+                default:
+                    printf("\tInvalid choice! Please select 1-4 only (>_<)!\n");
+                    getch();
+                    continue;
+            }
+
+            // Update the record
+            fseek(course_file, course_pos, SEEK_SET);
+            fwrite(&cs, sizeof(courses), 1, course_file);
+            printf("\n\tInformation updated successfully ( =^.^=)!\n");
+            getch();
+            system("cls");
+
+            // Display updated information
+            printf("\n\tCurrent Student Information:\n");
+            printf("\t+--------------------------------------------------------+\n");
+            printf("\t| %-25s | %s\n", "ID:", cs.course_ID);
+            printf("\t| %-25s | %s\n", "Course Name:", cs.course_name);
+            printf("\t| %-25s | %d\n", "Fee:", cs.tuition);
+            printf("\t| %-25s | %d\n", "Maximum In a Class:", cs.max_students);
+            printf("\t+--------------------------------------------------------+\n\n");
+
+        } while (update_choice != 4);
+    }
+
+    fclose(course_file);
+    printf("\n\n");
+    printf("                        (\\(\\ \n");
+    printf("Press any key to return ( -.-) \n");
+    getch();
+}
+
 
 
 
@@ -1823,6 +2089,7 @@ void experimental_print_students_list() {
                     printf("\t| %-20s | %s \n", "Full Name:", st.student_name);
                     printf("\t| %-20s | %s \n", "Phone Number:", st.student_phone);
                     printf("\t| %-20s | %s \n", "Email:", st.student_email);
+                    printf("\t| %-20s | %s \n", "Course:", st.course_attend);
                     printf("\t| %-20s | %s \n", "Class:", st.class_attend);
                     printf("\t| %-20s | %.2f |\n", "Tuition Paid:", st.tuition_paid);
                     printf("\t+--------------------------------------------------------+\n");
@@ -2374,7 +2641,7 @@ void sub_student_admin() {
         printf("\t\t* 5: Register a Student Into Class\n");
         printf("\t\t* 6: Remove a Student From Class\n");
         printf("\t\t* 7: View a Student's Tuition\n");
-        printf("\t\t* 8: View all current Student(s)")
+        printf("\t\t* 8: View all current Student(s)\n");
         printf("\t\t* 9: Return \n");
         printf("\t+------------------------------------------------------+\n");
         printf("\t  Enter your choice (1-9): ");
@@ -2394,7 +2661,7 @@ void sub_student_admin() {
                 experimental_delete_student_ID();
                 break;
             case 3:
-                //experimental_update_student_information();
+                experimental_Update_Student_Info();
                 break;
             case 4:
                 experimental_student_tuition_update();
@@ -2435,17 +2702,17 @@ void sub_course_admin() {
         printf("\t+========================================================+\n\n");
         printf("\n\t\tSelect your choice:\n\n");
         printf("\t\t* 1: Add a Course\n");
-        printf("\t\t* 2: Update a Course's Information\n");
-        printf("\t\t* 3: Update a Course's Fee\n");
-        printf("\t\t* 3: Delete a Course\n");
-        printf("\t\t* 4: View all current Course(s)")
-        printf("\t\t* 5: Return \n");
+        printf("\t\t* 2: Delete a Course\n");
+        printf("\t\t* 3: Update a Course's Information\n");
+        printf("\t\t* 4: Update a Course's Fee\n");
+        printf("\t\t* 5: View all current Course(s)\n");
+        printf("\t\t* 6: Return \n");
         printf("\t+------------------------------------------------------+\n");
-        printf("\t  Enter your choice (1-5): ");
+        printf("\t  Enter your choice (1-6): ");
 
         while (scanf("%d", &choice_course_admin) != 1) {
             while (getchar() != '\n');
-            printf("\t  (!_!) Invalid input! Please enter a number (1-5): ");
+            printf("\t  (!_!) Invalid input! Please enter a number (1-6): ");
             _getch();
             eraseLines(2);
         }
@@ -2455,31 +2722,84 @@ void sub_course_admin() {
                 experimental_insert_course();
                 break;
             case 2:
-                //experimental_update_course_information();
-                break;
-            case 3:
                 experimental_delete_course_ID();
                 break;
+            case 3:
+                experimental_Update_Course_Info();
+                break;
             case 4:
-                experimental_class_unregister();
+                //experimental_course_tuition_update();
                 break;
             case 5:
-                experimental_student_tuition_update();
+                experimental_print_course_list();
                 break;
             case 6:
-                experimental_student_tuition_view();
-                break;
-            case 7:
-                experimental_print_students_list();
-                break;
-            case 8:
                 break;
             default:
-                printf("From 1 to 8 only (>~<)!\n");
+                printf("From 1 to 6 only (>~<)!\n");
                 getch();
                 break;
         }
-    } while (choice_course_admin != 5);
+    } while (choice_course_admin != 6);
+    return;
+}
+
+void sub_class_admin() {
+    int choice_class_admin;
+
+    do {
+        system("cls");
+        printf("\n");
+        printf("\t+========================================================+\n");
+        printf("\t|              Study Center Management System            |\n");
+        printf("\t|========================================================|\n");
+        printf("\t|                    Student Management                  |\n");
+        printf("\t+========================================================+\n\n");
+        printf("\n\t\tSelect your choice:\n\n");
+        printf("\t\t* 1: Add a Class\n");
+        printf("\t\t* 2: Delete a Class\n");
+        printf("\t\t* 3: Update a Class's Information\n");
+        printf("\t\t* 4: Register a Student Into Class\n");
+        printf("\t\t* 5: Remove a Student From Class\n");
+        printf("\t\t* 6: View all current Class(s)\n");
+        printf("\t\t* 7: Return \n");
+        printf("\t+------------------------------------------------------+\n");
+        printf("\t  Enter your choice (1-7): ");
+
+        while (scanf("%d", &choice_class_admin) != 1) {
+            while (getchar() != '\n');
+            printf("\t  (!_!) Invalid input! Please enter a number (1-7): ");
+            _getch();
+            eraseLines(2);
+        }
+
+        switch(choice_class_admin) {
+            case 1:
+                experimental_insert_class();
+                break;
+            case 2:
+                //experimental_delete_class_ID();
+                break;
+            case 3:
+                //experimental_update_class_information();
+                break;
+            case 4:
+                experimental_class_register();
+                break;
+            case 5:
+                experimental_class_unregister();
+                break;
+            case 6:
+                experimental_print_class_list();
+                break;
+            case 7:
+                break;
+            default:
+                printf("From 1 to 7 only (>~<)!\n");
+                getch();
+                break;
+        }
+    } while (choice_class_admin != 7);
     return;
 }
 
@@ -2496,41 +2816,37 @@ void sub_head_admin() {
         printf("\t+========================================================+\n\n");
         printf("\n\t\tSelection of All Command Relating:\n\n");
         printf("\t\t* 1: Student\n"
-               "\t\t* 2: Class\n"
-               "\t\t* 3: Tuition\n"
-               "\t\t* 4: Information\n"
-               "\t\t* 5: Return to Main Menu\n");
+               "\t\t* 2: Course\n"
+               "\t\t* 3: Class\n"
+               "\t\t* 4: Return to Main Menu\n");
         printf("\t+--------------------------------------------------------+\n");
-        printf("\t  Enter your choice (1-5): ");
+        printf("\t  Enter your choice (1-4): ");
 
         while (scanf("%d", &choice_head_admin) != 1) {
             while (getchar() != '\n');
-            printf("\t  (!_!) Invalid input! Please enter a number (1-5): ");
+            printf("\t  (!_!) Invalid input! Please enter a number (1-4): ");
             _getch();
             eraseLines(2);
         }
     
         switch(choice_head_admin) {
             case 1:
-                sub_student();
+                sub_student_admin();
                 break;
             case 2:
-                sub_class();
+                sub_course_admin();
                 break;
             case 3:
-                sub_tuition();
+                sub_class_admin();
                 break;
             case 4:
-                sub_view();
-                break;
-            case 5:
                 break;
             default:
-                printf("From 1 to 5 only (>_<)!\n");
+                printf("From 1 to 4 only (>_<)!\n");
                 getch();
                 break;
         }
-    } while (choice_head_admin != 5);
+    } while (choice_head_admin != 4);
 
     printf("\nReturning to Main Menu.\n"
     "Press any key to return ( ='.'=) \n");
@@ -2641,7 +2957,7 @@ void sub_accountant() {
 
                 switch(sub_choice_accountant) {
                     case 1:
-                        experimental_student_pay();
+                        experimental_student_tuition_update();
                         break;
                     case 2:
                         experimental_print_students_list();
