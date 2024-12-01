@@ -1600,7 +1600,7 @@ cleanup:
     getch();
 }
 
-//delete class by ID (01/12, D)
+//delete class by ID (unregister student from ex_student.txt, delete from ex_class.txt, update course total_class and total_students) (01/12, D)
 void experimental_delete_class_ID() {
     FILE *class_file, *temp_class_file;
     FILE *student_file, *temp_student_file;
