@@ -177,9 +177,15 @@ void student_add() { // Added new Student's Information (21/11, N)
 
     // Get new student Information
     system("cls");
-    printf("\n\tEntering new Student's Information\n");
+    printf("\n");
+    printf("\t+========================================================+\n");
+    printf("\t|              Study Center Management System            |\n");
+    printf("\t|========================================================|\n");
+    printf("\t|                Add Student Information                 |\n");
+    printf("\t+========================================================+\n\n");
+
     do {
-        printf("Enter Student's ID: ");
+        printf("\tEnter Student's ID: ");
         fflush(stdin);
         fgets(new_student.student_ID, sizeof(new_student.student_ID), stdin);
         new_student.student_ID[ strcspn(new_student.student_ID, "\n") ] = 0;
@@ -199,14 +205,14 @@ void student_add() { // Added new Student's Information (21/11, N)
     }
 
     if (ID_found) {
-        printf("Error: Student ID [ %s ] already exists (>_<)!\n", new_student.student_ID);
+        printf("\tError: Student ID [ %s ] already exists (>_<)!\n", new_student.student_ID);
         system("cls");
     }
     else {
         // Student's Name validation
         do
         {
-            printf("Enter Student's Name: ");
+            printf("\tEnter Student's Name: ");
             fflush(stdin);
             fgets(new_student.student_name, sizeof(new_student.student_name), stdin);
             new_student.student_name[strcspn(new_student.student_name, "\n")] = 0;
@@ -221,7 +227,7 @@ void student_add() { // Added new Student's Information (21/11, N)
 
         // Phone number validation
         do {
-            printf("Enter Student's Phone Number: ");
+            printf("\tEnter Student's Phone Number: ");
             fflush(stdin);
             fgets(phone_str, sizeof(phone_str), stdin);
             fflush(stdin);
@@ -229,10 +235,10 @@ void student_add() { // Added new Student's Information (21/11, N)
             
             phone_length = strlen(phone_str);
             if (phone_length > 10) {
-                printf("You typed over 10 digits [ %s ].", phone_str);
+                printf("\tYou typed over 10 digits [ %s ].", phone_str);
             }
             else if (phone_length < 10) {
-                printf("You typed only %d digits [ %s ].", phone_length, phone_str);
+                printf("\tYou typed only %d digits [ %s ].", phone_length, phone_str);
             }
             printf("\n");
             bool valid = true;
@@ -255,16 +261,16 @@ void student_add() { // Added new Student's Information (21/11, N)
             
             if(valid) {
                 strcpy(new_student.student_phone, phone_str);
-                printf("Valid phone number format.\n");
+                printf("\tValid phone number format.\n");
                 break;
             }
-            printf("Invalid phone number format (>_<)! Please enter 10 digits (number) only.\n");
+            printf("\tInvalid phone number format (>_<)! Please enter 10 digits (number) only.\n");
             getch();
             eraseLines(4);
         } while(1);
 
         do {
-            printf("Enter Student's Email: ");
+            printf("\tEnter Student's Email: ");
             fflush(stdin);
             fgets(new_student.student_email, sizeof(new_student.student_email), stdin);
             fflush(stdin);
@@ -285,14 +291,14 @@ void student_add() { // Added new Student's Information (21/11, N)
         fseek(file, 0, SEEK_END);
         new_student.student_name[ strcspn(new_student.student_name, "\n") ] = 0;
         fwrite(&new_student, sizeof(students), 1, file);
-        printf("\nStudent added sucessfully ( =^.^=). Number: %d\n", student_count + 1);
+        printf("\n\tStudent added successfully ( =^.^=). Number: %d\n", student_count + 1);
     }
 
     fclose(file);
 
     printf("\n\n");
-    printf("                        (\\(\\ \n");
-    printf("Press any key to return ( -.-) !\n");
+    printf("\t                        (\\(\\ \n");
+    printf("\tPress any key to return ( -.-) !\n");
     getch();
 }
 
@@ -311,14 +317,29 @@ void course_add() { // Minor adjustment (23/11, N)
 
     // Get new class information
     system("cls");
-    printf("\n\tEntering new Course's Information\n");
+    printf("\n");
+    printf("\t+========================================================+\n");
+    printf("\t|              Study Center Management System            |\n");
+    printf("\t|========================================================|\n");
+    printf("\t|                    Add New Course                      |\n");
+    printf("\t+========================================================+\n\n");
+
     do {
-        printf("Enter Course ID: ");
+        system("cls");
+        printf("\n");
+        printf("\t+========================================================+\n");
+        printf("\t|              Study Center Management System            |\n");
+        printf("\t|========================================================|\n");
+        printf("\t|                    Add New Course                      |\n");
+        printf("\t+========================================================+\n\n");
+
+        printf("\tEnter Course ID: ");
         fflush(stdin);
         fgets(new_course.course_ID, sizeof(new_course.course_ID), stdin);
         new_course.course_ID[ strcspn(new_course.course_ID, "\n") ] = 0;
         if (strlen(new_course.course_ID) == 0) {
-            printf("Course ID cannot be empty (>_<)!\n");
+            printf("\tError: Course ID cannot be empty (>_<)!\n");
+            getch();
         }
     } while (strlen(new_course.course_ID) == 0);
 
@@ -333,35 +354,38 @@ void course_add() { // Minor adjustment (23/11, N)
     }
 
     if (course_found) {
-        printf("Error: Course ID [ %s ] already exists (>~<)!\n", new_course.course_ID);
+        printf("\tError: Course ID [ %s ] already exists (>~<)!\n", new_course.course_ID);
     }
     else {
         do {
-            printf("Enter Course's Name: ");
+            printf("\tEnter Course's Name: ");
             fflush(stdin);
             fgets(new_course.course_name, sizeof(new_course.course_name), stdin);
             new_course.course_name[ strcspn(new_course.course_name, "\n") ] = 0;
+            if (strlen(new_course.course_name) == 0) {
+                printf("\tError: Course Name cannot be empty (>_<)!\n");
+            }
         } while (strlen(new_course.course_name) == 0);
 
         do {
-            printf("Enter Course's Tuition Cost: ");
+            printf("\tEnter Course's Tuition Cost: ");
             while (scanf("%d", &new_course.tuition) != 1) {
                 while (getchar() != '\n');
-                printf("\t (!_!) Invalid input! Please enter only numeric value!");
+                printf("\t(!_!) Invalid input! Please enter only numeric value!");
                 _getch();
                 eraseLines(2);
             }
             if (new_course.tuition == 0) {
-                printf("Tuition Cost cannot be empty (>_<)!");
+                printf("\tError: Tuition Cost cannot be empty (>_<)!");
                 eraseLines(2);
             }
         } while (new_course.tuition == 0);
 
         do {
-            printf("Enter total amount of students can be in one class: ");
+            printf("\tEnter maximum students allowed per class: ");
             scanf("%d", &new_course.max_students);
             if (new_course.max_students <= 0) {
-                printf("Total amount of students must be at least 1 or above (>_<)!\n");
+                printf("\tError: Maximum students must be at least 1 or above (>_<)!\n");
                 new_course.max_students = 0;
             }
         } while (new_course.max_students == 0);
@@ -375,7 +399,7 @@ void course_add() { // Minor adjustment (23/11, N)
         new_course.course_name[ strcspn(new_course.course_name, "\n") ] = 0;
         fwrite(&new_course, sizeof(courses), 1, file);
 
-        printf("\nCourse added sucessfully ( =^.^=). Number: %d\n", course_count + 1);
+        printf("\n\tCourse added successfully ( =^.^=). Number: %d\n", course_count + 1);
     }
 
     fclose(file);
@@ -409,14 +433,28 @@ void class_add() { // Minor fix (25/11, N)
 
     // Get Course ID
     system("cls");
-    printf("\n\tCreating new Class for a Course\n");
+    printf("\n");
+    printf("\t+========================================================+\n");
+    printf("\t|              Study Center Management System            |\n");
+    printf("\t|========================================================|\n");
+    printf("\t|                    Add New Class                       |\n");
+    printf("\t+========================================================+\n\n");
+
     do {
-        printf("Enter Course ID: ");
+        system("cls");
+        printf("\n");
+        printf("\t+========================================================+\n");
+        printf("\t|              Study Center Management System            |\n");
+        printf("\t|========================================================|\n");
+        printf("\t|                    Add New Class                       |\n");
+        printf("\t+========================================================+\n\n");
+        printf("\tEnter Course ID: ");
         fflush(stdin);
         fgets(course_search, sizeof(course_search), stdin);
         course_search[ strcspn(course_search,"\n") ] = 0;
         if (strlen(course_search) == 0) {
-            printf("Course ID cannot be empty (>_<)!\n");
+            printf("\tError: Course ID cannot be empty (>_<)!\n");
+            getch();
         }
     } while (strlen(course_search) == 0);
 
@@ -431,7 +469,7 @@ void class_add() { // Minor fix (25/11, N)
 
     // If course don't exist, return.
     if (!course_found) {
-        printf("Error: Course ID [ %s ] was not found!\n", course_search);
+        printf("\tError: Course ID [ %s ] was not found (>_<)!\n", course_search);
 
         fclose(course_file);
         fclose(class_file);
@@ -445,14 +483,21 @@ void class_add() { // Minor fix (25/11, N)
 
     // New Class ID Input
     system("cls");
-    printf("\n\tCreating a new class for Course %s\n", cs.course_name);
+    printf("\n");
+    printf("\t+========================================================+\n");
+    printf("\t|              Study Center Management System            |\n");
+    printf("\t|========================================================|\n");
+    printf("\t|                    Add New Class                       |\n");
+    printf("\t+========================================================+\n\n");
+    printf("\tCreating a new class for Course [ %s ]\n\n", cs.course_name);
+
     do {
-        printf("Enter Class ID: ");
+        printf("\tEnter Class ID: ");
         fflush(stdin);
         fgets(new_class.class_ID, sizeof(new_class.class_ID), stdin);
         new_class.class_ID[ strcspn(new_class.class_ID,"\n") ] = 0;
         if (strlen(new_class.class_ID) == 0) {
-            printf("Class ID cannot be empty (>_<)!\n");
+            printf("\tError: Class ID cannot be empty (>_<)!\n");
         }
     } while (strlen(new_class.class_ID) == 0);
 
@@ -475,27 +520,27 @@ void class_add() { // Minor fix (25/11, N)
     }
 
     if (class_found) {
-        printf("Error: Class ID [ %s ] already exists (>~<)!\n", new_class.class_ID);
+        printf("\tError: Class ID [ %s ] already exists (>~<)!\n", new_class.class_ID);
     }
     else {
         //Enter Class's Information
         do { // Loop for class name validation
             new_name_valid = true; // set true to break loop
             do {
-                printf("Enter Class's Name: ");
+                printf("\tEnter Class's Name: ");
                 fflush(stdin);
                 fgets(new_class_name, sizeof(new_class_name), stdin);
                 new_class_name[ strcspn(new_class_name, "\n") ] = 0;
                 if (strlen(new_class_name) == 0) {
-                    printf("Class's Name cannot be empty (>_<)!\n");
+                    printf("\tClass's Name cannot be empty (>_<)!\n");
                 }
             } while (strlen(new_class_name) == 0);
 
             rewind(class_file);
             while ( fread(&existing_class, sizeof(classes), 1, class_file) == 1) {
                 if (strcmp(existing_class.class_name, new_class_name) == 0) {
-                    printf("Class's Name [ %s ] is already taken (>~<)!\n", new_class_name);
-                    printf("Please re-enter a different class name.\n");
+                    printf("\tClass's Name [ %s ] is already taken (>~<)!\n", new_class_name);
+                    printf("\tPlease re-enter a different class name.\n");
                     getch();
                     eraseLines(4);
                     memset( new_class_name, 0, sizeof(new_class_name) ); // Empty new_class_name
@@ -506,12 +551,12 @@ void class_add() { // Minor fix (25/11, N)
         } while (!new_name_valid);
 
         do {
-            printf("Enter Professor's Name: ");
+            printf("\tEnter Professor's Name: ");
             fflush(stdin);
             fgets(new_class.class_teacher, MAX_NAME_LENGTH, stdin);
             new_class.class_teacher[ strcspn(new_class.class_teacher, "\n") ] = 0;
             if (strlen(new_class.class_teacher) == 0) {
-                printf("Professor's Name cannot be empty (>_<)!");
+                printf("\tError: Professor's Name cannot be empty (>_<)!");
                 eraseLines(2);
             }
         } while (strlen(new_class.class_teacher) == 0);
@@ -542,7 +587,7 @@ void class_add() { // Minor fix (25/11, N)
         fseek(course_file, course_pos, SEEK_SET);
         fwrite(&cs, sizeof(courses), 1, course_file);
 
-        printf("\nClass %s added sucessfully ( =^.^=). Number: %d\n", new_class.class_name, class_count +1);
+        printf("\n\tClass [ %s ] added successfully ( =^.^=). Number: %d\n", new_class.class_name, class_count +1);
     }
 
     fclose(course_file);
@@ -585,12 +630,20 @@ void class_register() { // Fixed and good to go! (25/11, N)
 
     // Get student ID
     do {
-        printf("Enter Student ID to register: ");
+        system("cls");
+        printf("\n");
+        printf("\t+========================================================+\n");
+        printf("\t|              Study Center Management System            |\n");
+        printf("\t|========================================================|\n");
+        printf("\t|                   Class Registration                   |\n");
+        printf("\t+========================================================+\n\n");
+        printf("\tEnter Student ID to register: ");
         fflush(stdin);
         fgets(student_search, sizeof(student_search), stdin);
         student_search[ strcspn(student_search, "\n") ] = 0;
         if (strlen(student_search) == 0) {
-            printf("Error: Student ID cannot be empty (>_<)!\n");
+            printf("\tError: Student ID cannot be empty (>_<)!\n");
+            getch();
         }
     } while (strlen(student_search) == 0);
 
@@ -606,8 +659,8 @@ void class_register() { // Fixed and good to go! (25/11, N)
     if (!student_found) {
         printf("Student [ %s ] not found (>~<)!\n", student_search);
         printf("\n\n");
-        printf("                        (\\(\\ \n");
-        printf("Press any key to return ( -.-) \n");
+        printf("\t                        (\\(\\ \n");
+        printf("\tPress any key to return ( -.-) \n");
         getch();
 
 
@@ -619,8 +672,13 @@ void class_register() { // Fixed and good to go! (25/11, N)
     }
 
     system("cls");
-
-    printf("Student [ %s ]", st.student_name);
+    printf("\n");
+    printf("\t+========================================================+\n");
+    printf("\t|              Study Center Management System            |\n");
+    printf("\t|========================================================|\n");
+    printf("\t|                   Class Registration                   |\n");
+    printf("\t+========================================================+\n\n");
+    printf("\tStudent [ %s ]", st.student_name);
 
     // Check if student has already assigned for a class
     while (fread(&cl, sizeof(classes), 1, class_file) == 1) {
@@ -634,7 +692,7 @@ void class_register() { // Fixed and good to go! (25/11, N)
         printf("\n\tStudent has already been registered to class [ %s ] \n", st.class_attend);
         printf("\tWould you like to move student to a different class?\n"
                "\t(Disclaimer: the current class's fee will not be discharged).\n"
-               "Type 'yes' to continue or 'no' to cancel: ");
+               "\tType 'yes' to continue or 'no' to cancel: ");
         do {
             fflush(stdin);
             fgets(ans, sizeof(ans), stdin);
@@ -659,7 +717,7 @@ void class_register() { // Fixed and good to go! (25/11, N)
 
     // Get Class ID
     do {
-        printf("\nEnter Class's ID: ");
+        printf("\n\tEnter Class's ID: ");
         fflush(stdin);
         fgets(class_search, sizeof(class_search), stdin);
         class_search[ strcspn(class_search, "\n") ] = 0;
@@ -728,7 +786,7 @@ void class_register() { // Fixed and good to go! (25/11, N)
         fseek(course_file, course_pos, SEEK_SET);
         fwrite(&cs, sizeof(courses), 1, course_file);
 
-        printf("\nSuccessfully Registered Student %s for class %s ( =^.^=)!\n", st.student_name, st.class_attend);
+        printf("\n\tSuccessfully Registered Student %s for class %s ( =^.^=)!\n", st.student_name, st.class_attend);
     }
 
     fclose(student_file);
@@ -736,8 +794,8 @@ void class_register() { // Fixed and good to go! (25/11, N)
     fclose(class_file);
 
     printf("\n\n");
-    printf("                        (\\(\\ \n");
-    printf("Press any key to return ( -.-) \n");
+    printf("\t                        (\\(\\ \n");
+    printf("\tPress any key to return ( -.-) \n");
     getch();
 }
 
@@ -766,15 +824,22 @@ void class_unregister() { // Fixed and good to go! (27/11, N)
     }
 
     system("cls");
-    printf("(Disclaimer: the class's fee will not be discharged).\n");
+    printf("\n");
+    printf("\t+========================================================+\n");
+    printf("\t|              Study Center Management System            |\n");
+    printf("\t|========================================================|\n");
+    printf("\t|                   Class Unregistration                 |\n");
+    printf("\t+========================================================+\n\n");
+    printf("\t(Disclaimer: the class's fee will not be discharged).\n");
+
     // Get Student ID
     do {
-        printf("Enter Student ID: ");
+        printf("\tEnter Student ID: ");
         fflush(stdin);
         fgets(student_search, MAX_CLASSNAME_LENGTH, stdin);
         student_search[ strcspn(student_search, "\n") ] = 0;
         if (strlen(student_search) == 0) {
-            printf("Error: Student ID cannot be empty (>_<)!\n");
+            printf("\tError: Student ID cannot be empty (>_<)!\n");
         }
     } while (strlen(student_search) == 0);
 
@@ -788,16 +853,14 @@ void class_unregister() { // Fixed and good to go! (27/11, N)
     }
 
     if (!student_found) {
-        printf("Student ID %s has not been found (>_<)!\n", student_search);
+        printf("\tStudent ID [ %s ] has not been found (>_<)!\n", student_search);
     }
-
     else if (strcmp(st.class_attend, no_class) == 0) {
-        printf("Student %s has not registered to any classes (>~<)!\n", st.student_name);
+        printf("\tStudent [ %s ] has not registered to any classes (>~<)!\n", st.student_name);
     }
-
     else {
-        printf("\nCurrent Class: %s", st.class_attend);
-        printf("\nType 'yes' to continue or 'no' to cancel the unregister: ");
+        printf("\n\tCurrent Class: %s", st.class_attend);
+        printf("\n\tType 'yes' to continue or 'no' to cancel the unregister: ");
         do {
             fflush(stdin);
             fgets(ans, sizeof(ans), stdin);
@@ -818,7 +881,7 @@ void class_unregister() { // Fixed and good to go! (27/11, N)
             if (strcmp(ans, "yes") == 0) {
                 break;
             }
-            printf("\nInvalid Input (>~<)! Please type either yes or no: ");
+            printf("\n\tInvalid Input (>~<)! Please type either yes or no: ");
         } while (true);
 
 
@@ -861,7 +924,7 @@ void class_unregister() { // Fixed and good to go! (27/11, N)
         fseek(class_file, class_pos, SEEK_SET);
         fwrite(&cl, sizeof(classes), 1, class_file);
 
-        printf("\nSuccessfully removed student %s from class %s ( =^.^=)!\n", st.student_name, class_name_remove);
+        printf("\n\tSuccessfully removed student %s from class %s ( =^.^=)!\n", st.student_name, class_name_remove);
     }
 
     fclose(student_file);
@@ -873,7 +936,7 @@ void class_unregister() { // Fixed and good to go! (27/11, N)
     getch();
 }
 
-void class_view() { // Fixed and good to go! (27/11, N)
+void class_view() {
     FILE *class_file, *student_file, *course_file;
     classes cl;
     students st;
@@ -893,14 +956,20 @@ void class_view() { // Fixed and good to go! (27/11, N)
     }
 
     system("cls");
+    printf("\n");
+    printf("\t+========================================================+\n");
+    printf("\t|              Study Center Management System            |\n");
+    printf("\t|========================================================|\n");
+    printf("\t|                   Class Information                    |\n");
+    printf("\t+========================================================+\n\n");
 
     do {
-        printf("Enter Class ID to view enrollment: ");
+        printf("\tEnter Class ID to view enrollment: ");
         fflush(stdin);
         fgets(class_search, sizeof(class_search), stdin);
-        class_search[ strcspn(class_search, "\n") ] = 0;
+        class_search[strcspn(class_search, "\n")] = 0;
         if (strlen(class_search) == 0) {
-            printf("Class ID cannot be empty (>_<)!\n");
+            printf("\tError: Class ID cannot be empty (>_<)!\n");
         }
     } while (strlen(class_search) == 0);
 
@@ -913,20 +982,27 @@ void class_view() { // Fixed and good to go! (27/11, N)
     }
 
     if (!class_found) {
-        printf("Class ID [ %s ] has not been found (>~<)!\n", class_search);
+        printf("\tClass ID [ %s ] has not been found (>~<)!\n", class_search);
     }
-
     else {
         system("cls");
-        printf("Class [ %s ]\n", cl.class_name);
-        printf("By Professor [ %s ]\n\n", cl.class_teacher);
-        printf("%-5s |%-15s |%-30s |%-30s\n",
+        printf("\n");
+        printf("\t+========================================================+\n");
+        printf("\t|              Study Center Management System            |\n");
+        printf("\t|========================================================|\n");
+        printf("\t|                   Class Information                    |\n");
+        printf("\t+========================================================+\n\n");
+        printf("\tClass [ %s ]\n", cl.class_name);
+        printf("\tBy Professor [ %s ]\n\n", cl.class_teacher);
+        printf("\t%-5s |%-15s |%-30s |%-15s\n",
                "No.", "Student ID", "Full Name", "Tuition");
-        printf("----------------------------------------------------------\n");
+        printf("\t----------------------------------------------------------\n");
+        
         while (fread(&st, sizeof(students), 1, student_file) == 1) {
             if (strcmp(cl.class_name, st.class_attend) == 0) {
                 enrolled_count++;
-                printf("%-5d |%-15s |%-30s |%-10f\n", enrolled_count, st.student_ID, st.student_name, st.tuition_paid);
+                printf("\t%-5d |%-15s |%-30s |%-15.2f\n", 
+                    enrolled_count, st.student_ID, st.student_name, st.tuition_paid);
             }
         }
         
@@ -935,8 +1011,8 @@ void class_view() { // Fixed and good to go! (27/11, N)
                 break;
             }
         }
-        printf("\nTotal Student(s) in Class %s: %d Student(s)", cl.class_name, cl.total_students);
-        printf("\nMaximum allowed in Class: %d Students", cs.max_students);
+        printf("\n\tTotal Student(s) in Class %s: %d Student(s)", cl.class_name, cl.total_students);
+        printf("\n\tMaximum allowed in Class: %d Students", cs.max_students);
     }
 
     fclose(class_file);
@@ -948,7 +1024,7 @@ void class_view() { // Fixed and good to go! (27/11, N)
 }
 
 
-void student_tuition_view() { // Fixed and Good to go! (27/11, N)
+void student_tuition_view() {
     FILE *student_file, *course_file;
     students st;
     courses  cs;
@@ -968,14 +1044,28 @@ void student_tuition_view() { // Fixed and Good to go! (27/11, N)
     }
 
     system("cls");
+    printf("\n");
+    printf("\t+========================================================+\n");
+    printf("\t|              Study Center Management System            |\n");
+    printf("\t|========================================================|\n");
+    printf("\t|                Student Tuition Status                  |\n");
+    printf("\t+========================================================+\n\n");
 
     do {
-        printf("Enter Student ID: ");
+        system("cls");
+        printf("\n");
+        printf("\t+========================================================+\n");
+        printf("\t|              Study Center Management System            |\n");
+        printf("\t|========================================================|\n");
+        printf("\t|                Student Tuition Status                  |\n");
+        printf("\t+========================================================+\n\n");
+        printf("\tEnter Student ID: ");
         fflush(stdin);
         fgets(student_search, sizeof(student_search), stdin);
         student_search[ strcspn(student_search, "\n") ] = 0;
         if (strlen(student_search) == 0) {
-            printf("Error: Student ID cannot be empty (>_<)!\n");
+            printf("\tError: Student ID cannot be empty (>_<)!\n");
+            getch();
         }
     } while (strlen(student_search) == 0);
 
@@ -988,15 +1078,19 @@ void student_tuition_view() { // Fixed and Good to go! (27/11, N)
     }
 
     if (!student_found) {
-        printf("Student ID [ %s ] has not been found (>~<)!\n", student_search);
+        printf("\tStudent ID [ %s ] has not been found (>~<)!\n", student_search);
     }
-    
     else if (strcmp(st.class_attend, no_class) == 0) {
-        printf("Student [ %s ] current is not in a class (>~<)!\n", st.student_name);
+        printf("\tStudent [ %s ] is not currently enrolled in any class (>~<)!\n", st.student_name);
     }
-
     else {
         system("cls");
+        printf("\n");
+        printf("\t+========================================================+\n");
+        printf("\t|              Study Center Management System            |\n");
+        printf("\t|========================================================|\n");
+        printf("\t|                Student Tuition Status                  |\n");
+        printf("\t+========================================================+\n\n");
 
         // Get Course's Fee
         while(fread(&cs, sizeof(courses), 1, course_file) == 1) {
@@ -1011,35 +1105,35 @@ void student_tuition_view() { // Fixed and Good to go! (27/11, N)
         overpaid = paid / fee;
 
         // Print out Result
-        printf("%-30s |%-30s |%-10s\n", "Student", "Class", "Fee");
-        printf("%-30s |%-30s |%-15d\n", st.student_name, st.class_attend, cs.tuition);
-        printf("+=======================================================================+\n");
+        printf("\t%-30s |%-30s |%-10s\n", "Student", "Class", "Fee");
+        printf("\t%-30s |%-30s |%-15d\n", st.student_name, st.class_attend, cs.tuition);
+        printf("\t+--------------------------------------------------------+\n");
 
         printf("\n");
         if (paid < 0) {
-            printf("%-20s %-15.2f\n", "Unpaid Fee: ", paid);
+            printf("\t%-20s %-15.2f\n", "Unpaid Fee:", paid);
         }
         else if (paid > 0) {
-            printf("%-20s %-15.2f\n", "Overpaid Amount: ", paid);
+            printf("\t%-20s %-15.2f\n", "Overpaid Amount:", paid);
             if (overpaid < 1) {
-                printf("Student %s has paid for the current semester.\n", st.student_name);
-                printf("The extra %.2f will be accounted for the next semester.\n", paid);
+                printf("\tStudent [ %s ] has paid for the current semester.\n", st.student_name);
+                printf("\tThe extra %.2f will be accounted for the next semester.\n", paid);
             }
             else {
-                printf("Student %s has paid for the current semester.\n", st.student_name);
-                printf("And eligible for %d extra semester(s) after the current one.\n", overpaid);
+                printf("\tStudent [ %s ] has paid for the current semester.\n", st.student_name);
+                printf("\tAnd eligible for %d extra semester(s) after the current one.\n", overpaid);
             }
         }
         else {
-            printf("Student %s has paid the exact amount for the current semester.\n", st.student_name);
+            printf("\tStudent [ %s ] has paid the exact amount for the current semester.\n", st.student_name);
         }
     }
 
     fclose(student_file);
     fclose(course_file);
     printf("\n\n");
-    printf("                        (\\(\\ \n");
-    printf("Press any key to return ( -.-) \n");
+    printf("\t                        (\\(\\ \n");
+    printf("\tPress any key to return ( -.-) \n");
     getch();
 }
 
@@ -1060,15 +1154,21 @@ void student_tuition_update() {
     }
 
     system("cls");
+    printf("\n");
+    printf("\t+========================================================+\n");
+    printf("\t|              Study Center Management System            |\n");
+    printf("\t|========================================================|\n");
+    printf("\t|                Update Student Payment                  |\n");
+    printf("\t+========================================================+\n\n");
 
-    printf("Enter Student ID: ");
+    printf("\tEnter Student ID: ");
     while (fgets(student_search, sizeof(student_search), stdin) != NULL) {
-        student_search[ strcspn(student_search, "\n") ] = 0;
+        student_search[strcspn(student_search, "\n")] = 0;
         if (strlen(student_search) > 0) {
             break;
         } else {
-            printf("Error: Student ID cannot be empty (>_<)!\n");
-            printf("Enter Student ID: ");
+            printf("\tError: Student ID cannot be empty (>_<)!\n");
+            printf("\tEnter Student ID: ");
         }
     }
 
@@ -1082,48 +1182,60 @@ void student_tuition_update() {
     }
 
     if (!student_found) {
-        printf("Student ID [ %s ] has not been found (>~<)!\n", student_search);
-    }
-
-    else {
+        printf("\n\tStudent ID [ %s ] has not been found (>~<)!\n", student_search);
+    } else {
         system("cls");
+        printf("\n");
+        printf("\t+========================================================+\n");
+        printf("\t|              Study Center Management System            |\n");
+        printf("\t|========================================================|\n");
+        printf("\t|                Update Student Payment                  |\n");
+        printf("\t+========================================================+\n\n");
 
-        printf("Student [ %s ]\n", st.student_name);
+        printf("\tStudent [ %s ]\n", st.student_name);
         if (st.tuition_paid < 0) {
-            printf("Current Fee required to pay: %.2f\n", st.tuition_paid);
+            printf("\tCurrent Fee required to pay: %.2f\n", st.tuition_paid);
         }
         else if (st.tuition_paid > 0) {
-            printf("Current Overpaid Amount: %.2f\n", st.tuition_paid);
+            printf("\tCurrent Overpaid Amount: %.2f\n", st.tuition_paid);
         }
         else {
-            printf("No Fee Required to Pay.\n");
+            printf("\tNo Fee Required to Pay.\n");
         }
-        printf("+========================================================+\n\n");
+        printf("\t+--------------------------------------------------------+\n\n");
 
         // Get the new amount
-        printf("Type the amount of money student %s has paid: ", st.student_name);
+        printf("\tType the amount of money student %s has paid: ", st.student_name);
         while (scanf("%f", &pay) != 1) {
             while (getchar() != '\n');
-            printf("\t  (!_!) Invalid input! Please enter numeric value only!");
+            printf("\t(!_!) Invalid input! Please enter numeric value only!");
             _getch();
             eraseLines(2);
+            printf("\tType the amount of money student %s has paid: ", st.student_name);
         }
         
         // Update Student Fee
         st.tuition_paid = st.tuition_paid + pay;
 
         system("cls");
+        printf("\n");
+        printf("\t+========================================================+\n");
+        printf("\t|              Study Center Management System            |\n");
+        printf("\t|========================================================|\n");
+        printf("\t|                Update Student Payment                  |\n");
+        printf("\t+========================================================+\n\n");
 
         // Confirmation Line
-        printf("Confirming student %s has paid %.2f\n", st.student_name, pay);
+        printf("\tConfirming student %s has paid %.2f\n", st.student_name, pay);
+        printf("\t+--------------------------------------------------------+\n");
         if (st.tuition_paid > 0) {
-            printf("New Overpaid Amount: %.2f\n", st.tuition_paid);
+            printf("\tNew Overpaid Amount: %.2f\n", st.tuition_paid);
         }
         else if (st.tuition_paid < 0) {
-            printf("Fee remaining after: %.2f\n", st.tuition_paid);
+            printf("\tFee remaining after: %.2f\n", st.tuition_paid);
         }
         else {
-            printf("The remaining fee has been paid.\n");
+            printf("\tThe remaining fee has been paid.\n");
         }
 
         // Update Student Record
@@ -1133,8 +1245,8 @@ void student_tuition_update() {
 
     fclose(student_file);
     printf("\n\n");
-    printf("                        (\\(\\ \n");
-    printf("Press any key to return ( -.-) \n");
+    printf("\t                        (\\(\\ \n");
+    printf("\tPress any key to return ( -.-) \n");
     getch();
 }
 
@@ -1158,8 +1270,14 @@ void course_tuition_view() {
     }
 
     system("cls");
+    printf("\n");
+    printf("\t+========================================================+\n");
+    printf("\t|              Study Center Management System            |\n");
+    printf("\t|========================================================|\n");
+    printf("\t|                Course Tuition Overview                 |\n");
+    printf("\t+========================================================+\n\n");
 
-    printf("\n\tEnter Course ID: ");
+    printf("\tEnter Course ID: ");
     do {
         fflush(stdin);
         fgets(course_search, MAX_ID_LENGTH, stdin);
@@ -1167,10 +1285,10 @@ void course_tuition_view() {
         if (strlen(course_search) > 0) {
             break;
         } else {
-            printf("Error: Course ID cannot be empty (>_<)!\n");
+            printf("\tError: Course ID cannot be empty (>_<)!\n");
             _getch();
             eraseLines(2);
-            printf("\n\tEnter Course ID: ");
+            printf("\tEnter Course ID: ");
         }
     } while (true);
 
@@ -1183,15 +1301,26 @@ void course_tuition_view() {
     }
 
     if (!course_found) {
-        printf("Course ID [ %s ] has not been found (>~<)!\n", course_search);
+        printf("\tCourse ID [ %s ] has not been found (>~<)!\n", course_search);
     }
-
     else if (cs.total_students == 0) {
-        printf("Course has zero students, thus zero income.\n");
+        printf("\tCourse has zero students, thus zero income (>_<)!\n");
     }
-
     else {
         system("cls");
+        printf("\n");
+        printf("\t+========================================================+\n");
+        printf("\t|              Study Center Management System            |\n");
+        printf("\t|========================================================|\n");
+        printf("\t|                Course Tuition Overview                 |\n");
+        printf("\t+========================================================+\n\n");
+
+        // Print course info header
+        printf("\t+--------------------------------------------------------+\n");
+        printf("\t| %-20s | %-30s |\n", "Course Name", cs.course_name);
+        printf("\t| %-20s | %-30d |\n", "Course Fee", cs.tuition);
+        printf("\t| %-20s | %-30d |\n", "Total Students", cs.total_students);
+        printf("\t+--------------------------------------------------------+\n\n");
 
         // Check Student's Payment Status
         while(fread(&st, sizeof(students), 1, student_file) == 1) {
@@ -1211,28 +1340,26 @@ void course_tuition_view() {
             }
         }
 
-        // Print out Result
-        printf("\n\t%-30s |%-30s |%-15s", "Course", "Fee", "Students");
-        printf("\n\t%-30s |%-30d |%-10d", cs.course_name, cs.tuition, cs.total_students);
-        printf("+=======================================================================+\n");
-
+        // Print payment summary
+        printf("\t+--------------------------------------------------------+\n");
         if (paid > 0) {
-            printf("\n\t%-40s %-15.2f", "Tuition Fee Collected: ", paid);
-            printf("\n\t%-40s %-10d", "Number of Student(s) Paid: ", student_paid);
+            printf("\t| %-40s | %-15.2f |\n", "Tuition Fee Collected", paid);
+            printf("\t| %-40s | %-15d |\n", "Students Paid", student_paid);
         }
         else {
-            printf("\n\tZero Student has pay for their Tuition Fee.");
+            printf("\t| No students have paid their tuition fees yet.        |\n");
         }
+        
         if (remain < 0) {
-            printf("\n\n\t%-30s %-15.2f", "Tuition Fee Left: ", remain);
-            printf("\n\t%-40s %-10d", "Number of Student(s) haven't pay: ", student_remain);
+            printf("\t| %-40s | %-15.2f |\n", "Outstanding Tuition", -remain);
+            printf("\t| %-40s | %-15d |\n", "Students with Outstanding Fees", student_remain);
         }
         else {
-            printf("\n\n\tAll Students in course has paid their Tuition Fee.");
+            printf("\t| All students have paid their tuition fees ( =^.^=)!  |\n");
         }
+        printf("\t+--------------------------------------------------------+\n");
     }
 
-    
     fclose(student_file);
     fclose(course_file);
     printf("\n\n");
@@ -1267,8 +1394,14 @@ void course_tuition_update() {
     }
 
     system("cls");
+    printf("\n");
+    printf("\t+========================================================+\n");
+    printf("\t|              Study Center Management System            |\n");
+    printf("\t|========================================================|\n");
+    printf("\t|                Update Course Tuition Fee               |\n");
+    printf("\t+========================================================+\n\n");
 
-    printf("\n\tEnter Course ID: ");
+    printf("\tEnter Course ID: ");
     do {
         fflush(stdin);
         fgets(course_search, MAX_ID_LENGTH, stdin);
@@ -1277,9 +1410,9 @@ void course_tuition_update() {
             break;
         }
         else {
-            printf("Error: Course ID cannot be empty (>_<)!\n");
+            printf("\tError: Course ID cannot be empty (>_<)!\n");
             eraseLines(2);
-            printf("\n\tEnter Course ID: ");
+            printf("\tEnter Course ID: ");
         }
     } while (true);
 
@@ -1293,24 +1426,30 @@ void course_tuition_update() {
     }
 
     if (!course_found) {
-        printf("Course ID [ %s ] has not been found (>~<)!\n", course_search);
+        printf("\tCourse ID [ %s ] has not been found (>~<)!\n", course_search);
     }
-
     else {
         old_fee = cs.tuition;
         system("cls");
+        printf("\n");
+        printf("\t+========================================================+\n");
+        printf("\t|              Study Center Management System            |\n");
+        printf("\t|========================================================|\n");
+        printf("\t|                Update Course Tuition Fee               |\n");
+        printf("\t+========================================================+\n\n");
 
-        printf("\n\tCourse [ %s ]", cs.course_name);
-        printf("\n\tCurrent Fee: %d\n", cs.tuition);
-        printf("+========================================================+\n\n");
+        printf("\tCourse [ %s ]\n", cs.course_name);
+        printf("\tCurrent Fee: %d\n", cs.tuition);
+        printf("\t+--------------------------------------------------------+\n\n");
 
         // Get the new amount
-        printf("Type the new tuition fee for course %s: ", cs.course_name);
+        printf("\tType the new tuition fee for course %s: ", cs.course_name);
         while (scanf("%d", &new_fee) != 1) {
             while (getchar() != '\n');
-            printf("\t (!_!) Invalid input! Please enter numeric value only!");
+            printf("\t(!_!) Invalid input! Please enter numeric value only!");
             _getch();
             eraseLines(2);
+            printf("\tType the new tuition fee for course %s: ", cs.course_name);
         }
 
         // Update Course Fee
@@ -1318,11 +1457,18 @@ void course_tuition_update() {
         
         // Confirmation Line
         system("cls");
+        printf("\n");
+        printf("\t+========================================================+\n");
+        printf("\t|              Study Center Management System            |\n");
+        printf("\t|========================================================|\n");
+        printf("\t|                Update Course Tuition Fee               |\n");
+        printf("\t+========================================================+\n\n");
 
-        printf("\n\tCourse %s's new fee is: %d\n", cs.course_name, cs.tuition);
-        printf("+========================================================+\n\n");
-        printf("\tList of Student's Payment Status studying course %s\n", cs.course_name);
-        printf("%-30s |%-30s |%-15s\n", "Name", "Previous Payment", "Current Payment");
+        printf("\tCourse %s's new fee is: %d\n", cs.course_name, cs.tuition);
+        printf("\t+--------------------------------------------------------+\n\n");
+        printf("\tList of Student's Payment Status studying course %s\n\n", cs.course_name);
+        printf("\t%-30s |%-30s |%-15s\n", "Name", "Previous Payment", "Current Payment");
+        printf("\t----------------------------------------------------------\n");
         
         do {
             fseek(student_file, student_pos, SEEK_SET);
@@ -1340,18 +1486,18 @@ void course_tuition_update() {
             }
 
             if (!end_check) {
-                printf("%-30s |%-30d |%-30d\n", st.student_name, old_student_pay, new_student_pay);
+                printf("\t%-30s |%-30d |%-15d\n", st.student_name, old_student_pay, new_student_pay);
                 
                 // Update Student Record
                 fseek(student_file, student_pos, SEEK_SET);
                 fwrite(&st, sizeof(students), 1, student_file);
             }
         } while (!end_check);
-
-        // Update Course Record
-        fseek(course_file, course_pos, SEEK_SET);
-        fwrite(&cs, sizeof(courses), 1, course_file);
     }
+
+    // Update Course Record
+    fseek(course_file, course_pos, SEEK_SET);
+    fwrite(&cs, sizeof(courses), 1, course_file);
 
     fclose(student_file);
     fclose(course_file);
@@ -1391,12 +1537,12 @@ void student_delete() {
 
     // Get student ID with validation
     do {
-        printf("Enter Student ID to delete: ");
+        printf("\tEnter Student ID to delete: ");
         fflush(stdin);
         fgets(student_ID, sizeof(student_ID), stdin);
         student_ID[strcspn(student_ID, "\n")] = 0;
         if (strlen(student_ID) == 0) {
-            printf("Error: Student ID cannot be empty (>_<)!\n");
+            printf("\tError: Student ID cannot be empty (>_<)!\n");
         }
     } while (strlen(student_ID) == 0);
 
@@ -1406,32 +1552,34 @@ void student_delete() {
             student_found = true;
             strcpy(class_name, st.class_attend);
             
-            printf("\nStudent found:\n");
-            printf("ID: %s\n", st.student_ID);
-            printf("Name: %s\n", st.student_name);
-            printf("Class: %s\n", st.class_attend);
+            printf("\n\tStudent found:\n");
+            printf("\t+--------------------------------------------------------+\n");
+            printf("\t| %-20s | %s\n", "ID:", st.student_ID);
+            printf("\t| %-20s | %s\n", "Full Name:", st.student_name);
+            printf("\t| %-20s | %s\n", "Class:", st.class_attend);
+            printf("\t+--------------------------------------------------------+\n");
             
-            printf("\nAre you sure you want to delete this student? (yes/no): ");
+            printf("\n\tAre you sure you want to delete this student? (yes/no): ");
             do {
                 fflush(stdin);
                 fgets(confirm, sizeof(confirm), stdin);
                 confirm[strcspn(confirm, "\n")] = 0;
                 
                 if (strcmp(confirm, "no") == 0 || strcmp(confirm, "No") == 0) {
-                    printf("\nDeletion cancelled.\n");
+                    printf("\n\tDeletion cancelled.\n");
                     goto cleanup;
                 }
                 if (strcmp(confirm, "yes") == 0 || strcmp(confirm, "Yes") == 0) {
                     break;
                 }
-                printf("Invalid input! Please type yes or no: ");
+                printf("\tInvalid input! Please type yes or no: ");
             } while (true);
             break;
         }
     }
 
     if (!student_found) {
-        printf("Student ID [ %s ] not found (>_<)!\n", student_ID);
+        printf("\n\tStudent ID [ %s ] not found (>_<)!\n", student_ID);
         goto cleanup;
     }
 
@@ -1491,7 +1639,7 @@ void student_delete() {
     remove("ex_student.txt");
     rename("temp_student.txt", "ex_student.txt");
 
-    printf("\nStudent successfully deleted ( =^.^=)!\n");
+    printf("\n\tStudent successfully deleted ( =^.^=)!\n");
     goto end;
 
 cleanup:
@@ -1504,8 +1652,8 @@ end:
     if (course_file) fclose(course_file);
     
     printf("\n\n");
-    printf("                        (\\(\\ \n");
-    printf("Press any key to return ( -.-) \n");
+    printf("\t                        (\\(\\ \n");
+    printf("\tPress any key to return ( -.-) \n");
     getch();
 }
 
@@ -1532,10 +1680,18 @@ void course_delete() {
     files[4] = fopen(filenames.student, "rb");    // student_file
     files[5] = fopen("temp_student.txt", "wb");   // temp_student_file
 
+    system("cls");
+    printf("\n");
+    printf("\t+========================================================+\n");
+    printf("\t|              Study Center Management System            |\n");
+    printf("\t|========================================================|\n");
+    printf("\t|                     Delete Course                      |\n");
+    printf("\t+========================================================+\n\n");
+
     // Validate file opens
     for (int i = 0; i < 6; i++) {
         if (!files[i]) {
-            printf("Error opening files (>_<)!\n");
+            printf("\tError opening files (>_<)!\n");
             goto cleanup;
         }
     }
@@ -1545,7 +1701,10 @@ void course_delete() {
 
     // Find course and get confirmation
     courses cs;
-    if (!find_and_confirm_course(files[0], course_search, &cs)) goto cleanup;
+    if (!find_and_confirm_course(files[0], course_search, &cs)) {
+        printf("\n\tCourse ID [ %s ] not found (>_<)!\n", course_search);
+        goto cleanup;
+    }
 
     // Process files
     if (!process_course_deletion(files, course_search, &deleted_count)) goto cleanup;
@@ -1556,11 +1715,11 @@ void course_delete() {
     remove(filenames.class_); rename("temp_class.txt", filenames.class_);
     remove(filenames.student); rename("temp_student.txt", filenames.student);
 
-    printf("\nCourse successfully deleted ( =^.^=)!\n");
+    printf("\n\tCourse successfully deleted ( =^.^=)!\n");
     if (deleted_count > 0) {
-        printf("%d student(s) have been unregistered.\n", deleted_count);
+        printf("\t%d student(s) have been unregistered.\n", deleted_count);
     }
-    return;
+    goto end;
 
 cleanup:
     // Close all open files
@@ -1570,10 +1729,11 @@ cleanup:
     remove("temp_course.txt");
     remove("temp_class.txt"); 
     remove("temp_student.txt");
-    
+
+end:    
     printf("\n\n");
-    printf("                        (\\(\\ \n");
-    printf("Press any key to return ( -.-) \n");
+    printf("\t                        (\\(\\ \n");
+    printf("\tPress any key to return ( -.-) \n");
     getch();
 }
 
@@ -2213,7 +2373,7 @@ void course_update_info() {
                         printf("\n\tEnter new name: ");
                         fflush(stdin);
                         fgets(cs.course_name, sizeof(cs.course_name), stdin);
-                        cs.course_name[ strcspn(cs.course_name, "\n") ] = 0;
+                        cs.course_name[ strcspn(cs.course_name, "\n") ] =0;
                         if (strlen(cs.course_name) == 0) {
                             printf("\tCourse's Name cannot be empty (>_<)!");
                             eraseLines(2);
@@ -2364,7 +2524,7 @@ void class_update_info() {
 
     while (fread(&cl, sizeof(classes), 1, class_file) == 1 ) {
         class_count++;
-        printf("\t%-5d |%-15s |-%30s |%-30s\n",
+        printf("\t%-5d |%-15s |%-30s |%-30s\n",
             class_count, cl.class_ID, cl.class_name, cl.class_teacher);
     }
     printf("\t+--------------------------------------------------------+\n");
@@ -2376,7 +2536,7 @@ void class_update_info() {
     do {
         fflush(stdin);
         fgets(class_search, MAX_ID_LENGTH, stdin);
-        class_search[ strcspn(class_search, "\n") ] = 0;
+        class_search[ strcspn(class_search, "\n") ] =0;
         if (strlen(class_search) > 0) {
             break;
         }
@@ -2603,7 +2763,7 @@ void student_list() {
                 printf("\tEnter Student's ID to look: ");
                 fflush(stdin);
                 fgets(student_search, sizeof(student_search), stdin);
-                student_search[strcspn(student_search, "\n")] = 0;
+                student_search[strcspn(student_search, "\n")] =0;
                 if (strlen(student_search) == 0) {
                     printf("Error: Student ID cannot be empty (>_<)!\n");
                     system("pause");
@@ -2779,7 +2939,7 @@ void course_list() {
                 printf("\nEnter Course's ID to look: ");
                 fflush(stdin);
                 fgets(course_search, sizeof(course_search), stdin);
-                course_search[ strcspn(course_search, "\n") ] = 0;
+                course_search[ strcspn(course_search, "\n") ] =0;
                 rewind(file);
                 while (fread (&cs, sizeof(courses), 1, file) == 1) {
                     if (strcmp(course_search, cs.course_ID) == 0) {
@@ -2863,8 +3023,7 @@ void class_list() {
     printf("\t+========================================================================+\n\n");
 
     printf("\t+------+----------------+--------------------------------+\n");
-    printf("\t| %-4s | %-14s | %-30s |\n", 
-           "No.", "Class ID", "Class Name");
+    printf("\t| %-4s | %-14s | %-30s |\n");
     printf("\t+------+----------------+--------------------------------+\n");
 
     while (fread(&cl, sizeof(classes), 1, file) == 1) {
