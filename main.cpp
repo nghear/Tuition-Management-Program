@@ -1,6 +1,7 @@
 #include <stdio.h> // fread, fwrite, etc...
 #include <string.h> // strcpy, strcmp, etc...
 #include <stdlib.h>
+#include <math.h>
 #include <vector> 
 #include <algorithm> 
 #include <conio.h> // getch()
