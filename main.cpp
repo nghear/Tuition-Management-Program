@@ -2313,14 +2313,21 @@ void course_update_info() {
     int update_choice;
     int highest_student_count = 0;
     int course_count = 0;
-
+    bool student_check = false;
     // Open file in read and write mode
     course_file = fopen("ex_course.txt", "r+b");
     class_file = fopen("ex_class.txt","r+b");
     student_file = fopen("ex_student.txt","r+b");
-    if (course_file == NULL || class_file == NULL || student_file == NULL) {
-        printf("\tError opening file (>_<)!\n");
+    if (course_file == NULL || class_file == NULL) {
+        printf("\tError opening files (>_<)!\n");
+        getch();
         return;
+    }
+    if (student_file == NULL) {
+        student_check = false;
+        fclose(student_file);
+    } else {
+        student_check = true;
     }
 
     // Get course ID
@@ -2416,7 +2423,7 @@ void course_update_info() {
                         }
                     } while (strlen(cs.course_name) == 0);
 
-                    if (cs.total_students > 0) {
+                    if (cs.total_students > 0 && student_check) {
                         student_pos = 0;
                     
                         printf("\n\tUpdating All Student Studying the Course...\n");
@@ -2488,7 +2495,11 @@ void course_update_info() {
                     break;
 
                 case 4: // Return
-                    fclose(student_file);
+                    if (student_check) {
+                        fclose(student_file);
+                    }
+                    fclose(course_file);
+                    fclose(class_file);
                     return;
 
                 default:
@@ -2541,14 +2552,23 @@ void class_update_info() {
     long int student_pos;
     int class_count = 0;
     int update_choice;
+    bool student_check = false;
 
     // Open file
     class_file = fopen("ex_class.txt", "r+b");
     student_file = fopen("ex_student.txt", "r+b");
     
-    if (class_file == NULL || student_file == NULL) {
+    if (class_file == NULL) {
         printf("Error opening file (>_<)!\n");
+        getch();
         return;
+    }
+    
+    if (student_file == NULL) {
+        student_check = false;
+        fclose(student_file);
+    } else {
+        student_check = true;
     }
 
     system("cls");
@@ -2645,7 +2665,7 @@ void class_update_info() {
                         }
                     } while (strlen(cl.class_name) == 0);
 
-                    if (cl.total_students > 0) {
+                    if (cl.total_students > 0 && student_check) {
                         student_pos = 0;
 
                         printf("\n\tUpdating All Student currently in Class...\n");
@@ -2687,7 +2707,9 @@ void class_update_info() {
                     break;
                 
                 case 3: // Return
-                    fclose(student_file);
+                    if (student_check) {
+                        fclose(student_file);
+                    }
                     return;
 
                 default:
