@@ -1,4 +1,0 @@
-	| No.  | ID             | Name                           | Class                          | Tuition       |
---------------------------------+---------------+
-	| 1    | a              | a                              | Not Registered                 |          0.00 |
-	| 2    | b              | b                              | Not Registered                 |          0.00 |
