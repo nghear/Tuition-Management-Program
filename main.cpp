@@ -3102,7 +3102,7 @@ void class_list() {
     printf("\t+========================================================================+\n\n");
 
     printf("\t+------+----------------+--------------------------------+\n");
-    printf("\t| %-4s | %-14s | %-30s |\n");
+    printf("\t| %-4s | %-14s | %-30s |\n", "No.", "Class ID", "Class Name");
     printf("\t+------+----------------+--------------------------------+\n");
 
     while (fread(&cl, sizeof(classes), 1, file) == 1) {
@@ -3867,15 +3867,16 @@ void sub_staff() {
         printf("\t+========================================================+\n\n");
         printf("\n\t\tSelect your choice:\n\n");
         printf("\t\t* 1: Student Management\n"
-               "\t\t* 2: Class Management\n"
-               "\t\t* 3: Information List\n"
-               "\t\t* 4: Return to Main Menu\n");
+               "\t\t* 2: Course Management\n"
+               "\t\t* 3: Class Management\n"
+               "\t\t* 4: Information List\n"
+               "\t\t* 5: Return to Main Menu\n");
         printf("\t+--------------------------------------------------------+\n");
-        printf("\t  Enter your choice (1-4): ");
+        printf("\t  Enter your choice (1-5): ");
 
         while (scanf("%d", &choice_staff) != 1) {
             while (getchar() != '\n');
-            printf("\t  (!_!) Invalid input! Please enter a number (1-4): ");
+            printf("\t  (!_!) Invalid input! Please enter a number (1-5): ");
             _getch();
             eraseLines(2);
         }
@@ -3885,19 +3886,22 @@ void sub_staff() {
                 sub_student();
                 break;
             case 2:
-                sub_class();
+                sub_course();
                 break;
             case 3:
-                sub_view();
+                sub_class();
                 break;
             case 4:
+                sub_view();
+                break;
+            case 5:
                 break;  
             default:
-                printf("From 1 to 4 only (>_<)!\n");
+                printf("From 1 to 5 only (>_<)!\n");
                 getch();
                 break;
         }
-    } while (choice_staff != 4);
+    } while (choice_staff != 5);
 
     printf("\nReturning to Main Menu.\n"
     "Press any key to return ( ='.'=) \n");
