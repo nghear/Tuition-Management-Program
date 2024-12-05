@@ -176,6 +176,10 @@ void student_add() { // Added new Student's Information (21/11, N)
     file = fopen("ex_student.txt", "a+b");
     if (file == NULL) {
         printf("Error Opening file (>_<)!\n");
+        printf("\n\n");
+        printf("\t                        (\\(\\ \n");
+        printf("\tPress any key to return ( -.-) \n");
+        getch();
         return;
     }
 
@@ -318,6 +322,10 @@ void course_add() { // Minor adjustment (23/11, N)
     file = fopen("ex_course.txt","a+b");
     if (file == NULL) {
         printf("Error Opening File (>_<)!\n");
+        printf("\n\n");
+        printf("\t                        (\\(\\ \n");
+        printf("\tPress any key to return ( -.-) \n");
+        getch();
         return;
     }
 
@@ -433,6 +441,9 @@ void class_add() { // Minor fix (25/11, N)
     class_file = fopen("ex_class.txt", "a+b");
     if (course_file == NULL || class_file == NULL) {
         printf("Error Opening File (>_<)!\n");
+        printf("\n\n");
+        printf("\t                        (\\(\\ \n");
+        printf("\tPress any key to return ( -.-) \n");
         getch();
         return;
     }
@@ -629,6 +640,10 @@ void class_register() { // Fixed and good to go! (25/11, N)
     
     if (student_file == NULL || course_file == NULL || class_file == NULL) {
         printf("Error opening file(s) (>_<)!\n");
+        printf("\n\n");
+        printf("\t                        (\\(\\ \n");
+        printf("\tPress any key to return ( -.-) \n");
+        getch();
         return;
     }
 
@@ -826,6 +841,10 @@ void class_unregister() { // Fixed and good to go! (27/11, N)
     
     if (student_file == NULL || course_file == NULL || class_file == NULL) {
         printf("Error opening file (>_<)!\n");
+        printf("\n\n");
+        printf("\t                        (\\(\\ \n");
+        printf("\tPress any key to return ( -.-) \n");
+        getch();
         return;
     }
 
@@ -957,6 +976,9 @@ void class_view() {
 
     if (student_file == NULL || class_file == NULL || course_file == NULL) {
         printf("\tError opening file(s) (>_<)!\n");
+        printf("\n\n");
+        printf("\t                        (\\(\\ \n");
+        printf("\tPress any key to return ( -.-) \n");
         getch();
         return;
     }
@@ -1044,7 +1066,9 @@ void student_tuition_view() {
     course_file = fopen("ex_course.txt", "rb");
 
     if (student_file == NULL || course_file == NULL) {
-        printf("Error opening file(s) (>_<)!\n");
+        printf("Error opening file(s) (>_<)!\n");printf("\n\n");
+        printf("\t                        (\\(\\ \n");
+        printf("\tPress any key to return ( -.-) \n");
         getch();
         return;
     }
@@ -1155,6 +1179,9 @@ void student_tuition_update() {
 
     if (student_file == NULL) {
         printf("Error opening file(s) (>_<)!\n");
+        printf("\n\n");
+        printf("\t                        (\\(\\ \n");
+        printf("\tPress any key to return ( -.-) \n");
         getch();
         return;
     }
@@ -1270,7 +1297,9 @@ void course_tuition_view() {
     course_file = fopen("ex_course.txt", "rb");
 
     if (student_file == NULL || course_file == NULL) {
-        printf("Error opening file(s) (>_<)!\n");
+        printf("Error opening file(s) (>_<)!\n");printf("\n\n");
+        printf("\t                        (\\(\\ \n");
+        printf("\tPress any key to return ( -.-) \n");
         getch();
         return;
     }
@@ -1395,6 +1424,9 @@ void course_tuition_update() {
 
     if (student_file == NULL || course_file == NULL) {
         printf("\tError Opening File(s) (>_<)!\n");
+        printf("\n\n");
+        printf("\t                        (\\(\\ \n");
+        printf("\tPress any key to return ( -.-) \n");
         getch();
         return;
     }
@@ -1532,6 +1564,10 @@ void student_delete() {
         printf("Error opening student files (>_<)!\n");
         if (student_file) fclose(student_file);
         if (temp_student_file) fclose(temp_student_file);
+        printf("\n\n");
+        printf("\t                        (\\(\\ \n");
+        printf("\tPress any key to return ( -.-) \n");
+        getch();
         return;
     }
 
@@ -1704,6 +1740,10 @@ void course_delete() {
     for (int i = 0; i < 6; i++) {
         if (!files[i]) {
             printf("\tError opening files (>_<)!\n");
+            printf("\n\n");
+            printf("\t                        (\\(\\ \n");
+            printf("\tPress any key to return ( -.-) \n");
+            getch();
             goto cleanup;
         }
     }
@@ -1754,6 +1794,10 @@ void student_sort_ascending() {
     FILE *file = fopen("ex_student.txt", "rb");
     if (!file) {
         printf("\tError opening file (>_<)!\n");
+        printf("\n\n");
+        printf("\t                        (\\(\\ \n");
+        printf("\tPress any key to return ( -.-) \n");
+        getch();
         return;
     }
 
@@ -1827,6 +1871,10 @@ void class_delete() {
 
     if (!class_file || !temp_class_file || !student_file || !temp_student_file || !course_file) {
         printf("\tError opening files (>_<)!\n");
+        printf("\n\n");
+        printf("\t                        (\\(\\ \n");
+        printf("\tPress any key to return ( -.-) \n");
+        getch();
         goto cleanup;
     }
 
@@ -1955,6 +2003,10 @@ void student_sort_descending() {
     FILE *file = fopen("ex_student.txt", "rb");
     if (!file) {
         printf("\tError opening file (>_<)!\n");
+        printf("\n\n");
+        printf("\t                        (\\(\\ \n");
+        printf("\tPress any key to return ( -.-) \n");
+        getch();
         return;
     }
 
@@ -2004,6 +2056,10 @@ void student_sort_tuition_ascending() {
     FILE *file = fopen("ex_student.txt", "rb");
     if (!file) {
         printf("\tError opening file (>_<)!\n");
+        printf("\n\n");
+        printf("\t                        (\\(\\ \n");
+        printf("\tPress any key to return ( -.-) \n");
+        getch();
         return;
     }
 
@@ -2053,6 +2109,10 @@ void student_sort_tuition_descending() {
     FILE *file = fopen("ex_student.txt", "rb");
     if (!file) {
         printf("\tError opening file (>_<)!\n");
+        printf("\n\n");
+        printf("\t                        (\\(\\ \n");
+        printf("\tPress any key to return ( -.-) \n");
+        getch();
         return;
     }
 
@@ -2115,6 +2175,10 @@ void student_update_info() {
     file = fopen("ex_student.txt", "r+b");
     if (file == NULL) {
         printf("Error opening file (>_<)!\n");
+        printf("\n\n");
+        printf("\t                        (\\(\\ \n");
+        printf("\tPress any key to return ( -.-) \n");
+        getch();
         return;
     }
 
@@ -2320,6 +2384,9 @@ void course_update_info() {
     student_file = fopen("ex_student.txt","r+b");
     if (course_file == NULL || class_file == NULL) {
         printf("\tError opening files (>_<)!\n");
+        printf("\n\n");
+        printf("\t                        (\\(\\ \n");
+        printf("\tPress any key to return ( -.-) \n");
         getch();
         return;
     }
@@ -2560,6 +2627,9 @@ void class_update_info() {
     
     if (class_file == NULL) {
         printf("Error opening file (>_<)!\n");
+        printf("\n\n");
+        printf("\t                        (\\(\\ \n");
+        printf("\tPress any key to return ( -.-) \n");
         getch();
         return;
     }
@@ -2924,6 +2994,11 @@ void student_list() {
             
             if (print == NULL) {
                 printf("Error opening file(s) (>_<)!\n");
+                printf("\n\n");
+                printf("\t                        (\\(\\ \n");
+                printf("\tPress any key to return ( -.-) \n");
+                getch();
+            
                 break;
             }
 
@@ -3044,6 +3119,10 @@ void course_list() {
             
                 if (print == NULL) {
                     printf("Error opening file(s) (>_<)!\n");
+                    printf("\n\n");
+                    printf("\t                        (\\(\\ \n");
+                    printf("\tPress any key to return ( -.-) \n");
+                    getch();
                     break;
                 }
 
@@ -3140,6 +3219,10 @@ void class_list() {
             
                 if (print == NULL) {
                     printf("Error opening file(s) (>_<)!\n");
+                    printf("\n\n");
+                    printf("\t                        (\\(\\ \n");
+                    printf("\tPress any key to return ( -.-) \n");
+                    getch();
                     break;
                 }
 
