@@ -1131,15 +1131,15 @@ void class_view() {
     getch();
 }
 
-/*
 void teacher_tuition_view() {
     FILE *class_file;
     classes cl;
-    char teacher_search[MAX_ID_LENGTH];
-    float paid;
+    int teaching = 0;
+    char teacher_search[MAX_NAME_LENGTH];
+    float salary;
     bool teacher_found = false;
 
-    class_file = fopen("ex_course.txt", "rb");
+    class_file = fopen("ex_class.txt", "rb");
 
     if (class_file == NULL) {
         printf("Error opening file(s) (>_<)!\n");printf("\n\n");
@@ -1158,7 +1158,7 @@ void teacher_tuition_view() {
     printf("\t+========================================================+\n\n");
 
     do {
-        printf("\tEnter teacher ID: ");
+        printf("\tEnter Professor's name: ");
         fflush(stdin);
         fgets(teacher_search, sizeof(teacher_search), stdin);
         teacher_search[ strcspn(teacher_search, "\n") ] = 0;
@@ -1172,20 +1172,40 @@ void teacher_tuition_view() {
     while (fread(&cl, sizeof(classes), 1, class_file) == 1) {
         if (strcmp(cl.class_teacher, teacher_search) == 0) {
             teacher_found = true;
-            break;
+            teaching++;
+            salary += (cl.tuition * cl.total_students) / 100 * 50;
         }
     }
 
     if (!teacher_found) {
-        printf("\tProfessor [ %s ] has not been found (>~<)!\n", teacher_search);
+        printf("\tProfessor [ %s ] seems to not be in any class (>~<)!\n", teacher_search);
     }
     else {
-        rewind(class_file);
-        printf("\n\tProfessor")
+        system("cls");
+        printf("\n");
+        printf("\t+========================================================+\n");
+        printf("\t|              Study Center Management System            |\n");
+        printf("\t|========================================================|\n");
+        printf("\t|                Professor Tuition Status                |\n");
+        printf("\t+========================================================+\n\n");
+
+        // Print course info header
+        printf("\t+--------------------------------------------------------+\n");
+        printf("\t| %-20s | %-s \n", "Professor Name", cl.class_teacher);
+        printf("\t+--------------------------------------------------------+\n\n");
+        printf("\t+--------------------------------------------------------+\n");
+        printf("\t| %-20s | %-d\n", "Class(es) Teaching", teaching);
+        printf("\t| %-20s | %-15.2f\n", "Salary", salary);
+        printf("\t+--------------------------------------------------------+\n");
     }
-    
+
+    fclose(class_file);
+    printf("\n\n");
+    printf("\t                        (\\(\\ \n");
+    printf("\tPress any key to return ( -.-) \n");
+    getch();
 }
-*/
+
 
 void student_tuition_view() {
     FILE *student_file, *class_file;
@@ -4401,7 +4421,7 @@ void sub_accountant() {
 
                  while (scanf("%d", &sub_choice_accountant) != 1) {
                     while (getchar() != '\n');
-                    printf("\t  (!_!) Invalid input (>_<)! Please enter a number (1-2): ");
+                    printf("\t  (!_!) Invalid input (>_<)! Please enter a number (1-4): ");
                     _getch();
                     eraseLines(2);
                 }
@@ -4419,7 +4439,7 @@ void sub_accountant() {
                     case 4:
                         break;
                     default:
-                        printf("\t  Invalid input (>_<)! Please select options 1-2 only!\n");
+                        printf("\t  Invalid input (>_<)! Please select options 1-4 only!\n");
                         getch();
                         break;
                 }
@@ -4436,14 +4456,15 @@ void sub_accountant() {
                 printf("\n\t\tSelect your choice:\n\n");
                 printf("\t\t* 1: Change a Course's Fee\n");
                 printf("\t\t* 2: Calculate a Course's Payment Progress\n");
-                printf("\t\t* 3: View all Courses\n");
-                printf("\t\t* 4: Return\n");
+                printf("\t\t* 3: Calculate a Professor's Salary\n");
+                printf("\t\t* 4: View all Courses\n");
+                printf("\t\t* 5: Return\n");
                 printf("\t+--------------------------------------------------------+\n");
-                printf("\t  Enter your choice (1-4): ");
+                printf("\t  Enter your choice (1-5): ");
 
                  while (scanf("%d", &sub_choice_accountant) != 1) {
                     while (getchar() != '\n');
-                    printf("\t  (!_!) Invalid input (>_<)! Please enter a number (1-4): ");
+                    printf("\t  (!_!) Invalid input (>_<)! Please enter a number (1-5): ");
                     _getch();
                     eraseLines(2);
                 }
@@ -4456,11 +4477,15 @@ void sub_accountant() {
                         class_tuition_view();
                         break;
                     case 3:
-                        course_list();
+                        teacher_tuition_view();
+                        break;
                     case 4:
+                        course_list();
+                        break;
+                    case 5:
                         break;
                     default:
-                        printf("\t  Invalid input (>_<)! Please select options 1-4 only!\n");
+                        printf("\t  Invalid input (>_<)! Please select options 1-5 only!\n");
                         getch();
                         break;
                 }
