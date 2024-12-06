@@ -94,7 +94,7 @@ void employee_add() {
     do {
         printf("\tEnter Employee's ID: ");
         fflush(stdin);
-        fgets(new_employee.employee_ID, sizeof(new_employee.employee_ID), stdin);
+        fgets(new_employee.employee_ID, MAX_ID_LENGTH, stdin);
         new_employee.employee_ID[ strcspn(new_employee.employee_ID, "\n") ] = 0;
         if (strlen(new_employee.employee_ID) == 0) {
             printf("\tEmployee's ID cannot be empty (>_<)!\n");
@@ -120,7 +120,7 @@ void employee_add() {
         {
             printf("\tEnter Employee's Name: ");
             fflush(stdin);
-            fgets(new_employee.employee_name, sizeof(new_employee.employee_name), stdin);
+            fgets(new_employee.employee_name, MAX_NAME_LENGTH, stdin);
             new_employee.employee_name[strcspn(new_employee.employee_name, "\n")] = 0;
             if (strlen(new_employee.employee_name) == 0) {
                 printf("\tEmployee's Name cannot be empty (>_<)!\n");
@@ -259,7 +259,7 @@ void student_add() { // Added new Student's Information (21/11, N)
     do {
         printf("\tEnter Student's ID: ");
         fflush(stdin);
-        fgets(new_student.student_ID, sizeof(new_student.student_ID), stdin);
+        fgets(new_student.student_ID, MAX_ID_LENGTH, stdin);
         new_student.student_ID[ strcspn(new_student.student_ID, "\n") ] = 0;
         if (strlen(new_student.student_ID) == 0) {
             printf("\tStudent's ID cannot be empty (>_<)!\n");
@@ -286,7 +286,7 @@ void student_add() { // Added new Student's Information (21/11, N)
         {
             printf("\tEnter Student's Name: ");
             fflush(stdin);
-            fgets(new_student.student_name, sizeof(new_student.student_name), stdin);
+            fgets(new_student.student_name, MAX_NAME_LENGTH, stdin);
             new_student.student_name[strcspn(new_student.student_name, "\n")] = 0;
             if (strlen(new_student.student_name) == 0) {
                 printf("\tStudent's Name cannot be empty (>_<)!\n");
@@ -421,7 +421,7 @@ void course_add() { // Minor adjustment (23/11, N)
 
         printf("\tEnter Course ID: ");
         fflush(stdin);
-        fgets(new_course.course_ID, sizeof(new_course.course_ID), stdin);
+        fgets(new_course.course_ID, MAX_ID_LENGTH, stdin);
         new_course.course_ID[ strcspn(new_course.course_ID, "\n") ] = 0;
         if (strlen(new_course.course_ID) == 0) {
             printf("\tError: Course ID cannot be empty (>_<)!\n");
@@ -446,7 +446,7 @@ void course_add() { // Minor adjustment (23/11, N)
         do {
             printf("\tEnter Course's Name: ");
             fflush(stdin);
-            fgets(new_course.course_name, sizeof(new_course.course_name), stdin);
+            fgets(new_course.course_name, MAX_NAME_LENGTH, stdin);
             new_course.course_name[ strcspn(new_course.course_name, "\n") ] = 0;
             if (strlen(new_course.course_name) == 0) {
                 printf("\tError: Course Name cannot be empty (>_<)!\n");
@@ -525,7 +525,7 @@ void class_add() { // Minor fix (25/11, N)
         printf("\t+========================================================+\n\n");
         printf("\tEnter Course ID: ");
         fflush(stdin);
-        fgets(course_search, sizeof(course_search), stdin);
+        fgets(course_search, MAX_ID_LENGTH, stdin);
         course_search[ strcspn(course_search,"\n") ] = 0;
         if (strlen(course_search) == 0) {
             printf("\tError: Course ID cannot be empty (>_<)!\n");
@@ -569,7 +569,7 @@ void class_add() { // Minor fix (25/11, N)
     do {
         printf("\tEnter Class ID: ");
         fflush(stdin);
-        fgets(new_class.class_ID, sizeof(new_class.class_ID), stdin);
+        fgets(new_class.class_ID, MAX_ID_LENGTH, stdin);
         new_class.class_ID[ strcspn(new_class.class_ID,"\n") ] = 0;
         if (strlen(new_class.class_ID) == 0) {
             printf("\tError: Class ID cannot be empty (>_<)!\n");
@@ -604,7 +604,7 @@ void class_add() { // Minor fix (25/11, N)
             do {
                 printf("\tEnter Class's Name: ");
                 fflush(stdin);
-                fgets(new_class_name, sizeof(new_class_name), stdin);
+                fgets(new_class_name, MAX_NAME_LENGTH, stdin);
                 new_class_name[ strcspn(new_class_name, "\n") ] = 0;
                 if (strlen(new_class_name) == 0) {
                     printf("\tClass's Name cannot be empty (>_<)!\n");
@@ -734,7 +734,7 @@ void class_register() { // Fixed and good to go! (25/11, N)
         printf("\t+========================================================+\n\n");
         printf("\tEnter Student ID to register: ");
         fflush(stdin);
-        fgets(student_search, sizeof(student_search), stdin);
+        fgets(student_search, MAX_ID_LENGTH, stdin);
         student_search[ strcspn(student_search, "\n") ] = 0;
         if (strlen(student_search) == 0) {
             printf("\tError: Student ID cannot be empty (>_<)!\n");
@@ -819,7 +819,7 @@ void class_register() { // Fixed and good to go! (25/11, N)
     do {
         printf("\n\n\tEnter Class's ID: ");
         fflush(stdin);
-        fgets(class_search, sizeof(class_search), stdin);
+        fgets(class_search, MAX_ID_LENGTH, stdin);
         class_search[ strcspn(class_search, "\n") ] = 0;
         if (strlen(class_search) == 0) {
             printf("\tError: Class ID cannot be empty (>_<)!");
@@ -1074,7 +1074,7 @@ void class_view() {
     do {
         printf("\tEnter Class ID to view enrollment: ");
         fflush(stdin);
-        fgets(class_search, sizeof(class_search), stdin);
+        fgets(class_search, MAX_ID_LENGTH, stdin);
         class_search[strcspn(class_search, "\n")] = 0;
         if (strlen(class_search) == 0) {
             printf("\tError: Class ID cannot be empty (>_<)!\n");
@@ -1160,7 +1160,7 @@ void teacher_tuition_view() {
     do {
         printf("\tEnter Professor's name: ");
         fflush(stdin);
-        fgets(teacher_search, sizeof(teacher_search), stdin);
+        fgets(teacher_search, MAX_NAME_LENGTH, stdin);
         teacher_search[ strcspn(teacher_search, "\n") ] = 0;
         if (strlen(teacher_search) == 0) {
             printf("\tError: Professor's name cannot be empty (>_<)!\n");
@@ -1239,7 +1239,7 @@ void student_tuition_view() {
     do {
         printf("\tEnter Student ID: ");
         fflush(stdin);
-        fgets(student_search, sizeof(student_search), stdin);
+        fgets(student_search, MAX_ID_LENGTH, stdin);
         student_search[ strcspn(student_search, "\n") ] = 0;
         if (strlen(student_search) == 0) {
             printf("\tError: Student ID cannot be empty (>_<)!\n");
@@ -1343,7 +1343,7 @@ void student_tuition_update() {
     printf("\t+========================================================+\n\n");
 
     printf("\tEnter Student ID: ");
-    while (fgets(student_search, sizeof(student_search), stdin) != NULL) {
+    while (fgets(student_search, MAX_ID_LENGTH, stdin) != NULL) {
         student_search[strcspn(student_search, "\n")] = 0;
         if (strlen(student_search) > 0) {
             break;
@@ -1703,7 +1703,8 @@ void student_delete() {
     char student_ID[MAX_ID_LENGTH];
     char class_name[MAX_CLASSNAME_LENGTH];
     bool student_found = false;
-    char confirm[5];
+    char ans[4];
+    int ans_length;
 
     // Open student files
     student_file = fopen("ex_student.txt", "rb");
@@ -1735,7 +1736,7 @@ void student_delete() {
         printf("\t+========================================================+\n\n");
         printf("\tEnter Student ID to delete: ");
         fflush(stdin);
-        fgets(student_ID, sizeof(student_ID), stdin);
+        fgets(student_ID, MAX_ID_LENGTH, stdin);
         student_ID[strcspn(student_ID, "\n")] = 0;
         if (strlen(student_ID) == 0) {
             printf("\tError: Student ID cannot be empty (>_<)!\n");
@@ -1758,17 +1759,23 @@ void student_delete() {
             printf("\n\tAre you sure you want to delete this student? (yes/no): ");
             do {
                 fflush(stdin);
-                fgets(confirm, sizeof(confirm), stdin);
-                confirm[strcspn(confirm, "\n")] = 0;
-                
-                if (strcmp(confirm, "no") == 0 || strcmp(confirm, "No") == 0) {
-                    printf("\n\tDeletion cancelled.\n");
+                fgets(ans, sizeof(ans), stdin);
+                ans[ strcspn(ans, "\n") ] = 0;
+
+                // Remove uppercase lowercase variable
+                ans_length = strlen(ans);
+                for (int i = 0; i < ans_length; i++) {
+                    ans[i] = tolower(ans[i]);
+                }
+                if (strcmp(ans,"no") == 0) {
+                    printf("\tThe process has been cancelled.\n"
+                           "\tPress any key to return.\n");
                     goto cleanup;
                 }
-                if (strcmp(confirm, "yes") == 0 || strcmp(confirm, "Yes") == 0) {
+                if (strcmp(ans, "yes") == 0) {
                     break;
                 }
-                printf("\tInvalid input! Please type yes or no: ");
+                printf("\n\tInvalid Input (>~<)! Please type either yes or no: ");
             } while (true);
             break;
         }
@@ -2083,7 +2090,7 @@ void class_delete() {
     do {
         printf("\tEnter Class ID to delete: ");
         fflush(stdin);
-        fgets(class_ID, sizeof(class_ID), stdin);
+        fgets(class_ID, MAX_ID_LENGTH, stdin);
         class_ID[strcspn(class_ID, "\n")] = 0;
         if (strlen(class_ID) == 0) {
             printf("\tError: Class ID cannot be empty (>_<)!");
@@ -2536,7 +2543,7 @@ void student_update_info() {
     do {
         printf("\n\tEnter Student ID to update: ");
         fflush(stdin);
-        fgets(student_search, sizeof(student_search), stdin);
+        fgets(student_search, MAX_ID_LENGTH, stdin);
         student_search[strcspn(student_search, "\n")] = 0;
         if (strlen(student_search) == 0) {
             printf("\tError: Student ID cannot be empty (>_<)!\n");
@@ -2593,7 +2600,7 @@ void student_update_info() {
                     do {
                         printf("\n\tEnter new name: ");
                         fflush(stdin);
-                        fgets(st.student_name, sizeof(st.student_name), stdin);
+                        fgets(st.student_name, MAX_NAME_LENGTH, stdin);
                         st.student_name[strcspn(st.student_name, "\n")] = 0;
                         if (strlen(st.student_name) == 0) {
                             printf("\tStudent's Name cannot be empty (>_<)!\n");
@@ -2751,7 +2758,7 @@ void course_update_info() {
 
         printf("\n\tEnter Course ID to update: ");
         fflush(stdin);
-        fgets(course_search, sizeof(course_search), stdin);
+        fgets(course_search, MAX_ID_LENGTH, stdin);
         course_search[strcspn(course_search, "\n")] = 0;
         if (strlen(course_search) == 0) {
             printf("\tError: Course ID cannot be empty (>_<)!\n");
@@ -2809,7 +2816,7 @@ void course_update_info() {
                     do {
                         printf("\n\tEnter new name: ");
                         fflush(stdin);
-                        fgets(cs.course_name, sizeof(cs.course_name), stdin);
+                        fgets(cs.course_name, MAX_NAME_LENGTH, stdin);
                         cs.course_name[ strcspn(cs.course_name, "\n") ] =0;
                         if (strlen(cs.course_name) == 0) {
                             printf("\tCourse's Name cannot be empty (>_<)!");
@@ -3070,7 +3077,7 @@ void class_update_info() {
                     do {
                         printf("\n\tEnter new name: ");
                         fflush(stdin);
-                        fgets(cl.class_name, MAX_NAME_LENGTH, stdin);
+                        fgets(cl.class_name, MAX_CLASSNAME_LENGTH, stdin);
                         cl.class_name[ strcspn(cl.class_name, "\n") ] =0;
                         if (strlen(cl.class_name) == 0) {
                             printf("\tClass's Name cannot be empty (>_<)!");
@@ -3289,7 +3296,7 @@ void student_list() {
                 printf("\t+========================================================+\n\n");
                 printf("\tEnter Student's ID to look: ");
                 fflush(stdin);
-                fgets(student_search, sizeof(student_search), stdin);
+                fgets(student_search, MAX_ID_LENGTH, stdin);
                 student_search[strcspn(student_search, "\n")] =0;
                 if (strlen(student_search) == 0) {
                     printf("\tError: Student ID cannot be empty (>_<)!\n");
@@ -3472,7 +3479,7 @@ void course_list() {
                 system("cls");
                 printf("\n\tEnter Course's ID to look: ");
                 fflush(stdin);
-                fgets(course_search, sizeof(course_search), stdin);
+                fgets(course_search, MAX_ID_LENGTH, stdin);
                 course_search[ strcspn(course_search, "\n") ] =0;
                 rewind(file);
                 while (fread (&cs, sizeof(courses), 1, file) == 1) {
