@@ -41,6 +41,16 @@ typedef struct { // (1/12 N)
     int total_students; // current number of student(s) in class 
 } classes;
 
+typedef struct {
+    char employee_ID[MAX_ID_LENGTH];
+    char employee_name[MAX_NAME_LENGTH];
+    char employee_phone[MAX_NUMBER_LENGTH];
+    char employee_email[MAX_NAME_LENGTH];
+    char employee_password[MAX_NUMBER_LENGTH];
+    int employee_role; // 1 = Admin, 2 = Accountant, 3 = Staff, 4 = Teacher
+} employee;
+
+
 void eraseLines(int count) {
     if (count > 0) {
         printf("\x1b[2K"); // Clear current line
@@ -160,6 +170,170 @@ bool process_course_deletion(FILE *files[], const char *course_search, int *dele
     }
     
     return true;
+}
+
+//add employee functions
+void employee_add() {
+    FILE *file;
+    employee new_employee, existing_employee;
+    int employee_count = 0;
+    bool employee_found = false;
+    int phone_length;
+    char phone_str[MAX_NUMBER_LENGTH];
+
+    //open file in append and read mode
+    file = fopen("ex_employee.txt", "a+b");
+    if (file == NULL) {
+        printf("Error Opening file (>_<)!\n");
+        printf("\n\n");
+        printf("\t                        (\\(\\ \n");
+        printf("\tPress any key to return ( -.-) \n");
+        getch();
+        return;
+    }
+
+    //get new employee information
+    system("cls");
+    printf("\n");
+    printf("\t+========================================================+\n");
+    printf("\t|              Study Center Management System            |\n");
+    printf("\t|========================================================|\n");
+    printf("\t|                Add Employee Information                |\n");
+    printf("\t+========================================================+\n\n");
+
+    do {
+        printf("\tEnter Employee's ID: ");
+        fflush(stdin);
+        fgets(new_employee.employee_ID, sizeof(new_employee.employee_ID), stdin);
+        new_employee.employee_ID[ strcspn(new_employee.employee_ID, "\n") ] = 0;
+        if (strlen(new_employee.employee_ID) == 0) {
+            printf("\tEmployee's ID cannot be empty (>_<)!\n");
+        }
+    } while (strlen(new_employee.employee_ID) == 0);
+
+    //Check if ID already exists
+    rewind(file);
+    while ( fread(&existing_employee, sizeof(employee), 1, file) == 1) {
+        employee_count++;
+        if ( strcmp(existing_employee.employee_ID, new_employee.employee_ID) == 0) {
+            employee_found = true;
+            break;
+        }
+    }
+
+    if (employee_found) {
+        printf("\tError: Employee ID [ %s ] already exists (>_<)!\n", new_employee.employee_ID);
+    } else {
+
+        // Employee's Name validation
+        do
+        {
+            printf("\tEnter Employee's Name: ");
+            fflush(stdin);
+            fgets(new_employee.employee_name, sizeof(new_employee.employee_name), stdin);
+            new_employee.employee_name[strcspn(new_employee.employee_name, "\n")] = 0;
+            if (strlen(new_employee.employee_name) == 0) {
+                printf("\tEmployee's Name cannot be empty (>_<)!\n");
+                continue;
+            }
+            break;
+        } while (1);
+
+        // Phone number validation
+        do {
+            printf("\tEnter Student's Phone Number: ");
+            fflush(stdin);
+            fgets(phone_str, sizeof(phone_str), stdin);
+            fflush(stdin);
+            phone_str[strcspn(phone_str, "\n")] = 0;
+            
+            phone_length = strlen(phone_str);
+            if (phone_length > 10) {
+                printf("\tYou typed over 10 digits [ %s ].", phone_str);
+            }
+            else if (phone_length < 10) {
+                printf("\tYou typed only %d digits [ %s ].", phone_length, phone_str);
+            }
+            printf("\n");
+            bool valid = true;
+            
+            // Check if exactly 10 digits
+            if(phone_length != 10) {
+                printf("\tPhone number must be exactly 10 digits!\n");
+                getch();
+                eraseLines(4);
+                continue;
+            }
+
+            // Check if first 2 digits are valid
+            if(strncmp(phone_str, "09", 2) != 0 && strncmp(phone_str, "08", 2) != 0) {
+                printf("\tPhone number must start with '09' or '08'!\n");
+                getch();
+                eraseLines(4);
+                continue;
+            }
+            
+            // Verify all characters are digits
+            for(int i = 0; i < phone_length; i++) {
+                if(!isdigit(phone_str[i])) {
+                    valid = false;
+                    break;
+                }
+            }
+            
+            if(valid) {
+                strcpy(new_employee.employee_phone, phone_str);
+                printf("\tValid phone number format.\n");
+                break;
+            }
+            printf("\tInvalid phone number format (>_<)! Please enter 10 digits (number) only.\n");
+            getch();
+            eraseLines(4);
+        } while(1);
+
+        //Email validation
+        do {
+            printf("\tEnter Employee's Email: ");
+            fflush(stdin);
+            fgets(new_employee.employee_email, sizeof(new_employee.employee_email), stdin);
+            fflush(stdin);
+            new_employee.employee_email[strcspn(new_employee.employee_email, "\n")] = 0;
+            if (strlen(new_employee.employee_email) == 0) {
+                printf("\tEmployee's Email cannot be empty (>_<)!\n");
+            } else if (strchr(new_employee.employee_email, '@') == NULL) {
+                printf("\tEmployee's Email must contain '@' (>_<)!\n");
+            }
+        } while (strlen(new_employee.employee_email) == 0 || strchr(new_employee.employee_email, '@') == NULL);
+
+        //Password validation
+        printf("\tEnter Employee's Password: ");
+        fflush(stdin);
+        fgets(new_employee.employee_password, sizeof(new_employee.employee_password), stdin);
+        new_employee.employee_password[strcspn(new_employee.employee_password, "\n")] = 0;
+
+        //Role validation
+        do {
+            printf("\tEnter Employee's Role: ");
+            scanf("%d", &new_employee.employee_role);
+            if (new_employee.employee_role < 1 || new_employee.employee_role > 4) {
+                printf("\tInvalid role (>_<)! Enter 1 for Admin, 2 for Accountant, 3 for Staff, or 4 for Teacher.\n");
+            }
+        } while (new_employee.employee_role < 1 || new_employee.employee_role > 4);
+
+
+        //Write new student to file
+        fseek(file, 0, SEEK_END);
+        new_employee.employee_name[ strcspn(new_employee.employee_name, "\n") ] = 0;
+        fwrite(&new_employee, sizeof(employee), 1, file);
+        printf("\n\tEmployee added successfully ( =^.^=). Number: %d\n", employee_count + 1);
+    }
+
+    fclose(file);
+
+    printf("\n\n");
+    printf("\t                        (\\(\\ \n");
+    printf("\tPress any key to return ( -.-) !\n");
+    getch();
 }
 
 // Add Functions
@@ -3908,7 +4082,8 @@ void sub_head_admin() {
         printf("\t\t* 1: Student\n"
                "\t\t* 2: Course\n"
                "\t\t* 3: Class\n"
-               "\t\t* 4: Return to Main Menu\n");
+               "\t\t* 4: Employee\n"
+               "\t\t* 5: Return to Main Menu\n");
         printf("\t+--------------------------------------------------------+\n");
         printf("\t  Enter your choice (1-4): ");
 
@@ -3930,13 +4105,16 @@ void sub_head_admin() {
                 sub_class_admin();
                 break;
             case 4:
+                //sub_employee_admin();
+                break;
+            case 5:
                 break;
             default:
-                printf("From 1 to 4 only (>_<)!\n");
+                printf("From 1 to 5 only (>_<)!\n");
                 getch();
                 break;
         }
-    } while (choice_head_admin != 4);
+    } while (choice_head_admin != 5);
 
     printf("\nReturning to Main Menu.\n"
     "Press any key to return ( ='.'=) \n");
