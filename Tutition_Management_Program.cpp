@@ -21,7 +21,7 @@ typedef struct { // (1/12, N)
     char student_phone[MAX_NUMBER_LENGTH];  // Changed from int array to char array
     char course_attend[MAX_NAME_LENGTH]; // To Cross-Check courses's data
     char class_attend[MAX_CLASSNAME_LENGTH]; // To Cross-Check classes's data
-    float tuition_paid; // Amount need to pay (negative = haven't pay) 
+    float tuition_paid; // Amount need to pay (negative = haven't pay)
 } students;
 
 typedef struct { // (25/11, N)
@@ -39,6 +39,7 @@ typedef struct { // (1/12 N)
     char class_teacher[MAX_NAME_LENGTH]; // New data type
     int tuition; // Class's Fee
     int total_students; // current number of student(s) in class 
+    bool class_start;
 } classes;
 
 typedef struct {
@@ -758,6 +759,8 @@ void class_add() { // Minor fix (25/11, N)
                 eraseLines(2);
             }
         } while (new_class.tuition == 0);
+
+        new_class.class_start = false;
 
         new_class.total_students = 0;
 
@@ -2798,10 +2801,13 @@ void class_update_info() {
     students st;
     char class_search[MAX_ID_LENGTH];
     char class_ex_name[MAX_NAME_LENGTH];
+    char class_status[15];
+    char ans[4];
     bool class_found = false;
     bool ex_check = false;
     long int class_pos;
     long int student_pos;
+    int ans_length;
     int class_count = 0;
     int update_choice;
     bool student_check = false;
@@ -2876,6 +2882,13 @@ void class_update_info() {
     if (!class_found) {
         printf("\n\tClass ID [ %s ] not found (>_<)!\n", class_search);
     } else {
+        // Check Class Status
+        if (cl.class_start) {
+            strcpy(class_status,"In Session");
+        }
+        else {
+            strcpy(class_status,"Not Active");
+        }
         system("cls");
         printf("\n");
         printf("\t+========================================================+\n");
@@ -2890,18 +2903,23 @@ void class_update_info() {
         printf("\t| %-25s | %s\n", "ID:", cl.class_ID);
         printf("\t| %-25s | %s\n", "Class Name:", cl.class_name);
         printf("\t| %-25s | %s\n", "Proffesor:", cl.class_teacher);
+        printf("\t| %-25s | %d\n", "Fee:", cl.tuition);
+        printf("\t| %-25s | %s\n", "Status:", class_status);
+        
         printf("\t+--------------------------------------------------------+\n\n");
 
         do {
             printf("\tWhat would you like to update?\n\n");
             printf("\t\t* 1. Name\n");
             printf("\t\t* 2. Professor\n");
-            printf("\t\t* 3. Return\n");
-            printf("\tEnter your choice (1-3): ");
+            printf("\t\t* 3. Tuition\n");
+            printf("\t\t* 4. Status\n");
+            printf("\t\t* 5. Return\n");
+            printf("\tEnter your choice (1-5): ");
 
             while (scanf("%d", &update_choice) != 1) {
                 while (getchar() != '\n');
-                printf("\t(!_!) Invalid input! Please enter a number (1-4): ");
+                printf("\t(!_!) Invalid input! Please enter a number (1-5): ");
                 _getch();
                 eraseLines(2);
             }
@@ -2961,14 +2979,48 @@ void class_update_info() {
                     } while (strlen(cl.class_name) == 0);
                     break;
                 
-                case 3: // Return
+                case 3:
+                    break;
+                
+                case 4:
+                    printf("\n\tClass current status: %s", class_status);
+                    printf("\n\tDo you want to change this class's status (yes/no): ");
+                    do {
+                        fflush(stdin);
+                        fgets(ans, sizeof(ans), stdin);
+                        ans[ strcspn(ans, "\n") ] = 0;
+                        ans_length = strlen(ans);
+                        for (int i = 0; i < ans_length; i++) {
+                            ans[i] = tolower(ans[i]);
+                        }
+                        if (strcmp(ans,"no") == 0) {
+                            printf("\n\tClass will not be changed.");
+                            break;
+                        }
+                        if (strcmp(ans, "yes") == 0) {
+                            printf("\n\tClass's status has been changed.");
+                            if (cl.class_start) {
+                                cl.class_start = false;
+                                strcpy(class_status, "Not Active");
+                            }
+                            else {
+                                cl.class_start = true;
+                                strcpy(class_status, "In Session");
+                            }
+                            break;
+                        }
+                        printf("Invalid Input (>~<)! Please type either yes or no: ");
+                    } while (true);
+                    break;
+                
+                case 5: // Return
                     if (student_check) {
                         fclose(student_file);
                     }
                     return;
 
                 default:
-                    printf("\tInvalid choice! Please select 1-4 only (>_<)!\n");
+                    printf("\tInvalid choice! Please select 1-5 only (>_<)!\n");
                     getch();
                     continue;
             }
@@ -2994,9 +3046,11 @@ void class_update_info() {
             printf("\t| %-25s | %s\n", "ID:", cl.class_ID);
             printf("\t| %-25s | %s\n", "Class Name:", cl.class_name);
             printf("\t| %-25s | %s\n", "Proffesor:", cl.class_teacher);
+            printf("\t| %-25s | %d\n", "Fee:", cl.tuition);
+            printf("\t| %-25s | %s\n", "Status:", class_status);
             printf("\t+--------------------------------------------------------+\n\n");
 
-        } while (update_choice != 3);
+        } while (update_choice != 5);
     }
 
     fclose(class_file);
