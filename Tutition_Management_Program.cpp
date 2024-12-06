@@ -258,6 +258,14 @@ void student_add() { // Added new Student's Information (21/11, N)
                 eraseLines(4);
                 continue;
             }
+
+            // Check if first 2 digits are valid
+            if(strncmp(phone_str, "09", 2) != 0 && strncmp(phone_str, "08", 2) != 0) {
+                printf("\tPhone number must start with '09' or '08'!\n");
+                getch();
+                eraseLines(4);
+                continue;
+            }
             
             // Verify all characters are digits
             for(int i = 0; i < phone_length; i++) {
