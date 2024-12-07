@@ -3791,7 +3791,6 @@ void employee_list() {
     getch();
 }
 
-
 // Menu System
 
 // Staff Sub Menu
@@ -4578,7 +4577,7 @@ void sub_accountant() {
                 printf("\t+--------------------------------------------------------+\n");
                 printf("\t  Enter your choice (1-4): ");
 
-                 while (scanf("%d", &sub_choice_accountant) != 1) {
+                 while (scanf("%d", &sub_choice_accountant) !=1) {
                     while (getchar() != '\n');
                     printf("\t  (!_!) Invalid input (>_<)! Please enter a number (1-4): ");
                     _getch();
@@ -4621,7 +4620,7 @@ void sub_accountant() {
                 printf("\t+--------------------------------------------------------+\n");
                 printf("\t  Enter your choice (1-5): ");
 
-                 while (scanf("%d", &sub_choice_accountant) != 1) {
+                 while (scanf("%d", &sub_choice_accountant) !=1) {
                     while (getchar() != '\n');
                     printf("\t  (!_!) Invalid input (>_<)! Please enter a number (1-5): ");
                     _getch();
@@ -4657,7 +4656,7 @@ void sub_accountant() {
                 getch();
                 break;
         }
-    } while (choice_accountant != 3);
+    } while (choice_accountant !=3);
     
     printf("\nReturning to Main Menu.\n"
     "Press any key to return ( ='.'=) \n");
@@ -4787,7 +4786,6 @@ void login_menu() {
     fclose(admin_file);
     fclose(employee_file);
 }
-
 
 //main menu
 main() {
